@@ -1,0 +1,8 @@
+{
+  "name": "Sala do Futuro V2",
+  "description": "Ecossistema escolar gamificado para estudantes, professores, responsáveis e gestão escolar (ADM), com cadastro de guildas, salas, estudantes, relatórios de tarefas e lançamento de notas de avaliações.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

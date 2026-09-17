@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+ <html lang="pt-BR">
+    <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!----------Titulo e bombas invisiveis pro usuario------>
+
+      <title>Sala do Futuro V2</title> 
+      <meta name="description" content="Ecossistema escolar gamificado e acessível para estudantes, professores e responsáveis da rede estadual de São Paulo.">
+      <meta property="og:title" content="Sala do Futuro V2">
+      <meta property="og:description" content="Ecossistema escolar gamificado e acessível para estudantes, professores e responsáveis da rede estadual de São Paulo.">
+      <link rel="stylesheet" href="css/index.css">
+      <link rel="stylesheet" href="css/acessibilidade-global.css">
+    </head>
+    <body>
+
+    <main id="conteudo" role="main" style="display:flex; flex-direction:column; align-items:center; width:100%; max-width:600px;">
+<!---------Titulo e informações visiveis------------->
+
+     <h1>Sala do Futuro V2</h1>
+        <p>Bem-vindo à Sala do Futuro V2. Escolha o seu perfil de acesso:</p>
+
+<!----------Botões e semelhantes--------------------->
+ 
+<a href="login/loginal.html" class="perfil-card" id="cardEstudante" aria-label="Perfil do Estudante: Acessar tarefas, redações, desafios e ranking">
+ <div>
+   <small>Sou</small>
+   <strong>Estudante</strong>
+  </div>
+ <span aria-hidden="true">→</span>
+</a>
+
+ <a href="login/logingov.html" class="perfil-card" id="cardServidor" aria-label="Perfil do Servidor ou Professor: Acessar turmas, chamadas, avaliações e gerador IA">
+ <div>
+   <small>Sou</small>
+   <strong>Servidor / Professor</strong>
+  </div>
+ <span aria-hidden="true">→</span>
+</a>
+
+ <a href="login/loginre.html" class="perfil-card" id="cardResponsavel" aria-label="Perfil do Responsável: Acompanhar rendimento, frequência e avisos escolares">
+ <div>
+   <small>Sou</small>
+   <strong>Responsável</strong>
+  </div>
+ <span aria-hidden="true">→</span>
+</a>
+
+ <a href="login/Adm/index.html" class="perfil-card" id="cardAdm" aria-label="Perfil de Administração e Gestão Escolar: Cadastros de guildas, salas, estudantes e relatórios em tempo real">
+ <div>
+   <small>Sou</small>
+   <strong>Administração / Gestão</strong>
+  </div>
+ <span aria-hidden="true">→</span>
+</a>
+
+<!--------------Texto original-------->
+ <button id="btnInfo" aria-expanded="false" aria-controls="textoInfo">Você sabe o que é a SALA DO FUTURO?</button>
+  
+ <div id="textoInfo" style="display:none; margin-top:12px; padding: 16px; background: #e6f7ff; border-radius:12px;" role="region" aria-live="polite">
+  Sala do futuro v2 é um protótipo feito por alunos. Consulte o portal oficial em: https://saladofuturo.educacao.sp.gov.br/escolha-de-perfil, com foco pedagógico e inclusão acessível universal para todos os estudantes.
+ </div>
+<!-------Imagem e rodapé--------->
+ <img src="logosp.png" alt="Logotipo oficial do Governo do Estado de São Paulo">
+    </main>
+
+<!------Conectar os scripts--------->
+    <script src="js/acessibilidade-global.js"></script>
+    <script src="js/Index.js"></script>
+    </body>
+ </html>

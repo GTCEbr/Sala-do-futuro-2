@@ -1,0 +1,2623 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+
+<!----------Titulo e bombas invisiveis pro usuario------>
+
+  <title>
+    Área do Professor | Sala do Futuro V2
+  </title>
+
+
+<!----------CSS da pagina--------------------->
+
+  <link
+    rel="stylesheet"
+    href="css/index.css"
+  >
+  <link
+    rel="stylesheet"
+    href="../../css/acessibilidade-global.css"
+  >
+
+</head>
+
+
+<body>
+
+
+<div
+  class="app"
+  id="conteudo"
+>
+
+
+<!----------Menu lateral--------------------->
+
+<aside class="menu">
+
+
+  <div class="marca">
+
+    <img
+      src="../../logosp.png"
+      class="logo"
+      alt="Governo do Estado de São Paulo"
+    >
+
+
+    <div class="nome-sistema">
+
+      <span>
+        SALA DO
+      </span>
+
+      <span>
+        FUTURO
+      </span>
+
+    </div>
+
+  </div>
+
+
+<!----------Professor conectado--------------------->
+
+  <div class="professor-info">
+
+    Professor conectado
+
+    <strong id="professorEmail">
+      carregando...
+    </strong>
+
+  </div>
+
+
+<!----------Navegação--------------------->
+
+  <nav
+    class="menu-navegacao"
+    aria-label="Menu do professor"
+  >
+
+
+    <button
+      class="menu-botao ativo"
+      data-pagina="inicio"
+    >
+      Inicio
+    </button>
+
+
+    <button
+      class="menu-botao"
+      data-pagina="aulas"
+    >
+      Aulas e tarefas
+    </button>
+
+
+    <button
+      class="menu-botao"
+      data-pagina="entregas"
+    >
+      Entregas por ID
+    </button>
+
+
+    <button
+      class="menu-botao"
+      data-pagina="chamada"
+    >
+      Chamada
+    </button>
+
+
+    <button
+      class="menu-botao"
+      data-pagina="guildas"
+    >
+      Guildas
+    </button>
+
+
+    <button
+      class="menu-botao"
+      data-pagina="ranking"
+    >
+      Ranking e XP
+    </button>
+
+
+    <button
+      class="menu-botao"
+      data-pagina="comunica"
+    >
+      Comunica SP
+    </button>
+
+
+    <button
+      class="menu-botao"
+      data-pagina="totens"
+    >
+      Totens / provas
+    </button>
+
+
+    <button
+      class="menu-botao"
+      data-pagina="tokens"
+    >
+      Tokens
+    </button>
+
+
+    <button
+      class="menu-botao"
+      data-pagina="relatorios"
+    >
+      Relatorios
+    </button>
+
+
+    <button
+      class="menu-botao"
+      data-pagina="mural"
+    >
+      Mural de avisos
+    </button>
+
+    <button
+      class="menu-botao"
+      data-pagina="gerador-ia"
+      id="menuGeradorIABtn"
+      style="background:#eff6ff; color:#1d4ed8; border:1.5px solid #bfdbfe; font-weight:bold;"
+    >
+      ✨ Gerador IA (Gemini)
+    </button>
+
+    <button
+      class="menu-botao"
+      data-pagina="notas"
+      id="menuNotasBtn"
+    >
+      📝 Lançar Notas
+    </button>
+
+    <a
+      href="../Adm/index.html"
+      class="menu-botao"
+      style="text-decoration:none; display:flex; align-items:center; gap:6px; color:#1d5a9e; background:#f0f7ff; border:1px solid #c8e1fb; font-weight:bold; margin-top:8px;"
+    >
+      🏛️ Área ADM / Gestão
+    </a>
+
+    <button
+      class="menu-botao"
+      id="documentosBtn"
+    >
+      Documentos
+    </button>
+
+
+  </nav>
+
+
+<!----------Rodapé do menu--------------------->
+
+  <div class="menu-rodape">
+
+
+    <button id="atualizarTudoBtn">
+
+      Atualizar dados
+
+    </button>
+
+
+    <button id="sairBtn">
+
+      Sair
+
+    </button>
+
+
+  </div>
+
+
+</aside>
+
+
+<!----------Conteudo principal--------------------->
+
+<main class="conteudo">
+
+
+<!----------Topo--------------------->
+
+<header class="topo">
+
+
+  <div>
+
+    <h1 id="tituloPagina">
+
+      Painel do Professor
+
+    </h1>
+
+
+    <p id="subtituloPagina">
+
+      Administracao do prototipo
+      Sala do Futuro V2.
+
+    </p>
+
+  </div>
+
+
+  <div
+    class="status-firebase"
+    id="statusFirebase"
+  >
+
+    Firebase: verificando...
+
+  </div>
+
+
+</header>
+
+
+<!========================================
+INICIO
+========================================>
+
+
+<section
+  class="pagina ativa"
+  id="pagina-inicio"
+>
+
+
+<!----------Metricas--------------------->
+
+<div class="metricas">
+
+
+  <div class="metrica">
+
+    Tarefas
+
+    <strong id="metricaTarefas">
+      0
+    </strong>
+
+  </div>
+
+
+  <div class="metrica">
+
+    Alunos
+
+    <strong id="metricaAlunos">
+      0
+    </strong>
+
+  </div>
+
+
+  <div class="metrica">
+
+    Guildas pendentes
+
+    <strong id="metricaGuildas">
+      0
+    </strong>
+
+  </div>
+
+
+  <div class="metrica">
+
+    Avisos
+
+    <strong id="metricaAvisos">
+      0
+    </strong>
+
+  </div>
+
+
+</div>
+
+
+<!----------Cards iniciais--------------------->
+
+<div
+  class="grade"
+  style="margin-top:16px;"
+>
+
+
+<article class="card">
+
+
+  <h2>
+    Fluxo rapido
+  </h2>
+
+
+  <p>
+
+    Registre uma aula e coloque
+    uma tarefa por linha.
+
+    Ao salvar a aula,
+    cada linha vira uma tarefa
+    no Firebase com seu proprio ID.
+
+  </p>
+
+
+  <div class="acoes">
+
+
+    <button
+      class="botao primario ir-pagina"
+      data-ir="aulas"
+    >
+
+      Registrar aula
+
+    </button>
+
+
+    <button
+      class="botao ir-pagina"
+      data-ir="chamada"
+    >
+
+      Fazer chamada
+
+    </button>
+
+
+  </div>
+
+
+</article>
+
+
+<article class="card">
+
+
+  <h2>
+    Progresso
+  </h2>
+
+
+  <p>
+
+    O ranking usa o campo
+
+    <span class="codigo">
+      xp
+    </span>
+
+    de
+
+    <span class="codigo">
+      usuarios
+    </span>.
+
+    O professor pode conceder
+    no maximo 50 XP por vez.
+
+  </p>
+
+
+  <div class="acoes">
+
+
+    <button
+      class="botao ir-pagina"
+      data-ir="ranking"
+    >
+
+      Abrir ranking
+
+    </button>
+
+
+    <button
+      class="botao ir-pagina"
+      data-ir="guildas"
+    >
+
+      Ver guildas
+
+    </button>
+
+
+  </div>
+
+
+</article>
+
+
+<article class="card largo">
+
+
+  <h2>
+    Estrutura esperada do aluno
+  </h2>
+
+
+  <p>
+
+    <span class="codigo">
+      usuarios/{uid}
+    </span>
+
+    precisa ter pelo menos:
+
+    <span class="codigo">
+      nome
+    </span>,
+
+    <span class="codigo">
+      tipo: "aluno"
+    </span>,
+
+    <span class="codigo">
+      turma
+    </span>,
+
+    <span class="codigo">
+      escolaId
+    </span>
+
+    e
+
+    <span class="codigo">
+      xp
+    </span>.
+
+  </p>
+
+
+</article>
+
+
+</div>
+
+
+</section>
+
+
+<!========================================
+AULAS E TAREFAS
+========================================>
+
+
+<section
+  class="pagina"
+  id="pagina-aulas"
+>
+
+
+<div class="grade">
+
+
+<!----------Registrar aula--------------------->
+
+<article class="card">
+
+
+  <h2>
+    Registrar aula
+  </h2>
+
+
+  <p>
+
+    Uma tarefa por linha.
+
+    Ao registrar a aula,
+    elas sobem automaticamente.
+
+  </p>
+
+
+<form id="aulaForm">
+
+
+<div class="form-grid">
+
+
+<div class="campo">
+
+  <label for="aulaTitulo">
+
+    Titulo da aula
+
+  </label>
+
+  <input
+    id="aulaTitulo"
+    required
+    placeholder="Ex.: Equacoes do 1 grau"
+  >
+
+</div>
+
+
+<div class="campo">
+
+  <label for="aulaTurma">
+
+    Turma
+
+  </label>
+
+  <input
+    id="aulaTurma"
+    required
+    placeholder="Ex.: 8A"
+  >
+
+</div>
+
+
+<div class="campo">
+
+  <label for="aulaData">
+
+    Data
+
+  </label>
+
+  <input
+    id="aulaData"
+    type="date"
+    required
+  >
+
+</div>
+
+
+<div class="campo">
+
+  <label for="aulaXp">
+
+    XP por tarefa
+
+  </label>
+
+  <input
+    id="aulaXp"
+    type="number"
+    min="0"
+    max="50"
+    value="10"
+    required
+  >
+
+</div>
+
+
+<div class="campo completo">
+
+  <label for="aulaConteudo">
+
+    Conteudo / resumo
+
+  </label>
+
+  <textarea id="aulaConteudo">
+  </textarea>
+
+</div>
+
+
+<div class="campo completo">
+
+  <label for="aulaTarefas">
+
+    Tarefas da aula
+    - uma por linha
+
+  </label>
+
+  <textarea
+    id="aulaTarefas"
+    placeholder="Exercicio 1&#10;Atividade no caderno&#10;Quiz de revisao"
+  ></textarea>
+
+</div>
+
+
+<div class="campo">
+
+  <label for="aulaPrazo">
+
+    Prazo das tarefas
+
+  </label>
+
+  <input
+    id="aulaPrazo"
+    type="date"
+  >
+
+</div>
+
+
+</div>
+
+
+<div class="acoes">
+
+  <button
+    class="botao primario"
+    type="submit"
+  >
+
+    Registrar aula e publicar tarefas
+
+  </button>
+
+</div>
+
+
+<div
+  class="mensagem"
+  id="aulaMensagem"
+>
+</div>
+
+
+</form>
+
+
+</article>
+
+
+<!----------Tarefa manual--------------------->
+
+<article class="card">
+
+
+<h2>
+  Publicar tarefa manual
+</h2>
+
+
+<form id="tarefaForm">
+
+
+<div class="form-grid">
+
+
+<div class="campo completo">
+
+  <label for="tarefaTitulo">
+
+    Titulo
+
+  </label>
+
+  <input
+    id="tarefaTitulo"
+    required
+  >
+
+</div>
+
+
+<div class="campo">
+
+  <label for="tarefaTurma">
+
+    Turma
+
+  </label>
+
+  <input
+    id="tarefaTurma"
+    required
+    placeholder="Ex.: 8A"
+  >
+
+</div>
+
+
+<div class="campo">
+
+  <label for="tarefaXp">
+
+    XP
+
+  </label>
+
+  <input
+    id="tarefaXp"
+    type="number"
+    min="0"
+    max="50"
+    value="10"
+    required
+  >
+
+</div>
+
+
+<div class="campo">
+
+  <label for="tarefaPrazo">
+
+    Prazo
+
+  </label>
+
+  <input
+    id="tarefaPrazo"
+    type="date"
+  >
+
+</div>
+
+
+<div class="campo completo">
+
+  <label for="tarefaDescricao">
+
+    Descricao
+
+  </label>
+
+  <textarea id="tarefaDescricao">
+  </textarea>
+
+</div>
+
+
+</div>
+
+
+<div class="acoes">
+
+  <button
+    class="botao primario"
+    type="submit"
+  >
+
+    Publicar tarefa
+
+  </button>
+
+</div>
+
+
+<div
+  class="mensagem"
+  id="tarefaMensagem"
+>
+</div>
+
+
+</form>
+
+
+</article>
+
+
+<!----------Upload e Catálogo de Atividades em JSON (Currículo Paulista)--------------------->
+<article class="card largo" style="border: 2px solid #38bdf8; background: #f0f9ff;">
+
+  <div class="titulo-card">
+    <div>
+      <h2 style="color: #0369a1; display: flex; align-items: center; gap: 8px;">
+        <span>📂</span> Importar Atividades em JSON / Catálogo Padrão SP
+      </h2>
+      <p style="color: #0284c7;">
+        Suba um arquivo <code>.json</code> com suas atividades prontas ou carregue o catálogo padrão do Currículo Paulista para publicar em lote no Firebase.
+      </p>
+    </div>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+      <button class="botao" id="btnBaixarModeloJson" type="button" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd;">
+        📥 Baixar Modelo JSON
+      </button>
+      <button class="botao primario" id="btnCarregarCatalogoPadrao" type="button" style="background:#0284c7;">
+        📚 Carregar Catálogo Padrão SP
+      </button>
+    </div>
+  </div>
+
+  <div style="background:#ffffff; border:2px dashed #bae6fd; border-radius:12px; padding:24px; text-align:center; margin:16px 0;" id="dropzoneJsonAtividades">
+    <div style="font-size:2rem; margin-bottom:8px;">📄</div>
+    <strong style="color:#0369a1; display:block; margin-bottom:4px;">Arraste e solte o arquivo de atividades (.json) aqui</strong>
+    <span style="font-size:0.85rem; color:#64748b; display:block; margin-bottom:12px;">Ou selecione diretamente do seu computador</span>
+    
+    <label class="botao" style="display:inline-block; cursor:pointer; background:#0284c7; color:#fff; border:none; padding:8px 18px; border-radius:8px;">
+      Escolher Arquivo JSON
+      <input type="file" id="inputUploadJsonAtividades" accept=".json,application/json" style="display:none;">
+    </label>
+    <div id="uploadJsonStatus" style="margin-top:10px; font-size:0.9rem; font-weight:600;"></div>
+  </div>
+
+  <!-- Prévia e Seleção de Atividades do JSON -->
+  <div id="painelPreviaJson" style="display:none; margin-top:16px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+      <strong id="contadorAtividadesJson" style="color:#0f172a; font-size:1rem;">Atividades Encontradas</strong>
+      <div style="display:flex; gap:10px;">
+        <button type="button" class="botao" id="btnSelecionarTodasJson">Selecionar Todas</button>
+        <button type="button" class="botao primario" id="btnPublicarJsonFirestore" style="background:#16a34a; border-color:#16a34a;">
+          🚀 Publicar Selecionadas no Firestore
+        </button>
+      </div>
+    </div>
+
+    <div id="listaPreviaJsonCards" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:14px; max-height:480px; overflow-y:auto; padding:4px;">
+      <!-- Itens gerados dinamicamente via JS -->
+    </div>
+  </div>
+
+</article>
+
+
+<!----------Gerador Pedagógico Inclusivo com Inteligência Artificial (Gemini)--------------------->
+<article class="card largo" style="border: 2px solid #818cf8; background: #faf5ff;">
+
+  <div class="titulo-card">
+    <div>
+      <h2 style="color: #4338ca; display: flex; align-items: center; gap: 8px;">
+        <span>✨</span> Gerador Pedagógico com Inteligência Artificial (Gemini)
+      </h2>
+      <p style="color: #6366f1;">
+        Crie atividades pedagógicas adaptadas, alinhadas às habilidades do Currículo Paulista (BNCC) com recursos de acessibilidade universal em segundos.
+      </p>
+    </div>
+  </div>
+
+  <div class="form-grid">
+    <div class="campo">
+      <label for="iaComponente">Componente Curricular</label>
+      <select id="iaComponente">
+        <option value="Matemática">Matemática</option>
+        <option value="Língua Portuguesa">Língua Portuguesa</option>
+        <option value="Ciências da Natureza">Ciências da Natureza</option>
+        <option value="História">História</option>
+        <option value="Geografia">Geografia</option>
+        <option value="Língua Inglesa">Língua Inglesa</option>
+        <option value="Educação Financeira">Educação Financeira</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="iaTurma">Ano / Turma</label>
+      <input id="iaTurma" value="8º Ano A" placeholder="Ex.: 8º Ano A ou 1º Ano EM">
+    </div>
+
+    <div class="campo">
+      <label for="iaDificuldade">Nível de Dificuldade</label>
+      <select id="iaDificuldade">
+        <option value="Fácil">Fácil (Fixação e Engajamento)</option>
+        <option value="Médio" selected>Médio (Aplicação Prática)</option>
+        <option value="Desafiador">Desafiador (Raciocínio Avançado)</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="iaAcessibilidade">Adaptação Inclusiva</label>
+      <select id="iaAcessibilidade">
+        <option value="padrao">Padrão Universal (Clara e Acessível)</option>
+        <option value="baixa_visao">Baixa Visão / Descritiva</option>
+        <option value="tea_tdah">TEA / TDAH (Passos Estruturados)</option>
+        <option value="dislexia">Dislexia (Vocabulário Direto)</option>
+        <option value="superacao">Andaime Pedagógico (Pistas Graduais)</option>
+      </select>
+    </div>
+
+    <div class="campo completo">
+      <label for="iaTema">Tema ou Habilidade do Currículo</label>
+      <input id="iaTema" placeholder="Ex.: Equações do 1º Grau no cotidiano ou Coesão e Argumentação" value="Proporção e Regra de Três no cotidiano">
+      <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
+        <span style="font-size:0.75rem; color:#64748b; font-weight:bold;">Sugestões Rápidas:</span>
+        <button type="button" class="btn-tag-sugestao" data-tema="Proporções e porcentagem no orçamento diário" style="font-size:0.75rem; padding:2px 8px; border-radius:12px; background:#ede9fe; color:#5b21b6; border:1px solid #ddd6fe; cursor:pointer;">Matemática Cotidiana</button>
+        <button type="button" class="btn-tag-sugestao" data-tema="Análise crítica de fake news nas redes" style="font-size:0.75rem; padding:2px 8px; border-radius:12px; background:#ede9fe; color:#5b21b6; border:1px solid #ddd6fe; cursor:pointer;">Língua Portuguesa / Mídia</button>
+        <button type="button" class="btn-tag-sugestao" data-tema="Transformações químicas e preservação ambiental" style="font-size:0.75rem; padding:2px 8px; border-radius:12px; background:#ede9fe; color:#5b21b6; border:1px solid #ddd6fe; cursor:pointer;">Ciências / Ecologia</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="acoes" style="margin-top:14px;">
+    <button class="botao primario" type="button" id="btnGerarAtividadeIA" style="background:#6366f1; border-color:#4f46e5;">
+      <span>✨</span> Gerar Atividade com IA (Gemini)
+    </button>
+    <div id="iaStatusMensagem" style="margin-left:14px; font-size:0.9rem; font-weight:600;"></div>
+  </div>
+
+  <!-- Card de Prévia da Atividade Gerada -->
+  <div id="iaCardResultado" style="display:none; margin-top:20px; background:#ffffff; border:1.5px solid #c7d2fe; border-radius:12px; padding:20px; box-shadow:0 4px 12px rgba(99, 102, 241, 0.08);">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e0e7ff; padding-bottom:10px; margin-bottom:14px;">
+      <span id="iaPreviewHabilidade" style="background:#e0e7ff; color:#3730a3; padding:3px 10px; border-radius:12px; font-size:0.8rem; font-weight:bold;">EF08MA04</span>
+      <span id="iaPreviewXP" style="background:#fef3c7; color:#92400e; padding:3px 10px; border-radius:12px; font-size:0.8rem; font-weight:bold;">+30 XP</span>
+    </div>
+
+    <h3 id="iaPreviewTitulo" style="color:#1e1b4b; margin:0 0 10px 0; font-size:1.15rem;">Título da Atividade</h3>
+    <p id="iaPreviewEnunciado" style="font-size:0.95rem; line-height:1.55; color:#334155; margin-bottom:14px;"></p>
+
+    <div style="background:#f8fafc; border-left:4px solid #6366f1; padding:10px 14px; border-radius:4px; margin-bottom:14px;">
+      <strong style="font-size:0.85rem; color:#4338ca; display:block;">♿ Versão Acessível Simplificada:</strong>
+      <span id="iaPreviewAcessivel" style="font-size:0.85rem; color:#475569;"></span>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <strong style="display:block; font-size:0.9rem; color:#1e293b; margin-bottom:8px;">Alternativas e Gabarito:</strong>
+      <div id="iaPreviewAlternativas" style="display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+
+    <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:10px 14px; margin-bottom:16px;">
+      <strong style="color:#166534; font-size:0.85rem;">💡 Dica Pedagógica / Orientação Inclusiva:</strong>
+      <p id="iaPreviewDica" style="margin:4px 0 0 0; font-size:0.85rem; color:#14532d;"></p>
+    </div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button type="button" class="botao" id="iaBtnOuvirAtividade" style="background:#f1f5f9;">
+        <span>🔊</span> Ouvir Atividade
+      </button>
+      <button type="button" class="botao" id="iaBtnCopiarTexto" style="background:#f1f5f9;">
+        <span>📋</span> Copiar Conteúdo
+      </button>
+      <button type="button" class="botao primario" id="iaBtnSalvarFirestore" style="background:#16a34a; border-color:#16a34a;">
+        <span>💾</span> Publicar e Disponibilizar no Firestore para Alunos
+      </button>
+    </div>
+  </div>
+
+</article>
+
+
+<!----------Ultimas tarefas--------------------->
+
+<article class="card largo">
+
+
+<div class="titulo-card">
+
+
+  <div>
+
+    <h2>
+      Ultimas tarefas
+    </h2>
+
+    <p>
+      Use o ID na tela
+      Entregas por ID.
+    </p>
+
+  </div>
+
+
+  <button
+    class="botao"
+    id="carregarTarefasBtn"
+  >
+
+    Atualizar
+
+  </button>
+
+
+</div>
+
+
+<div class="tabela-wrap">
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+  <th>ID</th>
+
+  <th>Titulo</th>
+
+  <th>Turma</th>
+
+  <th>XP</th>
+
+  <th>Prazo</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="tarefasTabela">
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+</article>
+
+
+</div>
+
+
+</section>
+
+
+<!========================================
+ENTREGAS
+========================================>
+
+
+<section
+  class="pagina"
+  id="pagina-entregas"
+>
+
+
+<article class="card largo">
+
+
+<h2>
+  Ver alunos que fizeram uma tarefa
+</h2>
+
+
+<p>
+
+  Cole o ID da tarefa.
+
+  A busca usa
+
+  <span class="codigo">
+    entregas.tarefaId
+  </span>.
+
+</p>
+
+
+<div class="form-grid">
+
+
+<div class="campo completo">
+
+  <label for="entregaTarefaId">
+
+    ID da tarefa
+
+  </label>
+
+  <input
+    id="entregaTarefaId"
+    placeholder="Cole o ID gerado pelo Firebase"
+  >
+
+</div>
+
+
+</div>
+
+
+<div class="acoes">
+
+  <button
+    class="botao primario"
+    id="buscarEntregasBtn"
+  >
+
+    Buscar entregas
+
+  </button>
+
+</div>
+
+
+<div
+  class="mensagem"
+  id="entregaMensagem"
+>
+</div>
+
+
+<div
+  class="tabela-wrap"
+  style="margin-top:16px;"
+>
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+  <th>Aluno</th>
+
+  <th>Aluno ID</th>
+
+  <th>Status</th>
+
+  <th>Entregue em</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="entregasTabela">
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+</article>
+
+
+</section>
+
+
+<!========================================
+CHAMADA
+========================================>
+
+
+<section
+  class="pagina"
+  id="pagina-chamada"
+>
+
+
+<article class="card largo">
+
+
+<h2>
+  Chamada e comportamento
+</h2>
+
+
+<div class="form-grid">
+
+
+<div class="campo">
+
+  <label for="chamadaTurma">
+
+    Turma
+
+  </label>
+
+  <input
+    id="chamadaTurma"
+    placeholder="Ex.: 8A"
+  >
+
+</div>
+
+
+<div class="campo">
+
+  <label for="chamadaData">
+
+    Data
+
+  </label>
+
+  <input
+    id="chamadaData"
+    type="date"
+  >
+
+</div>
+
+
+</div>
+
+
+<div class="acoes">
+
+
+<button
+  class="botao"
+  id="carregarChamadaBtn"
+>
+
+  Carregar alunos
+
+</button>
+
+
+<button
+  class="botao primario"
+  id="salvarChamadaBtn"
+>
+
+  Salvar chamada
+
+</button>
+
+
+</div>
+
+
+<div
+  class="mensagem"
+  id="chamadaMensagem"
+>
+</div>
+
+
+<div
+  id="listaChamada"
+  class="lista-chamada"
+>
+
+  <div class="vazio">
+
+    Informe uma turma
+    e carregue os alunos.
+
+  </div>
+
+</div>
+
+
+</article>
+
+
+</section>
+
+
+<!========================================
+GUILDAS
+========================================>
+
+
+<section
+  class="pagina"
+  id="pagina-guildas"
+>
+
+
+<article class="card largo">
+
+
+<div class="titulo-card">
+
+
+<div>
+
+  <h2>
+    Guildas enviadas pelos alunos
+  </h2>
+
+  <p>
+
+    Aprove,
+    rejeite
+    ou acompanhe o status.
+
+  </p>
+
+</div>
+
+
+<button
+  class="botao"
+  id="carregarGuildasBtn"
+>
+
+  Atualizar
+
+</button>
+
+
+</div>
+
+
+<div class="tabela-wrap">
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+  <th>Guilda</th>
+
+  <th>Turma</th>
+
+  <th>Membros</th>
+
+  <th>Status</th>
+
+  <th>Acoes</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="guildasTabela">
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+<div
+  class="mensagem"
+  id="guildaMensagem"
+>
+</div>
+
+
+</article>
+
+
+</section>
+
+
+<!========================================
+RANKING
+========================================>
+
+
+<section
+  class="pagina"
+  id="pagina-ranking"
+>
+
+
+<div class="grade">
+
+
+<!----------Ranking individual--------------------->
+
+<article class="card largo">
+
+
+<h2>
+  Ranking individual
+</h2>
+
+
+<div class="form-grid">
+
+
+<div class="campo">
+
+  <label for="rankingTurma">
+
+    Filtrar turma
+
+  </label>
+
+  <input
+    id="rankingTurma"
+    placeholder="Ex.: 8A ou deixe vazio"
+  >
+
+</div>
+
+
+</div>
+
+
+<div class="acoes">
+
+  <button
+    class="botao primario"
+    id="carregarRankingBtn"
+  >
+
+    Carregar ranking
+
+  </button>
+
+</div>
+
+
+<p>
+
+  O professor pode conceder
+  de 1 a 50 XP por operacao.
+
+</p>
+
+
+<div class="tabela-wrap">
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+  <th>#</th>
+
+  <th>Aluno</th>
+
+  <th>Turma</th>
+
+  <th>XP</th>
+
+  <th>Dar XP</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="rankingTabela">
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+<div
+  class="mensagem"
+  id="rankingMensagem"
+>
+</div>
+
+
+</article>
+
+
+<!----------Ranking global--------------------->
+
+<article class="card largo">
+
+
+<div class="titulo-card">
+
+
+<div>
+
+  <h2>
+    Ranking global da escola
+  </h2>
+
+  <p>
+
+    Todos os alunos
+    ordenados pelo XP.
+
+  </p>
+
+</div>
+
+
+<button
+  class="botao"
+  id="carregarGlobalBtn"
+>
+
+  Atualizar
+
+</button>
+
+
+</div>
+
+
+<div class="tabela-wrap">
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+  <th>#</th>
+
+  <th>Aluno</th>
+
+  <th>Turma</th>
+
+  <th>Escola</th>
+
+  <th>XP</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="globalTabela">
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+</article>
+
+
+</div>
+
+
+</section>
+
+
+<!========================================
+COMUNICA SP
+========================================>
+
+
+<section
+  class="pagina"
+  id="pagina-comunica"
+>
+
+
+<article class="card largo">
+
+
+<h2>
+  Comunica SP
+</h2>
+
+
+<form id="comunicaForm">
+
+
+<div class="form-grid">
+
+
+<div class="campo">
+
+  <label for="comunicaDestino">
+
+    Destino
+
+  </label>
+
+  <input
+    id="comunicaDestino"
+    placeholder="Ex.: 8A, todos, aluno@email"
+  >
+
+</div>
+
+
+<div class="campo">
+
+  <label for="comunicaTitulo">
+
+    Titulo
+
+  </label>
+
+  <input
+    id="comunicaTitulo"
+    required
+  >
+
+</div>
+
+
+<div class="campo completo">
+
+  <label for="comunicaMensagemTexto">
+
+    Mensagem
+
+  </label>
+
+  <textarea
+    id="comunicaMensagemTexto"
+    required
+  ></textarea>
+
+</div>
+
+
+</div>
+
+
+<div class="acoes">
+
+  <button
+    class="botao primario"
+    type="submit"
+  >
+
+    Enviar mensagem
+
+  </button>
+
+</div>
+
+
+<div
+  class="mensagem"
+  id="comunicaMensagem"
+>
+</div>
+
+
+</form>
+
+
+</article>
+
+
+</section>
+
+
+<!========================================
+TOTENS
+========================================>
+
+
+<section
+  class="pagina"
+  id="pagina-totens"
+>
+
+
+<article class="card largo">
+
+
+<h2>
+  Criar totem de atividade / prova
+</h2>
+
+
+<form id="totemForm">
+
+
+<div class="form-grid">
+
+
+<div class="campo">
+
+  <label for="totemTitulo">
+
+    Titulo
+
+  </label>
+
+  <input
+    id="totemTitulo"
+    required
+  >
+
+</div>
+
+
+<div class="campo">
+
+  <label for="totemTurma">
+
+    Turma
+
+  </label>
+
+  <input
+    id="totemTurma"
+    required
+    placeholder="Ex.: 8A"
+  >
+
+</div>
+
+
+<div class="campo">
+
+  <label for="totemTarefaId">
+
+    ID da tarefa vinculada
+
+  </label>
+
+  <input
+    id="totemTarefaId"
+    placeholder="Opcional"
+  >
+
+</div>
+
+
+<div class="campo">
+
+  <label for="totemTipo">
+
+    Tipo
+
+  </label>
+
+  <select id="totemTipo">
+
+    <option value="atividade">
+      Atividade
+    </option>
+
+    <option value="prova">
+      Prova
+    </option>
+
+    <option value="quiz">
+      Quiz
+    </option>
+
+  </select>
+
+</div>
+
+
+<div class="campo completo">
+
+  <label for="totemDescricao">
+
+    Descricao
+
+  </label>
+
+  <textarea id="totemDescricao">
+  </textarea>
+
+</div>
+
+
+</div>
+
+
+<div class="acoes">
+
+  <button
+    class="botao primario"
+    type="submit"
+  >
+
+    Criar totem
+
+  </button>
+
+</div>
+
+
+<div
+  class="mensagem"
+  id="totemMensagem"
+>
+</div>
+
+
+</form>
+
+
+</article>
+
+
+</section>
+
+
+<!========================================
+TOKENS
+========================================>
+
+
+<section
+  class="pagina"
+  id="pagina-tokens"
+>
+
+
+<article class="card largo">
+
+
+<h2>
+  Geracao de tokens
+</h2>
+
+
+<div class="form-grid">
+
+
+<div class="campo">
+
+  <label for="tokenTipo">
+
+    Tipo
+
+  </label>
+
+  <select id="tokenTipo">
+
+    <option value="atividade">
+      Atividade
+    </option>
+
+    <option value="prova">
+      Prova
+    </option>
+
+    <option value="acesso">
+      Acesso
+    </option>
+
+  </select>
+
+</div>
+
+
+<div class="campo">
+
+  <label for="tokenValidade">
+
+    Validade em minutos
+
+  </label>
+
+  <input
+    id="tokenValidade"
+    type="number"
+    min="1"
+    max="1440"
+    value="60"
+  >
+
+</div>
+
+
+</div>
+
+
+<div class="acoes">
+
+  <button
+    class="botao primario"
+    id="gerarTokenBtn"
+  >
+
+    Gerar token
+
+  </button>
+
+</div>
+
+
+<div
+  class="mensagem"
+  id="tokenMensagem"
+>
+</div>
+
+
+</article>
+
+
+</section>
+
+
+<!========================================
+RELATORIOS
+========================================>
+
+
+<section
+  class="pagina"
+  id="pagina-relatorios"
+>
+
+
+<article class="card largo">
+
+
+<h2>
+  Enviar relatorio
+</h2>
+
+
+<form id="relatorioForm">
+
+
+<div class="form-grid">
+
+
+<div class="campo">
+
+  <label for="relatorioTipo">
+
+    Tipo
+
+  </label>
+
+  <select id="relatorioTipo">
+
+    <option value="turma">
+      Turma
+    </option>
+
+    <option value="atividade">
+      Atividade
+    </option>
+
+    <option value="comportamento">
+      Comportamento
+    </option>
+
+    <option value="outro">
+      Outro
+    </option>
+
+  </select>
+
+</div>
+
+
+<div class="campo">
+
+  <label for="relatorioTurma">
+
+    Turma / referencia
+
+  </label>
+
+  <input id="relatorioTurma">
+
+</div>
+
+
+<div class="campo completo">
+
+  <label for="relatorioTexto">
+
+    Relatorio
+
+  </label>
+
+  <textarea
+    id="relatorioTexto"
+    required
+  ></textarea>
+
+</div>
+
+
+</div>
+
+
+<div class="acoes">
+
+  <button
+    class="botao primario"
+    type="submit"
+  >
+
+    Enviar relatorio
+
+  </button>
+
+</div>
+
+
+<div
+  class="mensagem"
+  id="relatorioMensagem"
+>
+</div>
+
+
+</form>
+
+
+</article>
+
+
+</section>
+
+
+<!========================================
+MURAL
+========================================>
+
+
+<section
+  class="pagina"
+  id="pagina-mural"
+>
+
+
+<article class="card largo">
+
+
+<h2>
+  Mural de avisos
+</h2>
+
+
+<p>
+
+  O aviso salva
+
+  <span class="codigo">
+    notificar: true
+  </span>.
+
+  A area do aluno pode
+  ler a colecao
+
+  <span class="codigo">
+    avisos
+  </span>
+
+  para exibir notificacoes.
+
+</p>
+
+
+<form id="avisoForm">
+
+
+<div class="form-grid">
+
+
+<div class="campo">
+
+  <label for="avisoTitulo">
+
+    Titulo
+
+  </label>
+
+  <input
+    id="avisoTitulo"
+    required
+  >
+
+</div>
+
+
+<div class="campo">
+
+  <label for="avisoTurma">
+
+    Turma / destino
+
+  </label>
+
+  <input
+    id="avisoTurma"
+    placeholder="Ex.: 8A ou todos"
+  >
+
+</div>
+
+
+<div class="campo completo">
+
+  <label for="avisoTexto">
+
+    Aviso
+
+  </label>
+
+  <textarea
+    id="avisoTexto"
+    required
+  ></textarea>
+
+</div>
+
+
+</div>
+
+
+<div class="acoes">
+
+  <button
+    class="botao primario"
+    type="submit"
+  >
+
+    Publicar aviso
+
+  </button>
+
+</div>
+
+
+<div
+  class="mensagem"
+  id="avisoMensagem"
+>
+</div>
+
+
+</form>
+
+
+</article>
+
+
+</section>
+
+
+<!========================================
+NOTAS DAS AVALIAÇÕES
+========================================>
+
+<section
+  class="pagina"
+  id="pagina-notas"
+>
+
+<div class="grade">
+
+  <!-- Card de Parâmetros da Avaliação -->
+  <article class="card largo">
+    <h2>Lançamento de Notas das Avaliações</h2>
+    <p>
+      Selecione a turma, componente curricular e instrumento de avaliação (Prova Paulista, Simulado SAEB, Redação SP ou Projetos Gamificados) para lançar as notas dos estudantes com cálculo automático de média e status.
+    </p>
+
+    <div class="form-grid" style="margin-top:14px;">
+      <div class="campo">
+        <label for="notaTurmaSelect">Turma / Sala</label>
+        <select id="notaTurmaSelect">
+          <option value="8º Ano A">8º Ano A</option>
+          <option value="8º Ano B">8º Ano B</option>
+          <option value="9º Ano A">9º Ano A</option>
+          <option value="1º Ano EM">1º Ano EM</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="notaDisciplinaSelect">Componente Curricular</label>
+        <select id="notaDisciplinaSelect">
+          <option value="Matemática">Matemática</option>
+          <option value="Língua Portuguesa">Língua Portuguesa</option>
+          <option value="Ciências">Ciências</option>
+          <option value="História">História</option>
+          <option value="Geografia">Geografia</option>
+          <option value="Inglês">Inglês</option>
+          <option value="Tecnologia e Robótica">Tecnologia e Robótica</option>
+          <option value="Educação Física">Educação Física</option>
+          <option value="Arte">Arte</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="notaTipoAvaliacao">Instrumento Avaliativo</label>
+        <select id="notaTipoAvaliacao">
+          <option value="Prova Paulista Bimestral">Prova Paulista Bimestral</option>
+          <option value="Redação Paulista SP">Redação Paulista SP</option>
+          <option value="Simulado SAEB / Avalia SP">Simulado SAEB / Avalia SP</option>
+          <option value="Projeto Gamificado / Guildas">Projeto Gamificado / Guildas</option>
+          <option value="Atividade Prática em Sala">Atividade Prática em Sala</option>
+          <option value="Recuperação Contínua">Recuperação Contínua</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="notaBimestreSelect">Bimestre Letivo</label>
+        <select id="notaBimestreSelect">
+          <option value="1º Bimestre">1º Bimestre</option>
+          <option value="2º Bimestre">2º Bimestre</option>
+          <option value="3º Bimestre">3º Bimestre</option>
+          <option value="4º Bimestre">4º Bimestre</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="notaPeso">Peso da Avaliação</label>
+        <input type="number" id="notaPeso" value="10" min="1" max="10">
+      </div>
+
+      <div class="campo">
+        <label for="notaData">Data da Aplicação</label>
+        <input type="date" id="notaData">
+      </div>
+    </div>
+  </article>
+
+  <!-- Painel de Resumo e Estatísticas da Turma -->
+  <article class="card largo" style="background:#f4f9ff; border:1px solid #c8e1fb;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+      <div>
+        <h3 id="resumoTurmaTitulo" style="margin:0; color:#1d5a9e;">8º Ano A • Matemática • Prova Paulista Bimestral</h3>
+        <p style="margin:4px 0 0; font-size:13px; color:#53677e;">Digite as notas dos alunos (0 a 10) e adicione devolutivas pedagógicas se desejar.</p>
+      </div>
+      <div style="display:flex; gap:16px; align-items:center;">
+        <div style="text-align:right;">
+          <span style="font-size:12px; color:#60738a;">Média da Turma:</span>
+          <strong id="mediaTurmaValor" style="font-size:22px; color:#2f80ed; display:block;">--</strong>
+        </div>
+        <button type="button" id="btnAtribuirMediaGeral" class="botao" style="font-size:12px; padding:8px 12px;">
+          Preencher Base 7.0
+        </button>
+      </div>
+    </div>
+  </article>
+
+  <!-- Pauta e Relação de Alunos para Lançamento -->
+  <article class="card largo">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+      <h3>Pauta de Notas da Avaliação</h3>
+      <div style="display:flex; gap:8px;">
+        <button type="button" id="btnExportarPautaCSV" class="botao">Exportar Pauta (CSV)</button>
+        <button type="button" id="btnImprimirPautaNotas" class="botao">🖨️ Imprimir Pauta</button>
+      </div>
+    </div>
+
+    <div class="tabela-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:45px;">Nº</th>
+            <th>Estudante</th>
+            <th>RA</th>
+            <th>Guilda</th>
+            <th style="width:135px;">Nota (0.0 a 10.0)</th>
+            <th style="width:140px;">Situação</th>
+            <th>Devolutiva / Observações</th>
+          </tr>
+        </thead>
+        <tbody id="corpoTabelaLancamentoNotas">
+          <!-- Gerado dinamicamente -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="acoes" style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+      <span id="contadorAlunosPauta" style="color:#52657a; font-size:14px; font-weight:bold;">Carregando alunos...</span>
+      <button type="button" id="btnSalvarNotasDocente" class="botao primario" style="padding:12px 26px; font-size:15px;">
+        💾 Salvar Notas da Avaliação
+      </button>
+    </div>
+
+    <div class="mensagem" id="mensagemNotasFeedback"></div>
+  </article>
+
+  <!-- Histórico de Avaliações Registradas -->
+  <article class="card largo">
+    <h3>Avaliações Registradas Recentemente</h3>
+    <div class="tabela-wrap" style="margin-top:12px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Turma</th>
+            <th>Componente</th>
+            <th>Instrumento</th>
+            <th>Bimestre</th>
+            <th>Média da Sala</th>
+            <th>Alunos Lançados</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="corpoHistoricoNotasTabela">
+          <!-- Inserido dinamicamente -->
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+</div>
+
+</section>
+
+<!========================================
+GERADOR INTELIGENTE DE ATIVIDADES COM IA (GEMINI)
+========================================>
+<section
+  class="pagina"
+  id="pagina-gerador-ia"
+>
+  <div class="cartao" style="margin-bottom: 24px;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+      <div>
+        <h2 style="font-size:1.4rem; color:#1e3a8a; margin-bottom:6px; display:flex; align-items:center; gap:8px;">
+          <span>✨</span> Gerador Pedagógico Inteligente com IA (Gemini)
+        </h2>
+        <p style="color:#475569; font-size:0.95rem; margin:0;">
+          Crie avaliações e atividades alinhadas ao <strong>Currículo Paulista / BNCC</strong> com recursos avançados de <strong>Educação Inclusiva</strong> (descrições acessíveis, linguagem simplificada para cognição/TEA/TDAH/dislexia e áudio).
+        </p>
+      </div>
+      <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:20px; padding:6px 14px; font-size:0.85rem; color:#1d4ed8; font-weight:600;">
+        ⚡ Motor: Gemini 3.8 Flash + SEDUC Inclusiva
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:20px;">
+    <!-- COLUNA FORMULÁRIO -->
+    <div class="cartao">
+      <h3 style="font-size:1.1rem; color:#1e293b; margin-bottom:16px; border-bottom:2px solid #f1f5f9; padding-bottom:8px;">
+        ⚙️ Parâmetros da Atividade
+      </h3>
+
+      <div style="margin-bottom:14px;">
+        <label for="iaComponente" style="display:block; font-weight:600; font-size:0.9rem; margin-bottom:4px;">Componente Curricular:</label>
+        <select id="iaComponente" class="campo" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1;">
+          <option value="Matemática">Matemática</option>
+          <option value="Língua Portuguesa">Língua Portuguesa</option>
+          <option value="Ciências">Ciências</option>
+          <option value="História">História</option>
+          <option value="Geografia">Geografia</option>
+          <option value="Arte">Arte</option>
+          <option value="Língua Inglesa">Língua Inglesa</option>
+          <option value="Educação Física">Educação Física</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label for="iaTurma" style="display:block; font-weight:600; font-size:0.9rem; margin-bottom:4px;">Ano / Turma:</label>
+        <select id="iaTurma" class="campo" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1;">
+          <option value="6º Ano A">6º Ano EF</option>
+          <option value="7º Ano A">7º Ano EF</option>
+          <option value="8º Ano A" selected>8º Ano EF</option>
+          <option value="9º Ano A">9º Ano EF</option>
+          <option value="1ª Série EM">1ª Série do Ensino Médio</option>
+          <option value="2ª Série EM">2ª Série do Ensino Médio</option>
+          <option value="3ª Série EM">3ª Série do Ensino Médio</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label for="iaTema" style="display:block; font-weight:600; font-size:0.9rem; margin-bottom:4px;">Tema ou Habilidade Desejada:</label>
+        <input type="text" id="iaTema" class="campo" placeholder="Ex: Fração e proporção no mercado, Figuras de linguagem..." value="Equações de 1º grau no cotidiano" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1;">
+        <div style="margin-top:8px; display:flex; flex-wrap:wrap; gap:6px;">
+          <button type="button" class="btn-tag-sugestao" data-tema="Frações e Porcentagem no cotidiano" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:14px; padding:4px 10px; font-size:0.75rem; cursor:pointer;">💡 Frações</button>
+          <button type="button" class="btn-tag-sugestao" data-tema="Figuras de linguagem em músicas" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:14px; padding:4px 10px; font-size:0.75rem; cursor:pointer;">💡 Figuras de Linguagem</button>
+          <button type="button" class="btn-tag-sugestao" data-tema="Transformações Químicas e Matéria" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:14px; padding:4px 10px; font-size:0.75rem; cursor:pointer;">💡 Reações Químicas</button>
+          <button type="button" class="btn-tag-sugestao" data-tema="Cidadania, Direitos Humanos e Democracia" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:14px; padding:4px 10px; font-size:0.75rem; cursor:pointer;">💡 Cidadania</button>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
+        <div>
+          <label for="iaDificuldade" style="display:block; font-weight:600; font-size:0.9rem; margin-bottom:4px;">Dificuldade:</label>
+          <select id="iaDificuldade" class="campo" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1;">
+            <option value="Fácil">Fácil (20 XP)</option>
+            <option value="Médio" selected>Médio (30 XP)</option>
+            <option value="Desafiador">Desafiador (50 XP)</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="iaAcessibilidade" style="display:block; font-weight:600; font-size:0.9rem; margin-bottom:4px;">Inclusão / Acessibilidade:</label>
+          <select id="iaAcessibilidade" class="campo" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1;">
+            <option value="padrao">Padrão Inclusivo</option>
+            <option value="baixa_visao">Baixa Visão / Autodescritiva</option>
+            <option value="tea_tdah">TEA / TDAH (Passo a passo)</option>
+            <option value="dislexia">Dislexia (Linguagem Clara)</option>
+            <option value="superacao">Andaime com Dicas Graduais</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="button" id="btnGerarAtividadeIA" style="width:100%; background:#2563eb; color:#ffffff; border:none; padding:12px; border-radius:8px; font-weight:bold; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 12px rgba(37,99,235,0.25);">
+        <span>✨</span> Gerar Atividade com IA (Gemini)
+      </button>
+      <div id="iaStatusMensagem" style="margin-top:10px; font-size:0.85rem; text-align:center;" role="status"></div>
+    </div>
+
+    <!-- COLUNA PREVIEW / RESULTADO -->
+    <div class="cartao" id="iaCardResultado" style="display:none; background:#ffffff;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:2px solid #f1f5f9; padding-bottom:8px;">
+        <span id="iaPreviewHabilidade" style="background:#e0f2fe; color:#0369a1; font-weight:bold; font-size:0.78rem; padding:4px 10px; border-radius:12px;">EF08MA04</span>
+        <span id="iaPreviewXP" style="background:#fef3c7; color:#b45309; font-weight:bold; font-size:0.82rem; padding:4px 10px; border-radius:12px;">+30 XP</span>
+      </div>
+
+      <h4 id="iaPreviewTitulo" style="font-size:1.2rem; color:#1e293b; margin-bottom:10px;">Título da Atividade</h4>
+
+      <div style="background:#f8fafc; border-left:4px solid #0284c7; padding:12px; border-radius:4px; margin-bottom:12px;">
+        <p id="iaPreviewEnunciado" style="font-size:0.95rem; line-height:1.5; color:#334155; margin-bottom:0;"></p>
+      </div>
+
+      <!-- Versão Linguagem Simples / Apoio Cognitivo -->
+      <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:10px; margin-bottom:14px;">
+        <div style="font-size:0.8rem; font-weight:bold; color:#166534; margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+          <span>🌱</span> Versão em Linguagem Simples (Acessibilidade Cognitiva / Dislexia):
+        </div>
+        <p id="iaPreviewAcessivel" style="font-size:0.88rem; color:#14532d; margin:0;"></p>
+      </div>
+
+      <!-- Alternativas -->
+      <div id="iaPreviewAlternativas" style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
+        <!-- Injetado dinamicamente -->
+      </div>
+
+      <!-- Dica pedagógica -->
+      <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:10px; margin-bottom:16px;">
+        <span style="font-weight:bold; font-size:0.82rem; color:#92400e;">💡 Dica Inclusiva para o Estudante:</span>
+        <p id="iaPreviewDica" style="font-size:0.85rem; color:#78350f; margin:4px 0 0 0;"></p>
+      </div>
+
+      <!-- Ações -->
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <button type="button" id="iaBtnOuvirAtividade" style="background:#f8fafc; color:#0f172a; border:1px solid #cbd5e1; padding:10px; border-radius:8px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+          <span>🔊</span> Ouvir Atividade com Leitor de Voz
+        </button>
+
+        <button type="button" id="iaBtnSalvarFirestore" style="background:#16a34a; color:#ffffff; border:none; padding:12px; border-radius:8px; font-weight:bold; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 12px rgba(22,163,74,0.25);">
+          <span>💾</span> Publicar e Disponibilizar no Firestore para Alunos
+        </button>
+
+        <button type="button" id="iaBtnCopiarTexto" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; padding:8px; border-radius:6px; font-size:0.85rem; cursor:pointer;">
+          📋 Copiar Enunciado e Respostas
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+</main>
+
+
+</div>
+
+
+<!----------Acessibilidade simples--------------------->
+
+<div class="acessibilidade">
+
+
+<details>
+
+
+<summary>
+
+  Acessibilidade
+
+</summary>
+
+
+<div class="acessibilidade-botoes">
+
+
+<button
+  type="button"
+  id="lerPagina"
+>
+
+  Ler pagina
+
+</button>
+
+
+<button
+  type="button"
+  id="lerSelecionado"
+>
+
+  Ler selecionado
+
+</button>
+
+
+<button
+  type="button"
+  id="pararLeitura"
+>
+
+  Parar leitura
+
+</button>
+
+
+</div>
+
+
+</details>
+
+
+</div>
+
+
+<!----------VLibras--------------------->
+
+<div
+  vw
+  class="enabled"
+>
+
+
+<div
+  vw-access-button
+  class="active"
+>
+</div>
+
+
+<div vw-plugin-wrapper>
+
+
+<div class="vw-plugin-top-wrapper">
+</div>
+
+
+</div>
+
+
+</div>
+
+
+<script
+  src="https://vlibras.gov.br/app/vlibras-plugin.js"
+>
+</script>
+
+
+<script>
+
+if (
+  window.VLibras
+) {
+
+  new window.VLibras.Widget(
+    "https://vlibras.gov.br/app"
+  );
+
+}
+
+</script>
+
+
+<!----------Javascript da pagina--------------------->
+
+<script src="../../js/acessibilidade-global.js"></script>
+<script
+  type="module"
+  src="js/Index.js"
+>
+</script>
+
+
+</body>
+
+  </html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Área do Responsável | Sala do Futuro V2</title>
+  <style>
+    :root {
+      --azul: #1d5a9e;
+      --azul2: #2f80ed;
+      --azul-claro: #4db6e8;
+      --fundo: #f4f5f7;
+      --fundo2: #eef2f6;
+      --texto: #526176;
+      --texto-escuro: #31445e;
+      --borda: #dfe5ec;
+      --branco: #ffffff;
+      --verde: #23845a;
+      --amarelo: #a66b00;
+      --vermelho: #c62828;
+      --sombra: 0 3px 12px rgba(28, 47, 73, .08);
+      --raio: 16px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--fundo);
+      color: var(--texto);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header.topo {
+      background: var(--branco);
+      border-bottom: 1px solid var(--borda);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .marca-topo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .marca-topo img {
+      height: 36px;
+    }
+    .marca-topo strong {
+      color: var(--azul);
+      font-size: 1.1rem;
+      display: block;
+    }
+    .marca-topo small {
+      color: var(--texto);
+      font-size: 0.8rem;
+    }
+    .topo-acoes {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .btn-sair {
+      background: #fdf2f2;
+      color: var(--vermelho);
+      border: 1px solid #f8d7da;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .btn-sair:hover {
+      background: #f8d7da;
+    }
+    main.conteudo {
+      max-width: 1080px;
+      width: 100%;
+      margin: 24px auto;
+      padding: 0 20px 40px;
+      flex: 1;
+    }
+    .boas-vindas {
+      background: var(--branco);
+      padding: 24px;
+      border-radius: var(--raio);
+      border: 1px solid var(--borda);
+      box-shadow: var(--sombra);
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .boas-vindas h1 {
+      color: var(--texto-escuro);
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+    }
+    .boas-vindas p {
+      color: var(--texto);
+      font-size: 0.95rem;
+    }
+    .tag-estudante {
+      background: #e9f2fd;
+      border: 1px solid #cfe2ff;
+      color: var(--azul);
+      padding: 10px 16px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .tag-estudante .avatar {
+      width: 36px;
+      height: 36px;
+      background: var(--azul);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    .grade-resumo {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .card-metrica {
+      background: var(--branco);
+      padding: 20px;
+      border-radius: var(--raio);
+      border: 1px solid var(--borda);
+      box-shadow: var(--sombra);
+    }
+    .card-metrica span {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--texto);
+      margin-bottom: 8px;
+    }
+    .card-metrica strong {
+      font-size: 1.8rem;
+      color: var(--texto-escuro);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .card-metrica small {
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .status-positivo { color: var(--verde); }
+    .status-atencao { color: var(--amarelo); }
+    .secoes-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 800px) {
+      .secoes-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .painel-card {
+      background: var(--branco);
+      padding: 22px;
+      border-radius: var(--raio);
+      border: 1px solid var(--borda);
+      box-shadow: var(--sombra);
+      margin-bottom: 20px;
+    }
+    .painel-card h2 {
+      font-size: 1.15rem;
+      color: var(--texto-escuro);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--borda);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .item-aviso {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--borda);
+    }
+    .item-aviso:last-child {
+      border-bottom: none;
+    }
+    .item-aviso strong {
+      display: block;
+      color: var(--texto-escuro);
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+    .item-aviso p {
+      font-size: 0.85rem;
+      color: var(--texto);
+      margin-bottom: 4px;
+    }
+    .item-aviso time {
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+    .tabela-notas {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .tabela-notas th, .tabela-notas td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--borda);
+    }
+    .tabela-notas th {
+      color: var(--texto-escuro);
+      font-weight: 600;
+      background: var(--fundo2);
+    }
+    .badge-nota {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    .badge-verde { background: #e6f7ec; color: var(--verde); }
+    .badge-azul { background: #e7f1fc; color: var(--azul); }
+    .acoes-acessibilidade {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .acoes-acessibilidade button {
+      background: var(--fundo2);
+      border: 1px solid var(--borda);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: var(--texto-escuro);
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .acoes-acessibilidade button:hover {
+      background: #e2e8f0;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topo">
+    <div class="marca-topo">
+      <img src="../../logosp.png" alt="Governo de São Paulo">
+      <div>
+        <strong>Sala do Futuro V2</strong>
+        <small>Portal do Responsável</small>
+      </div>
+    </div>
+    <div class="topo-acoes">
+      <a href="../../Index.html" class="btn-sair">Sair</a>
+    </div>
+  </header>
+
+  <main class="conteudo" id="conteudo">
+
+    <section class="boas-vindas">
+      <div>
+        <h1>Acompanhamento Pedagógico</h1>
+        <p>Acompanhe a frequência escolar, notas e recados da instituição de ensino.</p>
+      </div>
+      <div class="tag-estudante">
+        <div class="avatar">AL</div>
+        <div>
+          <strong>Aluno Conectado</strong>
+          <small style="display:block; color:var(--texto);">Ensino Fundamental / Médio</small>
+        </div>
+      </div>
+    </section>
+
+    <div class="grade-resumo">
+      <div class="card-metrica">
+        <span>Frequência Bimestral</span>
+        <strong class="status-positivo">94%</strong>
+        <small class="status-positivo">Regular (Meta: ≥ 75%)</small>
+      </div>
+      <div class="card-metrica">
+        <span>Média Geral</span>
+        <strong class="status-positivo">8.4</strong>
+        <small class="status-positivo">Acima da média escolar</small>
+      </div>
+      <div class="card-metrica">
+        <span>Atividades Concluídas</span>
+        <strong>18 / 20</strong>
+        <small class="status-atencao">2 pendentes esta semana</small>
+      </div>
+      <div class="card-metrica">
+        <span>Pontuação Gamificada</span>
+        <strong>420 XP</strong>
+        <small style="color:var(--azul);">Nível 4 • Sala do Futuro</small>
+      </div>
+    </div>
+
+    <div class="secoes-grid">
+      <div>
+        <div class="painel-card">
+          <h2>Boletim Escolar Recente</h2>
+          <table class="tabela-notas">
+            <thead>
+              <tr>
+                <th>Componente Curricular</th>
+                <th>1º Bimestre</th>
+                <th>2º Bimestre</th>
+                <th>Situação</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Língua Portuguesa</td>
+                <td>8.5</td>
+                <td>8.0</td>
+                <td><span class="badge-nota badge-verde">Aprovado</span></td>
+              </tr>
+              <tr>
+                <td>Matemática</td>
+                <td>7.5</td>
+                <td>8.5</td>
+                <td><span class="badge-nota badge-verde">Aprovado</span></td>
+              </tr>
+              <tr>
+                <td>Ciências / Biologia</td>
+                <td>9.0</td>
+                <td>8.8</td>
+                <td><span class="badge-nota badge-verde">Aprovado</span></td>
+              </tr>
+              <tr>
+                <td>História & Geografia</td>
+                <td>8.0</td>
+                <td>8.5</td>
+                <td><span class="badge-nota badge-verde">Aprovado</span></td>
+              </tr>
+              <tr>
+                <td>Inglês</td>
+                <td>9.5</td>
+                <td>9.0</td>
+                <td><span class="badge-nota badge-azul">Destaque</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="painel-card">
+          <h2>Recados e Comunicações da Escola</h2>
+          <div class="item-aviso">
+            <strong>Reunião de Pais e Mestres do 2º Bimestre</strong>
+            <p>Convidamos os responsáveis para a devolutiva pedagógica na próxima sexta-feira às 18h30 no auditório da escola.</p>
+            <time>Publicado pela Coordenação Pedagógica</time>
+          </div>
+          <div class="item-aviso">
+            <strong>Semana da Ciência e Tecnologia</strong>
+            <p>Alunos apresentarão projetos interdisciplinares gamificados desenvolvidos nas trilhas da Sala do Futuro.</p>
+            <time>Publicado pela Diretoria de Ensino</time>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="painel-card">
+          <h2>Agenda Próxima</h2>
+          <div class="item-aviso">
+            <strong>Avaliação de Matemática</strong>
+            <p>Conteúdo: Geometria espacial e equações.</p>
+            <time>Nesta Quinta-feira</time>
+          </div>
+          <div class="item-aviso">
+            <strong>Entrega Redação Paulista</strong>
+            <p>Tema: Sustentabilidade e o papel da juventude.</p>
+            <time>Sexta-feira, 23:59</time>
+          </div>
+          <div class="item-aviso">
+            <strong>Feira do Conhecimento</strong>
+            <p>Mostra cultural e esportiva de guildas.</p>
+            <time>Próximo mês</time>
+          </div>
+        </div>
+
+        <div class="painel-card">
+          <h2>Recursos de Acessibilidade</h2>
+          <p style="font-size:0.85rem; margin-bottom: 8px;">Utilize sintetizador de voz para leitura da página.</p>
+          <div class="acoes-acessibilidade">
+            <button id="lerPagina">Ler página</button>
+            <button id="lerSelecionado">Ler seleção</button>
+            <button id="pararLeitura">Parar leitura</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
+  </div>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>
+    if (window.VLibras) {
+      new window.VLibras.Widget('https://vlibras.gov.br/app');
+    }
+  </script>
+
+  <script>
+    function falar(texto) {
+      if (!("speechSynthesis" in window)) {
+        alert("Seu navegador não suporta leitura por voz.");
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const fala = new SpeechSynthesisUtterance(texto);
+      fala.lang = "pt-BR";
+      window.speechSynthesis.speak(fala);
+    }
+
+    document.getElementById("lerPagina")?.addEventListener("click", () => {
+      falar(document.getElementById("conteudo")?.innerText || "");
+    });
+
+    document.getElementById("lerSelecionado")?.addEventListener("click", () => {
+      const txt = window.getSelection().toString().trim();
+      if (!txt) {
+        alert("Selecione algum texto primeiro.");
+        return;
+      }
+      falar(txt);
+    });
+
+    document.getElementById("pararLeitura")?.addEventListener("click", () => {
+      window.speechSynthesis.cancel();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+{
+  "versao": "2.0",
+  "descricao": "Catálogo oficial de atividades curriculares padronizadas - Currículo Paulista e SEDUC-SP",
+  "anoLetivo": 2026,
+  "componentes": [
+    "Matemática",
+    "Língua Portuguesa",
+    "Redação",
+    "Ciências da Natureza",
+    "História",
+    "Geografia",
+    "Língua Inglesa",
+    "Educação Financeira"
+  ],
+  "atividades": [
+    {
+      "id": "PAD-MAT-01",
+      "titulo": "Razão, Proporção e Regra de Três",
+      "componente": "Matemática",
+      "turma": "8º Ano A",
+      "habilidadeBNCC": "EF08MA04",
+      "tipo": "multiplaEscolha",
+      "xp": 20,
+      "enunciado": "Em um laboratório escolar da Sala do Futuro, 4 impressoras 3D produzem 24 peças de robótica em 3 horas de trabalho contínuo. Mantendo o mesmo ritmo de produção, quantas peças serão produzidas por 6 impressoras iguais durante 4 horas?",
+      "alternativas": [
+        { "id": "a", "texto": "36 peças" },
+        { "id": "b", "texto": "48 peças" },
+        { "id": "c", "texto": "54 peças" },
+        { "id": "d", "texto": "60 peças" }
+      ],
+      "respostaCorreta": "b",
+      "explicacao": "Uma impressora produz 24 / (4 * 3) = 2 peças por hora. Logo, 6 impressoras em 4 horas produzirão: 6 * 4 * 2 = 48 peças.",
+      "acessibilidade": "Dica visual: Descubra primeiro quantas peças uma única máquina faz em uma hora."
+    },
+    {
+      "id": "PAD-MAT-02",
+      "titulo": "Equações Polinomiais e Resolução de Problemas",
+      "componente": "Matemática",
+      "turma": "8º Ano A",
+      "habilidadeBNCC": "EF08MA07",
+      "tipo": "multiplaEscolha",
+      "xp": 25,
+      "enunciado": "O dobro da quantia de pontos de uma guilda na gincana escolar, somado a 150 pontos bônus, resulta no total de 750 pontos. Qual é a pontuação original dessa guilda?",
+      "alternativas": [
+        { "id": "a", "texto": "250 pontos" },
+        { "id": "b", "texto": "300 pontos" },
+        { "id": "c", "texto": "350 pontos" },
+        { "id": "d", "texto": "400 pontos" }
+      ],
+      "respostaCorreta": "b",
+      "explicacao": "2x + 150 = 750 => 2x = 600 => x = 300 pontos.",
+      "acessibilidade": "Linguagem direta: Pense no número que ao ser dobrado e somado a 150 resulta em 750."
+    },
+    {
+      "id": "PAD-POR-01",
+      "titulo": "Coesão Referencial e Figuras de Linguagem",
+      "componente": "Língua Portuguesa",
+      "turma": "8º Ano A",
+      "habilidadeBNCC": "EF08LP04",
+      "tipo": "multiplaEscolha",
+      "xp": 20,
+      "enunciado": "No trecho 'Os alunos da Sala do Futuro construíram um foguete experimental. Eles trabalharam incansavelmente na oficina de robótica.', o pronome 'Eles' desempenha qual papel coesivo?",
+      "alternativas": [
+        { "id": "a", "texto": "Anáfora, retomando a expressão 'Os alunos da Sala do Futuro'." },
+        { "id": "b", "texto": "Catáfora, antecipando uma informação ainda não dita." },
+        { "id": "c", "texto": "Elipse, omitindo um verbo transitivo direto." },
+        { "id": "d", "texto": "Metáfora, estabelecendo uma comparação implícita." }
+      ],
+      "respostaCorreta": "a",
+      "explicacao": "O pronome 'Eles' funciona como elemento anafórico, retomando o termo mencionado anteriormente para evitar repetição.",
+      "acessibilidade": "Destaque: Observe que o pronome substitui alguém que já foi apresentado na primeira frase."
+    },
+    {
+      "id": "PAD-POR-02",
+      "titulo": "Análise de Notícia e Desinformação",
+      "componente": "Língua Portuguesa",
+      "turma": "9º Ano A",
+      "habilidadeBNCC": "EF09LP02",
+      "tipo": "dissertativa",
+      "xp": 30,
+      "enunciado": "Leia o resumo de uma matéria jornalística sobre inteligência artificial e redija um parágrafo crítico (de 5 a 8 linhas) apontando como o leitor pode checar fontes confiáveis antes de compartilhar conteúdos nas redes sociais.",
+      "criterios": "Presença de tese clara, vocabulário formal, menção a agências de checagem ou fontes primárias.",
+      "acessibilidade": "Guia estruturado: Inicie citando um método prático de conferir a data e o autor da notícia."
+    },
+    {
+      "id": "PAD-RED-01",
+      "titulo": "Proposta Dissertativa: Sustentabilidade e Futuro Urbano",
+      "componente": "Redação",
+      "turma": "1º Ano EM",
+      "habilidadeBNCC": "EM13LP05",
+      "tipo": "dissertativa",
+      "xp": 50,
+      "enunciado": "A partir da leitura dos textos motivadores disponibilizados na plataforma Redação Paulista, elabore um texto dissertativo-argumentativo sobre o tema: 'Caminhos para combater o desperdício de água e promover a sustentabilidade nas cidades paulistas'. Proponha uma intervenção cidadã.",
+      "criterios": "Estrutura dissertativa clássica (introdução, 2 argumentos, proposta de intervenção e conclusão com coesão textual).",
+      "acessibilidade": "Recurso de áudio e régua de foco recomendados para planejamento de parágrafos."
+    },
+    {
+      "id": "PAD-CIE-01",
+      "titulo": "Cadeias Alimentares e Equilíbrio Ecológico",
+      "componente": "Ciências da Natureza",
+      "turma": "8º Ano A",
+      "habilidadeBNCC": "EF08CI05",
+      "tipo": "multiplaEscolha",
+      "xp": 20,
+      "enunciado": "Em um ecossistema da Mata Atlântica paulista, a extinção local de predadores de topo (como a onça-parda) provocaria diretamente:",
+      "alternativas": [
+        { "id": "a", "texto": "Aumento descontrolado de herbívoros e consequente degradação da vegetação nativa." },
+        { "id": "b", "texto": "Aumento imediato do número de produtores primários e árvores de grande porte." },
+        { "id": "c", "texto": "Extinção imediata de todas as bactérias e fungos decompositores." },
+        { "id": "d", "texto": "Desaparecimento de todos os cursos d'água da bacia hidrográfica." }
+      ],
+      "respostaCorreta": "a",
+      "explicacao": "Sem predadores de topo para controlar as populações intermediárias, os herbívoros aumentam exponencialmente, consumindo em excesso a vegetação nativa.",
+      "acessibilidade": "Dica de raciocínio: Pense no que acontece quando ninguém caça os animais que comem as plantas."
+    },
+    {
+      "id": "PAD-HIS-01",
+      "titulo": "A Proclamação da República e Cidadania no Brasil",
+      "componente": "História",
+      "turma": "9º Ano A",
+      "habilidadeBNCC": "EF09HI01",
+      "tipo": "multiplaEscolha",
+      "xp": 20,
+      "enunciado": "A transição do Império para a República no Brasil em 1889 foi marcada principalmente por:",
+      "alternativas": [
+        { "id": "a", "texto": "Intensa participação popular de camponeses e operários nas ruas." },
+        { "id": "b", "texto": "Movimento liderado por elites militares e cafeeiras com pouca participação popular inicial." },
+        { "id": "c", "texto": "Uma revolta camponesa com apoio direto da Família Real portuguesa." },
+        { "id": "d", "texto": "Uma votação de sufrágio universal com voto feminino já garantido." }
+      ],
+      "respostaCorreta": "b",
+      "explicacao": "Conforme o historiador Aristides Lobo, 'o povo assistiu àquilo bestializado', evidenciando o caráter de cúpula militar e cafeeira do golpe republicano.",
+      "acessibilidade": "Foco histórico: Lembre-se da célebre frase sobre o povo assistindo aos acontecimentos de longe."
+    },
+    {
+      "id": "PAD-GEO-01",
+      "titulo": "Urbanização e Megalópoles: A Região Metropolitana de SP",
+      "componente": "Geografia",
+      "turma": "8º Ano B",
+      "habilidadeBNCC": "EF08GE03",
+      "tipo": "multiplaEscolha",
+      "xp": 20,
+      "enunciado": "O processo em que a expansão física e territorial de duas ou mais cidades vizinhas as faz fundir-se espacialmente em uma mancha urbana única é denominado:",
+      "alternativas": [
+        { "id": "a", "texto": "Conurbação" },
+        { "id": "b", "texto": "Gentrificação" },
+        { "id": "c", "texto": "Êxodo rural" },
+        { "id": "d", "texto": "Segregação voluntária" }
+      ],
+      "respostaCorreta": "a",
+      "explicacao": "A conurbação é a união física da mancha urbana de cidades vizinhas, fenômeno visível em toda a Grande São Paulo e ABC paulista.",
+      "acessibilidade": "Associação de palavras: 'Con' (junto) + 'Urbe' (cidade)."
+    },
+    {
+      "id": "PAD-ING-01",
+      "titulo": "Digital Literacy and Connectors in English",
+      "componente": "Língua Inglesa",
+      "turma": "8º Ano A",
+      "habilidadeBNCC": "EF08LI08",
+      "tipo": "multiplaEscolha",
+      "xp": 20,
+      "enunciado": "Choose the best connector to complete the sentence: 'Students must use strong passwords, ________ they can protect their personal data online.'",
+      "alternativas": [
+        { "id": "a", "texto": "so that" },
+        { "id": "b", "texto": "although" },
+        { "id": "c", "texto": "because of" },
+        { "id": "d", "texto": "however" }
+      ],
+      "respostaCorreta": "a",
+      "explicacao": "'So that' indica finalidade ou propósito ('de modo que' / 'para que').",
+      "acessibilidade": "Tradução contextual: Procure o conector que signifique 'para que' ou 'de modo a'."
+    },
+    {
+      "id": "PAD-FIN-01",
+      "titulo": "Orçamento Consciente e Juros Compostos",
+      "componente": "Educação Financeira",
+      "turma": "8º Ano A",
+      "habilidadeBNCC": "EF08MA04 / SEDUC",
+      "tipo": "multiplaEscolha",
+      "xp": 25,
+      "enunciado": "Qual é a regra prática fundamental para a saúde financeira e construção de uma reserva para o Projeto de Vida de um jovem estudante?",
+      "alternativas": [
+        { "id": "a", "texto": "Poupar primeiro uma porcentagem fixa de tudo o que recebe antes de efetuar gastos variáveis." },
+        { "id": "b", "texto": "Gastar com tudo o que desejar e apenas guardar o dinheiro se sobrar no último dia." },
+        { "id": "c", "texto": "Realizar compras parceladas com juros sem checar o limite total da renda." },
+        { "id": "d", "texto": "Evitar registrar gastos pequenos, pois eles não causam impacto no final do mês." }
+      ],
+      "respostaCorreta": "a",
+      "explicacao": "A mentalidade de 'pagar-se primeiro' é a chave da Educação Financeira para garantir segurança e realizar metas.",
+      "acessibilidade": "Dica prática: Guarde um pedacinho assim que receber, não espere para ver o que sobra."
+    }
+  ]
+}

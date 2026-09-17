@@ -1,0 +1,491 @@
+/* ==========================================================================
+   ACESSIBILIDADE UNIVERSAL SP - SALA DO FUTURO V2
+   Em conformidade com WCAG 2.2 Nível AAA, Lei Brasileira de Inclusão (LBI)
+   e Diretrizes de Acessibilidade Digital da SEDUC-SP
+   ========================================================================== */
+
+/* Link de salto acessível (Skip link) */
+.link-pular-conteudo {
+  position: absolute;
+  top: -999px;
+  left: 16px;
+  background: #0284c7;
+  color: #ffffff !important;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  z-index: 999999;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  transition: top 0.2s ease;
+}
+
+.link-pular-conteudo:focus,
+.link-pular-conteudo:focus-visible {
+  top: 16px;
+  outline: 4px solid #facc15;
+  outline-offset: 2px;
+}
+
+/* Anel de foco visível universal para teclado */
+:focus-visible {
+  outline: 3px solid #0284c7 !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 5px rgba(2, 132, 199, 0.25) !important;
+}
+
+/* Multiplicadores de tamanho de fonte */
+:root {
+  --fator-fonte: 1;
+  --espacamento-linhas: 1.5;
+  --espacamento-letras: normal;
+}
+
+body {
+  font-size: calc(1rem * var(--fator-fonte));
+  line-height: var(--espacamento-linhas);
+  letter-spacing: var(--espacamento-letras);
+}
+
+/* --------------------------------------------------------------------------
+   1. MODO ALTO CONTRASTE (WCAG AAA)
+   -------------------------------------------------------------------------- */
+body.acessibilidade-alto-contraste {
+  background-color: #000000 !important;
+  color: #ffff00 !important;
+}
+
+body.acessibilidade-alto-contraste * {
+  background-color: #000000 !important;
+  color: #ffff00 !important;
+  border-color: #ffffff !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+body.acessibilidade-alto-contraste a,
+body.acessibilidade-alto-contraste button,
+body.acessibilidade-alto-contraste .btn,
+body.acessibilidade-alto-contraste input[type="button"],
+body.acessibilidade-alto-contraste input[type="submit"] {
+  background-color: #000000 !important;
+  color: #00ffff !important;
+  border: 2px solid #00ffff !important;
+  text-decoration: underline !important;
+}
+
+body.acessibilidade-alto-contraste a:hover,
+body.acessibilidade-alto-contraste button:hover,
+body.acessibilidade-alto-contraste a:focus,
+body.acessibilidade-alto-contraste button:focus {
+  background-color: #00ffff !important;
+  color: #000000 !important;
+}
+
+body.acessibilidade-alto-contraste input,
+body.acessibilidade-alto-contraste select,
+body.acessibilidade-alto-contraste textarea {
+  background-color: #111111 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffff00 !important;
+}
+
+body.acessibilidade-alto-contraste :focus-visible {
+  outline: 4px solid #ffff00 !important;
+  outline-offset: 4px !important;
+}
+
+/* --------------------------------------------------------------------------
+   2. MODO TEMA ESCURO SUAVE
+   -------------------------------------------------------------------------- */
+body.acessibilidade-modo-escuro {
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+body.acessibilidade-modo-escuro .perfil-card,
+body.acessibilidade-modo-escuro .cartao,
+body.acessibilidade-modo-escuro .card,
+body.acessibilidade-modo-escuro .painel,
+body.acessibilidade-modo-escuro .menu,
+body.acessibilidade-modo-escuro .topo,
+body.acessibilidade-modo-escuro header,
+body.acessibilidade-modo-escuro aside {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+body.acessibilidade-modo-escuro h1,
+body.acessibilidade-modo-escuro h2,
+body.acessibilidade-modo-escuro h3,
+body.acessibilidade-modo-escuro strong {
+  color: #f1f5f9 !important;
+}
+
+body.acessibilidade-modo-escuro p,
+body.acessibilidade-modo-escuro span,
+body.acessibilidade-modo-escuro small {
+  color: #cbd5e1 !important;
+}
+
+body.acessibilidade-modo-escuro input,
+body.acessibilidade-modo-escuro select,
+body.acessibilidade-modo-escuro textarea {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. FONTE AMIGÁVEL PARA DISLEXIA
+   -------------------------------------------------------------------------- */
+body.acessibilidade-fonte-dislexia,
+body.acessibilidade-fonte-dislexia * {
+  font-family: 'Comic Sans MS', 'Verdana', 'Trebuchet MS', sans-serif !important;
+  letter-spacing: 0.08em !important;
+  word-spacing: 0.12em !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. ESPAÇAMENTO EXPANDIDO PARA LEITURA COGNITIVA
+   -------------------------------------------------------------------------- */
+body.acessibilidade-espacamento-ampliado {
+  --espacamento-linhas: 1.9 !important;
+  --espacamento-letras: 0.05em !important;
+}
+
+body.acessibilidade-espacamento-ampliado p,
+body.acessibilidade-espacamento-ampliado li,
+body.acessibilidade-espacamento-ampliado span {
+  margin-bottom: 0.75em;
+}
+
+/* --------------------------------------------------------------------------
+   5. REDUZIR ANIMAÇÕES / ESTÍMULOS SENSORIAIS (TEA / FOTOSSENSIBILIDADE)
+   -------------------------------------------------------------------------- */
+body.acessibilidade-sem-animacao,
+body.acessibilidade-sem-animacao * {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+/* --------------------------------------------------------------------------
+   6. FILTROS DE DALTONISMO
+   -------------------------------------------------------------------------- */
+body.daltonismo-protanopia {
+  filter: url('#filtro-protanopia') !important;
+}
+
+body.daltonismo-deuteranopia {
+  filter: url('#filtro-deuteranopia') !important;
+}
+
+body.daltonismo-tritanopia {
+  filter: url('#filtro-tritanopia') !important;
+}
+
+body.daltonismo-monocromatico {
+  filter: grayscale(100%) contrast(120%) !important;
+}
+
+/* --------------------------------------------------------------------------
+   7. RÉGUA DE LEITURA & MÁSCARA DE FOCO
+   -------------------------------------------------------------------------- */
+#reguaLeituraVisual {
+  display: none;
+  position: fixed;
+  left: 0;
+  width: 100vw;
+  height: 36px;
+  background: rgba(250, 204, 21, 0.28);
+  border-top: 2px solid #ca8a04;
+  border-bottom: 2px solid #ca8a04;
+  pointer-events: none;
+  z-index: 99998;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-50%);
+}
+
+#mascaraFocoTopo,
+#mascaraFocoBase {
+  display: none;
+  position: fixed;
+  left: 0;
+  width: 100vw;
+  background: rgba(0, 0, 0, 0.65);
+  pointer-events: none;
+  z-index: 99997;
+  transition: height 0.05s ease;
+}
+
+#mascaraFocoTopo {
+  top: 0;
+  height: 0;
+}
+
+#mascaraFocoBase {
+  bottom: 0;
+  height: 0;
+}
+
+/* Destaque visual ao ler texto por voz (Text-to-Speech) */
+.acessibilidade-destaque-voz {
+  background-color: #fef08a !important;
+  color: #1e293b !important;
+  border-radius: 4px;
+  padding: 2px 4px;
+  box-shadow: 0 0 8px rgba(250, 204, 21, 0.8);
+  transition: all 0.2s ease;
+}
+
+body.acessibilidade-alto-contraste .acessibilidade-destaque-voz {
+  background-color: #ffff00 !important;
+  color: #000000 !important;
+  outline: 3px solid #00ffff !important;
+}
+
+/* --------------------------------------------------------------------------
+   8. WIDGET FLUTUANTE DE ACESSIBILIDADE UNIVERSAL
+   -------------------------------------------------------------------------- */
+.widget-acessibilidade-wrapper {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 99999;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.btn-gatilho-acessibilidade {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #0284c7;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  border-radius: 50px;
+  padding: 10px 18px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.35);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-gatilho-acessibilidade:hover {
+  background: #0369a1;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.45);
+}
+
+.btn-gatilho-acessibilidade .icone-acess {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+/* Painel Gaveta de Acessibilidade */
+.painel-acessibilidade-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  max-width: 440px;
+  height: 100vh;
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.25);
+  z-index: 100000;
+  overflow-y: auto;
+  padding: 24px;
+  box-sizing: border-box;
+  animation: deslizarEntrada 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes deslizarEntrada {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.painel-acessibilidade-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 99999;
+}
+
+.painel-cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.painel-cabecalho h2 {
+  font-size: 1.25rem;
+  color: #0369a1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.btn-fechar-painel {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  padding: 6px 12px;
+  cursor: pointer;
+  color: #475569;
+}
+
+.btn-fechar-painel:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+/* Seções de Recursos */
+.secao-recurso-acess {
+  margin-bottom: 22px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.secao-recurso-acess h3 {
+  font-size: 1rem;
+  color: #1e293b;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.grade-botoes-acess {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.btn-opcao-acess {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.btn-opcao-acess:hover {
+  border-color: #0284c7;
+  background: #f0f9ff;
+  color: #0284c7;
+}
+
+.btn-opcao-acess.ativo {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+}
+
+/* Barra de Voz / TTS */
+.barra-controle-voz {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.botoes-audio-fila {
+  display: flex;
+  gap: 8px;
+}
+
+.botoes-audio-fila button {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.botoes-audio-fila button:hover {
+  background: #f1f5f9;
+}
+
+.status-voz-texto {
+  font-size: 0.8rem;
+  color: #64748b;
+  min-height: 20px;
+}
+
+/* Guia de Atalhos Acessíveis */
+.lista-atalhos-acess {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.82rem;
+  color: #475569;
+}
+
+.lista-atalhos-acess li {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px dashed #e2e8f0;
+}
+
+.lista-atalhos-acess kbd {
+  background: #e2e8f0;
+  color: #0f172a;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-weight: bold;
+}
+
+/* Botão de resetar preferências */
+.btn-resetar-acess {
+  width: 100%;
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.btn-resetar-acess:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #fca5a5;
+}
