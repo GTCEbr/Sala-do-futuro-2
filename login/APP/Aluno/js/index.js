@@ -9,8 +9,9 @@ if (window.VLibras) {
 }
 
 /*========================================
-FIREBASE
+FIREBASE & LOCAL DB
 ========================================*/
+import DBLocal from "../../../js/db-local.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 
 import {
@@ -445,107 +446,76 @@ $("menuMobileBtn")
 LOGIN E PERFIL
 ========================================*/
 
+async function carregarPerfilAlunoCompleto(user) {
+  usuarioAtual = user || {
+    uid: "aluno_demo_1",
+    email: "guilherme.santos@aluno.sp.gov.br",
+    displayName: "Guilherme Santos"
+  };
+
+  try {
+    // 1. Busca primeiro do DBLocal (transferência para armazenamento local de demonstração)
+    const alunosLocais = DBLocal.obterAlunos();
+    const alunoEncontrado = alunosLocais.find(a => 
+      a.id === usuarioAtual.uid || 
+      (usuarioAtual.email && a.email && a.email.toLowerCase() === usuarioAtual.email.toLowerCase()) ||
+      a.nome.toLowerCase().includes("guilherme")
+    ) || alunosLocais[0];
+
+    if (alunoEncontrado) {
+      perfilAluno = {
+        id: alunoEncontrado.id,
+        nome: alunoEncontrado.nome || "Guilherme Santos",
+        email: alunoEncontrado.email || usuarioAtual.email || "aluno@escola.sp.gov.br",
+        turma: alunoEncontrado.sala || alunoEncontrado.turma || "8º Ano A",
+        sala: alunoEncontrado.sala || alunoEncontrado.turma || "8º Ano A",
+        guilda: alunoEncontrado.guilda || "Águias da Sabedoria",
+        ra: alunoEncontrado.ra || "000.123.456-7 SP",
+        xp: alunoEncontrado.xp || 420,
+        nivel: alunoEncontrado.nivel || 4,
+        tipo: "aluno"
+      };
+    } else {
+      perfilAluno = {
+        id: usuarioAtual.uid,
+        nome: usuarioAtual.displayName || "Guilherme Santos",
+        email: usuarioAtual.email || "aluno@escola.sp.gov.br",
+        turma: "8º Ano A",
+        sala: "8º Ano A",
+        guilda: "Águias da Sabedoria",
+        ra: "000.123.456-7 SP",
+        xp: 420,
+        nivel: 4,
+        tipo: "aluno"
+      };
+      DBLocal.salvarAluno(perfilAluno);
+    }
+
+    perfilAluno.tipo = "aluno";
+
+    atualizarPerfilTela();
+    atualizarProgresso();
+
+    await Promise.allSettled([
+      carregarTarefas(),
+      carregarMensagens(),
+      atualizarPublicacaoDiaria(),
+      carregarResumoTarefaSP()
+    ]);
+  } catch (erro) {
+    console.error("Falha na inicialização local do aluno:", erro);
+  }
+}
+
 onAuthStateChanged(
   auth,
   async user => {
-
-    if (!user) {
-
-      window.location.href =
-        rotas.login;
-
-      return;
-
+    if (user) {
+      await carregarPerfilAlunoCompleto(user);
+    } else {
+      // Modo Demonstração Local: inicializa diretamente com o perfil institucional demo
+      await carregarPerfilAlunoCompleto(null);
     }
-
-
-    usuarioAtual = user;
-
-
-    try {
-
-      const perfilRef =
-        doc(
-          db,
-          "usuarios",
-          user.uid
-        );
-
-
-      const perfilDoc =
-        await getDoc(perfilRef);
-
-
-      if (!perfilDoc.exists()) {
-        const pedacosNome = (user.email || "aluno").split("@")[0].split(/[._-]/);
-        const primeiroNome = pedacosNome[0].charAt(0).toUpperCase() + pedacosNome[0].slice(1);
-        const segundoNome = pedacosNome[1] ? (pedacosNome[1].charAt(0).toUpperCase() + pedacosNome[1].slice(1)) : "Santos";
-
-        const perfilPadrao = {
-          nome: user.displayName || primeiroNome || "Guilherme",
-          sobrenome: segundoNome || "Santos",
-          email: user.email || "aluno@escola.sp.gov.br",
-          turma: "8º ano A",
-          tipo: "aluno",
-          ano: 2026,
-          xp: 420,
-          nivel: 4,
-          ra: "000.123.456-7 SP"
-        };
-
-        try {
-          await setDoc(perfilRef, perfilPadrao);
-        } catch (errGravacao) {
-          console.warn("Perfil mantido em memória:", errGravacao);
-        }
-
-        perfilAluno = {
-          id: user.uid,
-          ...perfilPadrao
-        };
-      } else {
-        perfilAluno = {
-          id: perfilDoc.id,
-          ...perfilDoc.data()
-        };
-      }
-
-      perfilAluno.tipo = "aluno";
-
-
-      atualizarPerfilTela();
-
-      atualizarProgresso();
-
-
-      await Promise.all([
-
-        carregarTarefas(),
-
-        carregarMensagens(),
-
-        atualizarPublicacaoDiaria(),
-
-        carregarResumoTarefaSP()
-
-      ]);
-
-    }
-
-    catch (erro) {
-
-      console.error(
-        "Falha ao iniciar o app do aluno:",
-        erro
-      );
-
-
-      alert(
-        "Nao foi possivel carregar sua area. Verifique as regras do Firebase e sua conexao."
-      );
-
-    }
-
   }
 );
 
@@ -796,120 +766,58 @@ async function carregarTarefas() {
 
 
   try {
+    // 1. Busca dados do banco local oficial (DBLocal)
+    const tarefasLocais = DBLocal.obterTarefasDocentes();
+    const entregasLocais = DBLocal.obterEntregasDocentes();
 
-    const [
-      tarefasResultado,
-      entregasResultado
-    ] =
-      await Promise.all([
+    entregasCache = new Map();
+    entregasLocais.forEach(entrega => {
+      if (entrega.tarefaId && (entrega.alunoId === usuarioAtual.uid || !entrega.alunoId || entrega.alunoNome === perfilAluno.nome)) {
+        entregasCache.set(entrega.tarefaId, entrega);
+      }
+    });
 
-        getDocs(
-          collection(
-            db,
-            "tarefas"
-          )
-        ),
-
-        getDocs(
-          query(
-            collection(
-              db,
-              "entregas"
-            ),
-
-            where(
-              "alunoId",
-              "==",
-              usuarioAtual.uid
-            )
-          )
-        )
-
-      ]);
-
-
-    entregasCache =
-      new Map();
-
-
-    entregasResultado
-      .forEach(item => {
-
-        const entrega =
-          item.data();
-
-
-        if (entrega.tarefaId) {
-
-          entregasCache.set(
-
-            entrega.tarefaId,
-
-            {
-              id: item.id,
-              ...entrega
-            }
-
-          );
-
-        }
-
-      });
-
-
-    const turmaAluno =
-      normalizarTurma(
-        perfilAluno.turma
-      );
-
-
+    const turmaAluno = normalizarTurma(perfilAluno.turma);
     tarefasCache = [];
 
+    tarefasLocais.forEach(tarefa => {
+      const turmaTarefa = normalizarTurma(tarefa.turma);
+      const mesmaTurma = !turmaTarefa || turmaTarefa === "TODOS" || turmaTarefa === "GERAL" || turmaTarefa === turmaAluno;
+      const ativa = tarefa.ativa !== false;
+      if (mesmaTurma && ativa) {
+        tarefasCache.push(tarefa);
+      }
+    });
 
-    tarefasResultado
-      .forEach(item => {
+    // Se houver tarefas no Firestore, mescla também em modo resiliente
+    try {
+      const [tarefasResultado, entregasResultado] = await Promise.allSettled([
+        getDocs(collection(db, "tarefas")),
+        getDocs(query(collection(db, "entregas"), where("alunoId", "==", usuarioAtual.uid)))
+      ]);
 
-        const tarefa = {
+      if (entregasResultado.status === "fulfilled") {
+        entregasResultado.value.forEach(item => {
+          const entrega = item.data();
+          if (entrega.tarefaId) {
+            entregasCache.set(entrega.tarefaId, { id: item.id, ...entrega });
+          }
+        });
+      }
 
-          id: item.id,
-
-          ...item.data()
-
-        };
-
-
-        const turmaTarefa =
-          normalizarTurma(
-            tarefa.turma
-          );
-
-
-        const mesmaTurma =
-
-          !turmaTarefa
-
-          || turmaTarefa === "TODOS"
-
-          || turmaTarefa
-             === turmaAluno;
-
-
-        const ativa =
-          tarefa.ativa !== false;
-
-
-        if (
-          mesmaTurma
-          && ativa
-        ) {
-
-          tarefasCache.push(
-            tarefa
-          );
-
-        }
-
-      });
+      if (tarefasResultado.status === "fulfilled") {
+        tarefasResultado.value.forEach(item => {
+          if (!tarefasCache.some(t => t.id === item.id)) {
+            const tarefa = { id: item.id, ...item.data() };
+            const turmaTarefa = normalizarTurma(tarefa.turma);
+            const mesmaTurma = !turmaTarefa || turmaTarefa === "TODOS" || turmaTarefa === "GERAL" || turmaTarefa === turmaAluno;
+            if (mesmaTurma && tarefa.ativa !== false) {
+              tarefasCache.push(tarefa);
+            }
+          }
+        });
+      }
+    } catch(e) {}
 
 
     tarefasCache.sort(
@@ -1380,44 +1288,39 @@ async function enviarEntrega(event) {
     }
 
 
-    await setDoc(
-      entregaRef,
-      {
+    // 1. Salva diretamente no DBLocal oficial de demonstração
+    const dadosEntrega = {
+      id: entregaId,
+      tarefaId: tarefaId,
+      alunoId: usuarioAtual.uid,
+      alunoNome: perfilAluno.nome || "Aluno",
+      turma: perfilAluno.turma || "",
+      resposta: resposta,
+      status: "entregue",
+      xpGanha: 50,
+      criadoEm: new Date().toISOString()
+    };
+    DBLocal.salvarEntregaDocente(dadosEntrega);
 
-        tarefaId:
-          tarefaId,
+    // Concede XP e atualiza localmente
+    perfilAluno.xp = (perfilAluno.xp || 420) + 50;
+    perfilAluno.nivel = Math.max(1, Math.floor(perfilAluno.xp / 100));
+    DBLocal.salvarAluno(perfilAluno);
+    atualizarProgresso();
 
-        alunoId:
-          usuarioAtual.uid,
-
-        alunoNome:
-          perfilAluno.nome
-          || "Aluno",
-
-        turma:
-          perfilAluno.turma
-          || "",
-
-        resposta:
-          resposta,
-
-        status:
-          "entregue",
-
-        entregueEm:
-          firestoreTimestamp()
-
-      }
-    );
-
+    // Sincronização secundária não bloqueante com Firestore
+    try {
+      setDoc(entregaRef, {
+        ...dadosEntrega,
+        entregueEm: firestoreTimestamp()
+      }).catch(() => {});
+    } catch(errSync) {}
 
     status.className =
       "mensagem-status ok";
 
-
     status.textContent =
-      "Atividade entregue.";
-
+      "Atividade entregue com sucesso! +50 XP ganhos.";
 
     await carregarTarefas();
 
@@ -1522,157 +1425,40 @@ async function carregarMensagens() {
 
 
   try {
+    const turma = normalizarTurma(perfilAluno.turma);
+    const email = usuarioAtual.email || "";
 
-    const turma =
-      normalizarTurma(
-        perfilAluno.turma
-      );
+    // 1. Busca comunicados e avisos do banco local institucional (DBLocal)
+    const comunicadosLocais = DBLocal.obterComunicados();
+    const mensagens = comunicadosLocais.map(c => ({
+      id: c.id,
+      tipoMensagem: c.tipo || "Comunica SP",
+      titulo: c.titulo,
+      conteudo: c.conteudo || c.mensagem,
+      criadoEm: c.data || c.criadoEm || new Date().toISOString(),
+      autor: c.autor || "Coordenação Pedagógica",
+      origem: "local"
+    }));
 
-
-    const email =
-      usuarioAtual.email
-      || "";
-
-
-    const destinos =
-      [
-        ...new Set(
-          [
-            turma,
-            "todos",
-            "TODOS",
-            email
-          ].filter(Boolean)
-        )
-      ];
-
-
-    const consultas = [];
-
-
-    if (destinos.length) {
-
-      consultas.push(
-
-        getDocs(
-
-          query(
-
-            collection(
-              db,
-              "comunicacoes"
-            ),
-
-            where(
-              "destino",
-              "in",
-              destinos
-            )
-
-          )
-
-        )
-
-      );
-
-    }
-
-
-    consultas.push(
-
-      getDocs(
-
-        query(
-
-          collection(
-            db,
-            "avisos"
-          ),
-
-          where(
-            "turma",
-            "in",
-            [
-              turma || "SEM_TURMA",
-              "TODOS"
-            ]
-          )
-
-        )
-
-      )
-
-    );
-
-
-    const resultados =
-      await Promise.all(
-        consultas
-      );
-
-
-    const mensagens = [];
-
-
-    if (destinos.length) {
-
-      resultados[0]
-        .forEach(item => {
-
-          mensagens.push({
-
-            id:
-              item.id,
-
-            tipoMensagem:
-              "Comunica SP",
-
-            ...item.data()
-
+    // Sincronização secundária não bloqueante com Firestore
+    try {
+      const destinos = [...new Set([turma, "todos", "TODOS", email].filter(Boolean))];
+      const consultas = [];
+      if (destinos.length) {
+        consultas.push(getDocs(query(collection(db, "comunicacoes"), where("destino", "in", destinos))));
+      }
+      consultas.push(getDocs(query(collection(db, "avisos"), where("turma", "in", [turma || "SEM_TURMA", "TODOS"]))));
+      const resultados = await Promise.allSettled(consultas);
+      resultados.forEach(res => {
+        if (res.status === "fulfilled") {
+          res.value.forEach(item => {
+            if (!mensagens.some(m => m.id === item.id)) {
+              mensagens.push({ id: item.id, tipoMensagem: "Mural", ...item.data() });
+            }
           });
-
-        });
-
-
-      resultados[1]
-        .forEach(item => {
-
-          mensagens.push({
-
-            id:
-              item.id,
-
-            tipoMensagem:
-              "Mural",
-
-            ...item.data()
-
-          });
-
-        });
-
-    }
-
-    else {
-
-      resultados[0]
-        .forEach(item => {
-
-          mensagens.push({
-
-            id:
-              item.id,
-
-            tipoMensagem:
-              "Mural",
-
-            ...item.data()
-
-          });
-
-        });
-
-    }
+        }
+      });
+    } catch(errSync) {}
 
 
     mensagens.sort(
@@ -2383,43 +2169,45 @@ async function carregarResumoTarefaSP() {
         );
       });
 
-    const [entregasResultado, pontosResultado] = await Promise.allSettled([
-      getDocs(
-        query(
-          collection(db, "entregasTarefaSP"),
-          where("alunoId", "==", usuarioAtual.uid)
+    // 1. Considera entregas locais primeiro
+    const entregasOficiais = DBLocal.obterEntregasOficiais();
+    entregasOficiais.forEach(e => {
+      if (e.atividadeId) {
+        entregues.add(e.atividadeId);
+      }
+    });
+
+    try {
+      const [entregasResultado, pontosResultado] = await Promise.allSettled([
+        getDocs(
+          query(
+            collection(db, "entregasTarefaSP"),
+            where("alunoId", "==", usuarioAtual.uid)
+          )
+        ),
+        getDoc(
+          doc(db, "pontuacaoTarefaSP", usuarioAtual.uid)
         )
-      ),
-      getDoc(
-        doc(db, "pontuacaoTarefaSP", usuarioAtual.uid)
-      )
-    ]);
+      ]);
 
-    const entregues = new Set();
+      if (entregasResultado.status === "fulfilled") {
+        entregasResultado.value.forEach(item => {
+          const entrega = item.data();
+          if (entrega.atividadeId) {
+            entregues.add(entrega.atividadeId);
+          }
+        });
+      }
 
-    if (entregasResultado.status === "fulfilled") {
-      entregasResultado.value.forEach(item => {
-        const entrega = item.data();
-        if (entrega.atividadeId) {
-          entregues.add(entrega.atividadeId);
-        }
-      });
-    }
-
-    const pendentes = atividadesVisiveis.filter(
-      atividade => !entregues.has(atividade.id)
-    ).length;
-
-    let pontosSemana = 0;
-
-    if (
-      pontosResultado.status === "fulfilled"
-      && pontosResultado.value.exists()
-    ) {
-      pontosSemana = Number(
-        pontosResultado.value.data().pontosSemana || 0
-      );
-    }
+      if (
+        pontosResultado.status === "fulfilled"
+        && pontosResultado.value.exists()
+      ) {
+        pontosSemana = Number(
+          pontosResultado.value.data().pontosSemana || 0
+        );
+      }
+    } catch(errResumo) {}
 
     atualizarTexto(
       `${pendentes} pendente${pendentes === 1 ? "" : "s"} • ${pontosSemana} pts na semana`

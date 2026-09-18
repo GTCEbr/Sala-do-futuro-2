@@ -1,6 +1,7 @@
 // professor.js
 // Sala do Futuro V2
 
+import DBLocal from "../../js/db-local.js";
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 
@@ -507,56 +508,35 @@ if ($("aulaForm")) {
 
       const ids = [];
 
+      for (let i = 0; i < tarefas.length; i++) {
+        const tarefa = tarefas[i];
+        const novaTarefaLocal = {
+          id: "aula_tar_" + Date.now() + "_" + i,
+          titulo: tarefa,
+          turma: classe,
+          xp: xp,
+          prazo: prazo || null,
+          aulaId: aula.id,
+          professorId: usuarioAtual?.uid || "prof_seduc",
+          ativa: true,
+          criadoEm: new Date().toISOString()
+        };
 
-      for (
-        const tarefa
-        of tarefas
-      ) {
+        DBLocal.salvarTarefaDocente(novaTarefaLocal);
+        ids.push(novaTarefaLocal.id);
 
-        const novaTarefa =
-
-        await addDoc(
-
-          collection(
-            db,
-            "tarefas"
-          ),
-
-          {
-
-            titulo:
-            tarefa,
-
-            turma:
-            classe,
-
-            xp:
-            xp,
-
-            prazo:
-            prazo || null,
-
-            aulaId:
-            aula.id,
-
-            professorId:
-            usuarioAtual.uid,
-
-            ativa:
-            true,
-
-            criadoEm:
-            serverTimestamp()
-
-          }
-
-        );
-
-
-        ids.push(
-          novaTarefa.id
-        );
-
+        try {
+          addDoc(collection(db, "tarefas"), {
+            titulo: tarefa,
+            turma: classe,
+            xp: xp,
+            prazo: prazo || null,
+            aulaId: aula.id,
+            professorId: usuarioAtual?.uid || "prof_seduc",
+            ativa: true,
+            criadoEm: serverTimestamp()
+          }).catch(() => {});
+        } catch(eTar) {}
       }
 
 
@@ -633,67 +613,31 @@ if ($("tarefaForm")) {
 
 
     try {
+      const novaTarefaLocal = {
+        id: "tar_man_" + Date.now(),
+        titulo: $("tarefaTitulo").value.trim(),
+        turma: turma($("tarefaTurma").value),
+        xp: Number($("tarefaXp").value),
+        prazo: $("tarefaPrazo").value || null,
+        descricao: $("tarefaDescricao").value.trim(),
+        professorId: usuarioAtual?.uid || "prof_seduc",
+        ativa: true,
+        criadoEm: new Date().toISOString()
+      };
 
-      const tarefa =
+      DBLocal.salvarTarefaDocente(novaTarefaLocal);
 
-      await addDoc(
-
-        collection(
-          db,
-          "tarefas"
-        ),
-
-        {
-
-          titulo:
-          $("tarefaTitulo")
-          .value
-          .trim(),
-
-          turma:
-          turma(
-            $("tarefaTurma")
-            .value
-          ),
-
-          xp:
-          Number(
-            $("tarefaXp")
-            .value
-          ),
-
-          prazo:
-          $("tarefaPrazo")
-          .value || null,
-
-          descricao:
-          $("tarefaDescricao")
-          .value
-          .trim(),
-
-          professorId:
-          usuarioAtual.uid,
-
-          ativa:
-          true,
-
-          criadoEm:
-          serverTimestamp()
-
-        }
-
-      );
-
+      try {
+        addDoc(collection(db, "tarefas"), {
+          ...novaTarefaLocal,
+          criadoEm: serverTimestamp()
+        }).catch(() => {});
+      } catch(eSync) {}
 
       mensagem(
-
         "tarefaMensagem",
-
         "ok",
-
-        "Tarefa criada. ID: " +
-        tarefa.id
-
+        "Tarefa criada com sucesso no banco local. ID: " + novaTarefaLocal.id
       );
 
 
@@ -741,109 +685,48 @@ LISTAR TAREFAS
 ========================================*/
 
 async function carregarTarefas() {
+  const tabela = $("tarefasTabela");
+  if (!tabela) return;
 
-  const tabela =
-  $("tarefasTabela");
-
-
-  if (!tabela) {
-    return;
-  }
-
-
-  tabela.innerHTML =
-  "";
-
+  tabela.innerHTML = "";
 
   try {
+    const tarefasLocais = DBLocal.obterTarefasDocentes();
+    const mapaTarefas = new Map();
+    tarefasLocais.forEach(t => mapaTarefas.set(t.id, t));
 
-    const resultado =
+    try {
+      const resultado = await getDocs(collection(db, "tarefas"));
+      resultado.forEach(doc => {
+        if (!mapaTarefas.has(doc.id)) {
+          mapaTarefas.set(doc.id, { id: doc.id, ...doc.data() });
+        }
+      });
+    } catch (eSync) {}
 
-    await getDocs(
+    const lista = Array.from(mapaTarefas.values());
 
-      collection(
-        db,
-        "tarefas"
-      )
-
-    );
-
-
-    resultado
-    .forEach(
-    function(documento) {
-
-      const tarefa =
-      documento.data();
-
-
-      tabela
-      .insertAdjacentHTML(
-
-      "beforeend",
-
-      `
-
-      <tr>
-
-        <td>
-          ${textoSeguro(documento.id)}
-        </td>
-
-        <td>
-          ${textoSeguro(tarefa.titulo)}
-        </td>
-
-        <td>
-          ${textoSeguro(tarefa.turma)}
-        </td>
-
-        <td>
-          ${textoSeguro(tarefa.xp || 0)}
-        </td>
-
-        <td>
-          ${textoSeguro(tarefa.prazo || "-")}
-        </td>
-
-      </tr>
-
-      `
-
+    lista.forEach(function(tarefa) {
+      tabela.insertAdjacentHTML(
+        "beforeend",
+        `
+        <tr>
+          <td>${textoSeguro(tarefa.id)}</td>
+          <td>${textoSeguro(tarefa.titulo)}</td>
+          <td>${textoSeguro(tarefa.turma)}</td>
+          <td>${textoSeguro(tarefa.xp || 0)}</td>
+          <td>${textoSeguro(tarefa.prazo || "-")}</td>
+        </tr>
+        `
       );
-
     });
 
-
-    if (resultado.empty) {
-
-      tabela.innerHTML =
-
-      `
-
-      <tr>
-
-        <td colspan="5">
-          Nenhuma tarefa.
-        </td>
-
-      </tr>
-
-      `;
-
+    if (lista.length === 0) {
+      tabela.innerHTML = `<tr><td colspan="5">Nenhuma tarefa cadastrada.</td></tr>`;
     }
-
+  } catch(erro) {
+    console.error("Erro ao carregar tarefas:", erro);
   }
-
-
-  catch(erro) {
-
-    console.error(
-      erro
-    );
-
-  }
-
 }
 
 
@@ -884,95 +767,49 @@ if ($("buscarEntregasBtn")) {
 
 
     try {
+      const entregasLocais = DBLocal.obterEntregasDocentes();
+      const entregasFiltradas = entregasLocais.filter(e => !tarefaId || e.tarefaId === tarefaId);
 
-      const pesquisa =
+      const mapaEntregas = new Map();
+      entregasFiltradas.forEach(e => mapaEntregas.set(e.id, e));
 
-      query(
+      try {
+        const pesquisa = tarefaId
+          ? query(collection(db, "entregas"), where("tarefaId", "==", tarefaId))
+          : collection(db, "entregas");
+        const resultado = await getDocs(pesquisa);
+        resultado.forEach(doc => {
+          if (!mapaEntregas.has(doc.id)) {
+            mapaEntregas.set(doc.id, { id: doc.id, ...doc.data() });
+          }
+        });
+      } catch (eSync) {}
 
-        collection(
-          db,
-          "entregas"
-        ),
+      tabela.innerHTML = "";
+      const lista = Array.from(mapaEntregas.values());
 
-        where(
-          "tarefaId",
-          "==",
-          tarefaId
-        )
-
-      );
-
-
-      const resultado =
-
-      await getDocs(
-        pesquisa
-      );
-
-
-      tabela.innerHTML =
-      "";
-
-
-      resultado
-      .forEach(
-      function(documento) {
-
-        const entrega =
-        documento.data();
-
-
-        tabela
-        .insertAdjacentHTML(
-
-        "beforeend",
-
-        `
-
-        <tr>
-
-          <td>
-            ${textoSeguro(
-              entrega.alunoNome ||
-              entrega.alunoEmail ||
-              "-"
-            )}
-          </td>
-
-          <td>
-            ${textoSeguro(
-              entrega.alunoId ||
-              "-"
-            )}
-          </td>
-
-          <td>
-            ${textoSeguro(
-              entrega.status ||
-              "entregue"
-            )}
-          </td>
-
-        </tr>
-
-        `
-
+      lista.forEach(function(entrega) {
+        tabela.insertAdjacentHTML(
+          "beforeend",
+          `
+          <tr>
+            <td>${textoSeguro(entrega.alunoNome || entrega.alunoEmail || "-")}</td>
+            <td>${textoSeguro(entrega.alunoId || "-")}</td>
+            <td>${textoSeguro(entrega.status || "entregue")}</td>
+          </tr>
+          `
         );
-
       });
 
+      if (lista.length === 0) {
+        tabela.innerHTML = `<tr><td colspan="3">Nenhuma entrega registrada para esta tarefa.</td></tr>`;
+      }
 
       mensagem(
-
         "entregaMensagem",
-
         "ok",
-
-        resultado.size +
-        " entrega(s)."
-
+        lista.length + " entrega(s) encontrada(s)."
       );
-
     }
 
 
@@ -994,51 +831,34 @@ BUSCAR ALUNOS
 ========================================*/
 
 async function buscarAlunos() {
+  const locais = DBLocal.obterAlunos();
+  if (locais && locais.length > 0) {
+    return locais;
+  }
 
-  const resultado =
+  try {
+    const resultado = await getDocs(
+      collection(
+        db,
+        "usuarios"
+      )
+    );
 
-  await getDocs(
+    const alunos = [];
+    resultado.forEach(function(documento) {
+      const dados = documento.data();
+      if (dados.tipo === "aluno") {
+        alunos.push({
+          id: documento.id,
+          ...dados
+        });
+      }
+    });
 
-    collection(
-      db,
-      "usuarios"
-    )
-
-  );
-
-
-  const alunos = [];
-
-
-  resultado
-  .forEach(
-  function(documento) {
-
-    const dados =
-    documento.data();
-
-
-    if (
-      dados.tipo ===
-      "aluno"
-    ) {
-
-      alunos.push({
-
-        id:
-        documento.id,
-
-        ...dados
-
-      });
-
-    }
-
-  });
-
-
-  return alunos;
-
+    return alunos.length > 0 ? alunos : DBLocal.obterAlunos();
+  } catch(e) {
+    return DBLocal.obterAlunos();
+  }
 }
 
 
@@ -1261,165 +1081,79 @@ async function carregarGuildas() {
   }
 
 
-  tabela.innerHTML =
-  "";
+  tabela.innerHTML = "";
 
+  try {
+    const guildasLocais = DBLocal.obterGuildas();
+    const mapaGuildas = new Map();
+    guildasLocais.forEach(g => mapaGuildas.set(g.id, g));
 
-  const resultado =
-
-  await getDocs(
-
-    collection(
-      db,
-      "guildas"
-    )
-
-  );
-
-
-  resultado
-  .forEach(
-  function(documento) {
-
-    const guilda =
-    documento.data();
-
-
-    tabela
-    .insertAdjacentHTML(
-
-    "beforeend",
-
-    `
-
-    <tr>
-
-      <td>
-        ${textoSeguro(
-          guilda.nome ||
-          documento.id
-        )}
-      </td>
-
-      <td>
-        ${textoSeguro(
-          guilda.turma ||
-          "-"
-        )}
-      </td>
-
-      <td>
-        ${textoSeguro(
-          guilda.status ||
-          "pendente"
-        )}
-      </td>
-
-      <td>
-
-        <button
-          class="aprovarGuilda"
-          data-id="${documento.id}"
-        >
-          Aprovar
-        </button>
-
-        <button
-          class="rejeitarGuilda"
-          data-id="${documento.id}"
-        >
-          Rejeitar
-        </button>
-
-      </td>
-
-    </tr>
-
-    `
-
-    );
-
-  });
-
-
-/*----------Aprovar----------*/
-
-  document
-  .querySelectorAll(
-    ".aprovarGuilda"
-  )
-
-  .forEach(
-  function(botao) {
-
-    botao
-    .addEventListener(
-    "click",
-    async function() {
-
-      await updateDoc(
-
-        doc(
-          db,
-          "guildas",
-          botao.dataset.id
-        ),
-
-        {
-
-          status:
-          "aprovada"
-
+    try {
+      const resultado = await getDocs(collection(db, "guildas"));
+      resultado.forEach(doc => {
+        if (!mapaGuildas.has(doc.id)) {
+          mapaGuildas.set(doc.id, { id: doc.id, ...doc.data() });
         }
+      });
+    } catch (eSync) {}
 
+    const lista = Array.from(mapaGuildas.values());
+
+    lista.forEach(function(guilda) {
+      tabela.insertAdjacentHTML(
+        "beforeend",
+        `
+        <tr>
+          <td>${textoSeguro(guilda.nome || guilda.id)}</td>
+          <td>${textoSeguro(guilda.turma || "-")}</td>
+          <td>${textoSeguro(guilda.status || "pendente")}</td>
+          <td>
+            <button class="aprovarGuilda" data-id="${guilda.id}">Aprovar</button>
+            <button class="rejeitarGuilda" data-id="${guilda.id}">Rejeitar</button>
+          </td>
+        </tr>
+        `
       );
-
-
-      carregarGuildas();
-
     });
 
-  });
+    if (lista.length === 0) {
+      tabela.innerHTML = `<tr><td colspan="4">Nenhuma guilda cadastrada.</td></tr>`;
+    }
 
+    /*----------Aprovar----------*/
+    document.querySelectorAll(".aprovarGuilda").forEach(function(botao) {
+      botao.addEventListener("click", async function() {
+        const id = botao.dataset.id;
+        const guilda = mapaGuildas.get(id) || { id, status: "aprovada" };
+        guilda.status = "aprovada";
+        DBLocal.salvarGuilda(guilda);
 
-/*----------Rejeitar----------*/
+        try {
+          await updateDoc(doc(db, "guildas", id), { status: "aprovada" });
+        } catch (e) {}
 
-  document
-  .querySelectorAll(
-    ".rejeitarGuilda"
-  )
-
-  .forEach(
-  function(botao) {
-
-    botao
-    .addEventListener(
-    "click",
-    async function() {
-
-      await updateDoc(
-
-        doc(
-          db,
-          "guildas",
-          botao.dataset.id
-        ),
-
-        {
-
-          status:
-          "rejeitada"
-
-        }
-
-      );
-
-
-      carregarGuildas();
-
+        carregarGuildas();
+      });
     });
 
-  });
+    /*----------Rejeitar----------*/
+    document.querySelectorAll(".rejeitarGuilda").forEach(function(botao) {
+      botao.addEventListener("click", async function() {
+        const id = botao.dataset.id;
+        const guilda = mapaGuildas.get(id) || { id, status: "rejeitada" };
+        guilda.status = "rejeitada";
+        DBLocal.salvarGuilda(guilda);
+
+        try {
+          await updateDoc(doc(db, "guildas", id), { status: "rejeitada" });
+        } catch (e) {}
+
+        carregarGuildas();
+      });
+    });
+  } catch(erro) {
+    console.error("Erro ao carregar guildas:", erro);
+  }
 
 }
 
@@ -1976,74 +1710,39 @@ PAINEL
 ========================================*/
 
 async function atualizarPainel() {
-
   try {
+    const tarefasLocais = DBLocal.obterTarefasDocentes();
+    const avisosLocais = DBLocal.obterComunicados();
+    const alunos = await buscarAlunos();
 
-    const tarefas =
+    let totalTarefas = tarefasLocais.length;
+    let totalAvisos = avisosLocais.length;
 
-    await getDocs(
+    try {
+      const tarefasDocs = await getDocs(collection(db, "tarefas"));
+      if (tarefasDocs.size > totalTarefas) totalTarefas = tarefasDocs.size;
+    } catch(e) {}
 
-      collection(
-        db,
-        "tarefas"
-      )
-
-    );
-
-
-    const avisos =
-
-    await getDocs(
-
-      collection(
-        db,
-        "avisos"
-      )
-
-    );
-
-
-    const alunos =
-    await buscarAlunos();
-
+    try {
+      const avisosDocs = await getDocs(collection(db, "avisos"));
+      if (avisosDocs.size > totalAvisos) totalAvisos = avisosDocs.size;
+    } catch(e) {}
 
     if ($("metricaTarefas")) {
-
-      $("metricaTarefas")
-      .textContent =
-      tarefas.size;
-
+      $("metricaTarefas").textContent = totalTarefas;
     }
-
 
     if ($("metricaAlunos")) {
-
-      $("metricaAlunos")
-      .textContent =
-      alunos.length;
-
+      $("metricaAlunos").textContent = alunos.length;
     }
-
 
     if ($("metricaAvisos")) {
-
-      $("metricaAvisos")
-      .textContent =
-      avisos.size;
-
+      $("metricaAvisos").textContent = totalAvisos;
     }
-
   }
-
-
   catch(erro) {
-
-    console.error(
-      erro
-    );
-
+    console.error("Erro ao atualizar métricas:", erro);
   }
-
 }
 
 
@@ -2546,17 +2245,31 @@ if ($("btnSalvarNotasDocente")) {
     salvarAvaliacoesArmazenadas(avaliacoesCadastradas);
     renderizarHistoricoAvaliacoes();
 
-    // Sincroniza também no Firestore se online
+    // 1. Salva no banco local oficial (DBLocal)
+    DBLocal.salvarAvaliacaoDocente(novaAvaliacao);
+    notasAlunos.forEach(item => {
+      DBLocal.salvarNota({
+        id: `nota_${item.ra || item.nome}_${discSel}`,
+        alunoNome: item.nome,
+        alunoRa: item.ra,
+        turma: turmaSel,
+        componente: discSel,
+        nota1Bim: item.nota,
+        nota2Bim: item.nota,
+        mediaFinal: item.nota,
+        situacao: item.status?.rotulo || "Avaliado"
+      });
+    });
+
+    // Sincroniza em segundo plano se online
     try {
-      await addDoc(collection(db, "avaliacoes_notas"), {
+      addDoc(collection(db, "avaliacoes_notas"), {
         ...novaAvaliacao,
         criadoEm: serverTimestamp()
-      });
-    } catch(err) {
-      console.warn("Avaliação registrada no cache local:", err);
-    }
+      }).catch(() => {});
+    } catch(err) {}
 
-    mensagem("mensagemNotasFeedback", "ok", `Notas salvas com sucesso! Avaliação registrada com média ${mediaFinal}.`);
+    mensagem("mensagemNotasFeedback", "ok", `Notas salvas no banco local! Avaliação registrada com média ${mediaFinal}.`);
   });
 }
 
@@ -2727,7 +2440,7 @@ if ($("iaBtnCopiarTexto")) {
   });
 }
 
-// Botão para salvar e publicar no Firestore
+// Botão para salvar e disponibilizar tarefa gerada pela IA
 if ($("iaBtnSalvarFirestore")) {
   $("iaBtnSalvarFirestore").addEventListener("click", async () => {
     if (!atividadeIAGeradaAtual) return;
@@ -2735,11 +2448,11 @@ if ($("iaBtnSalvarFirestore")) {
 
     try {
       btn.disabled = true;
-      btn.innerHTML = `<span>⏳</span> Publicando no Firestore...`;
+      btn.innerHTML = `<span>⏳</span> Publicando atividade...`;
 
       const turmaClasse = turma($("iaTurma")?.value || "8º Ano A");
-
-      const docRef = await addDoc(collection(db, "tarefas"), {
+      const novaTarefa = {
+        id: "ia_" + Date.now(),
         titulo: atividadeIAGeradaAtual.titulo,
         turma: turmaClasse,
         componente: atividadeIAGeradaAtual.componente,
@@ -2753,17 +2466,28 @@ if ($("iaBtnSalvarFirestore")) {
         origem: "IA_GEMINI",
         ativa: true,
         professorId: usuarioAtual?.uid || "prof_seduc",
-        criadoEm: serverTimestamp()
-      });
+        criadoEm: new Date().toISOString()
+      };
 
-      alert(`✅ Atividade publicada com sucesso no Firestore!\nID: ${docRef.id}\nTurma: ${turmaClasse}\nOs estudantes já podem visualizar e responder no portal.`);
+      // 1. Salva no DBLocal institucional
+      DBLocal.salvarTarefaDocente(novaTarefa);
+
+      // Sincroniza em segundo plano no Firestore se online
+      try {
+        addDoc(collection(db, "tarefas"), {
+          ...novaTarefa,
+          criadoEm: serverTimestamp()
+        }).catch(() => {});
+      } catch (errSync) {}
+
+      alert(`✅ Atividade publicada com sucesso no banco de dados da Sala do Futuro!\nTurma: ${turmaClasse}\nOs estudantes já podem visualizar e responder no portal.`);
       atualizarPainel();
     } catch (e) {
-      console.error("Erro ao salvar atividade no Firestore:", e);
-      alert("Erro ao salvar atividade no Firestore: " + e.message);
+      console.error("Erro ao salvar atividade:", e);
+      alert("Erro ao salvar atividade: " + e.message);
     } finally {
       btn.disabled = false;
-      btn.innerHTML = `<span>💾</span> Publicar e Disponibilizar no Firestore para Alunos`;
+      btn.innerHTML = `<span>💾</span> Publicar e Disponibilizar no Portal para Alunos`;
     }
   });
 }
@@ -2999,7 +2723,8 @@ if ($("btnPublicarJsonFirestore")) {
 
       for (const atv of selecionadas) {
         const turmaClasse = turma(atv.turma || "8º Ano A");
-        await addDoc(collection(db, "tarefas"), {
+        const novaAtv = {
+          id: "json_" + Date.now() + "_" + Math.random().toString(36).substr(2, 4),
           titulo: atv.titulo || "Atividade Curricular",
           turma: turmaClasse,
           componente: atv.componente || "Geral",
@@ -3013,12 +2738,24 @@ if ($("btnPublicarJsonFirestore")) {
           origem: "IMPORTACAO_JSON",
           ativa: true,
           professorId: usuarioAtual?.uid || "prof_seduc",
-          criadoEm: serverTimestamp()
-        });
+          criadoEm: new Date().toISOString()
+        };
+
+        // Salva no banco local oficial
+        DBLocal.salvarTarefaDocente(novaAtv);
+
+        // Sincroniza em segundo plano no Firestore
+        try {
+          addDoc(collection(db, "tarefas"), {
+            ...novaAtv,
+            criadoEm: serverTimestamp()
+          }).catch(() => {});
+        } catch (errSync) {}
+
         salvasComSucesso++;
       }
 
-      alert(`🎉 Sucesso! ${salvasComSucesso} atividade(s) foram publicadas no Firestore e já estão disponíveis para os alunos realizarem.`);
+      alert(`🎉 Sucesso! ${salvasComSucesso} atividade(s) foram salvas no banco da Sala do Futuro e já estão disponíveis para os alunos realizarem.`);
       $("painelPreviaJson").style.display = "none";
       if ($("uploadJsonStatus")) $("uploadJsonStatus").innerHTML = "";
       atualizarPainel();

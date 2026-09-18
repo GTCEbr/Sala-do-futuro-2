@@ -880,17 +880,21 @@
   <!-- Conteúdo Principal -->
   <main class="container-adm">
 
-    <!-- Barra de Status com Firestore Real -->
-    <div class="barra-status-conexao" id="barraStatusConexao">
+    <!-- Barra de Status com Banco Local (Modo Demonstração) & Gemini IA -->
+    <div class="barra-status-conexao" id="barraStatusConexao" style="border-left-color: #10b981;">
       <div class="status-badge-live">
-        <span class="ponto-status" id="pontoConexao"></span>
-        <span id="textoStatusFirestore">Conectado ao Firebase Firestore (salafuturov2prot)</span>
-        <span class="badge-reais">DADOS REAIS</span>
+        <span class="ponto-status" id="pontoConexao" style="background: #10b981;"></span>
+        <span id="textoStatusFirestore">Modo Demonstração: Banco Local Ativo &amp; Persistente</span>
+        <span class="badge-reais" style="background:#10b981;">100% LOCAL</span>
+        <span class="badge-reais" style="background:#0284c7;">⚡ IA GEMINI CONFIGURADA</span>
       </div>
       <div class="status-acoes">
-        <span id="ultimaSincronizacao">Carregando banco de dados...</span>
-        <button type="button" class="btn-sincronizar" id="btnSincronizarReal">
-          🔄 Sincronizar em Tempo Real
+        <span id="ultimaSincronizacao">Dados locais prontos</span>
+        <button type="button" class="btn-sincronizar" id="btnSincronizarReal" style="background:var(--azul-primario); color:#ffffff;">
+          🔄 Atualizar Dados
+        </button>
+        <button type="button" class="btn-sincronizar" id="btnResetarDemo" style="background:#f1f5f9; color:#334155; border:1px solid #cbd5e1;" title="Restaura os dados padrão de demonstração">
+          ↺ Resetar Demonstração
         </button>
       </div>
     </div>
@@ -1832,8 +1836,9 @@
   <!-- ACESSIBILIDADE UNIVERSAL SP -->
   <script src="../../js/acessibilidade-global.js"></script>
 
-  <!-- SCRIPT MODULAR INTEGRADO AO FIREBASE FIRESTORE -->
+  <!-- SCRIPT MODULAR INTEGRADO AO BANCO LOCAL (MODO DEMONSTRAÇÃO) -->
   <script type="module">
+    import DBLocal from "../js/db-local.js";
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
     import { getAuth } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
     import {
@@ -1924,311 +1929,34 @@
     // SINCRONIZAÇÃO COMPLETA COM FIRESTORE REAL
     // ====================================================
     async function sincronizarBancoFirestore(mostrarAviso = true) {
-      document.getElementById("textoStatusFirestore").textContent = "Sincronizando com Firestore...";
-      document.getElementById("pontoConexao").style.background = "#eab308";
+      document.getElementById("textoStatusFirestore").textContent = "Carregando banco local...";
+      document.getElementById("pontoConexao").style.background = "#10b981";
 
       try {
         await carregarAtividadesOficiaisSP();
 
-        // 1. Carrega Alunos (coleção usuarios)
-        const snapUsuarios = await getDocs(collection(db, "usuarios"));
-        const listaAlunos = [];
-        snapUsuarios.forEach(d => {
-          const u = d.data();
-          if (u.tipo === "aluno" || !u.tipo) {
-            listaAlunos.push({
-              id: d.id,
-              nome: u.nome ? (u.nome + (u.sobrenome ? " " + u.sobrenome : "")) : (u.email || "Estudante"),
-              email: u.email || "",
-              ra: u.ra || "000.000.000-0 SP",
-              sala: u.turma || u.sala || "8º Ano A",
-              guilda: u.guilda || "Águias da Sabedoria",
-              xp: Number(u.xp || 100),
-              nivel: Number(u.nivel || 1)
-            });
-          }
-        });
+        // 1. Carrega coleções do Banco Local Oficial de Demonstração
+        const listaAlunos = DBLocal.obterAlunos();
+        const listaSalas = DBLocal.obterSalas();
+        const listaGuildas = DBLocal.obterGuildas();
+        const listaTarefas = DBLocal.obterTarefas();
+        const listaEntregasSP = DBLocal.obterEntregasSP();
+        const listaEntregasDocentes = DBLocal.obterEntregas();
+        const listaNotas = DBLocal.obterNotas();
+        const listaOcorrencias = DBLocal.obterOcorrencias();
 
-        // 2. Carrega Salas (coleção salas)
-        const snapSalas = await getDocs(collection(db, "salas"));
-        const listaSalas = [];
-        snapSalas.forEach(d => {
-          listaSalas.push({ id: d.id, ...d.data() });
-        });
-
-        // 3. Carrega Guildas (coleção guildas)
-        const snapGuildas = await getDocs(collection(db, "guildas"));
-        const listaGuildas = [];
-        snapGuildas.forEach(d => {
-          listaGuildas.push({ id: d.id, ...d.data() });
-        });
-
-        // 4. Carrega Tarefas Docentes (coleção tarefas)
-        const snapTarefas = await getDocs(collection(db, "tarefas"));
-        const listaTarefas = [];
-        snapTarefas.forEach(d => {
-          listaTarefas.push({ id: d.id, ...d.data() });
-        });
-
-        // 5. Carrega Entregas do Tarefas SP (coleção entregasTarefaSP)
-        const snapEntregasSP = await getDocs(collection(db, "entregasTarefaSP"));
-        const listaEntregasSP = [];
-        snapEntregasSP.forEach(d => {
-          listaEntregasSP.push({ id: d.id, ...d.data() });
-        });
-
-        // 6. Carrega Entregas Docentes (coleção entregas)
-        const snapEntregasDocentes = await getDocs(collection(db, "entregas"));
-        const listaEntregasDocentes = [];
-        snapEntregasDocentes.forEach(d => {
-          listaEntregasDocentes.push({ id: d.id, ...d.data() });
-        });
-
-        // 7. Carrega Avaliações Oficiais (coleção avaliacoes_notas)
-        const snapAvaliacoes = await getDocs(collection(db, "avaliacoes_notas"));
-        const listaAvaliacoes = [];
-        snapAvaliacoes.forEach(d => {
-          listaAvaliacoes.push({ id: d.id, ...d.data() });
-        });
-
-        // 8. Carrega Notas Oficiais da Gestão (coleção notas)
-        const snapNotas = await getDocs(collection(db, "notas"));
-        const listaNotas = [];
-        snapNotas.forEach(d => {
-          listaNotas.push({ id: d.id, ...d.data() });
-        });
-
-        // 9. Carrega Livro de Ocorrências (coleção ocorrencias)
-        const snapOcorrencias = await getDocs(collection(db, "ocorrencias"));
-        const listaOcorrencias = [];
-        snapOcorrencias.forEach(d => {
-          listaOcorrencias.push({ id: d.id, ...d.data() });
-        });
-
-        // Se o banco estiver inicialmente limpo nas coleções de apoio, inicializamos dados institucionais no Firestore
-        if (listaSalas.length === 0) {
-          const salasPadrao = [
-            { nome: "8º Ano A", etapa: "Ensino Fundamental Anos Finais", turno: "Matutino", capacidade: 35 },
-            { nome: "8º Ano B", etapa: "Ensino Fundamental Anos Finais", turno: "Vespertino", capacidade: 35 },
-            { nome: "9º Ano A", etapa: "Ensino Fundamental Anos Finais", turno: "Matutino", capacidade: 32 },
-            { nome: "1º Ano EM", etapa: "Ensino Médio", turno: "Integral", capacidade: 40 }
-          ];
-          for (const s of salasPadrao) {
-            const docRef = await addDoc(collection(db, "salas"), { ...s, criadoEm: serverTimestamp() });
-            listaSalas.push({ id: docRef.id, ...s });
-          }
-        }
-
-        if (listaGuildas.length === 0) {
-          const guildasPadrao = [
-            { nome: "Águias da Sabedoria", cor: "#1d5a9e", lema: "Visão além do alcance e busca constante pelo saber.", lider: "Guilherme Santos", pontos: 1450 },
-            { nome: "Fênix da Criação", cor: "#ea580c", lema: "Criatividade, resiliência e inovação tecnológica.", lider: "Beatriz Lima", pontos: 1380 },
-            { nome: "Sentinelas do Futuro", cor: "#16a34a", lema: "Sustentabilidade e cooperação para vencer.", lider: "Lucas Martins", pontos: 1210 }
-          ];
-          for (const g of guildasPadrao) {
-            const docRef = await addDoc(collection(db, "guildas"), { ...g, criadoEm: serverTimestamp() });
-            listaGuildas.push({ id: docRef.id, ...g });
-          }
-        }
-
-        if (listaAlunos.length === 0) {
-          const alunosPadrao = [
-            { nome: "Guilherme Santos", email: "guilherme.santos@escola.sp.gov.br", ra: "000.123.456-7 SP", turma: "8º Ano A", guilda: "Águias da Sabedoria", xp: 420, tipo: "aluno", ano: 2026 },
-            { nome: "Beatriz Lima", email: "beatriz.lima@escola.sp.gov.br", ra: "000.234.567-8 SP", turma: "8º Ano A", guilda: "Fênix da Criação", xp: 390, tipo: "aluno", ano: 2026 },
-            { nome: "Lucas Martins", email: "lucas.martins@escola.sp.gov.br", ra: "000.345.678-9 SP", turma: "8º Ano B", guilda: "Sentinelas do Futuro", xp: 310, tipo: "aluno", ano: 2026 },
-            { nome: "Mariana Costa", email: "mariana.costa@escola.sp.gov.br", ra: "000.456.789-0 SP", turma: "9º Ano A", guilda: "Águias da Sabedoria", xp: 480, tipo: "aluno", ano: 2026 },
-            { nome: "Rafael Oliveira", email: "rafael.oliveira@escola.sp.gov.br", ra: "000.567.890-1 SP", turma: "1º Ano EM", guilda: "Fênix da Criação", xp: 260, tipo: "aluno", ano: 2026 }
-          ];
-          for (const a of alunosPadrao) {
-            const docRef = await addDoc(collection(db, "usuarios"), { ...a, criadoEm: serverTimestamp() });
-            listaAlunos.push({ id: docRef.id, ...a, sala: a.turma });
-          }
-        }
-
-        // Se ainda não houver entregas reais registradas no Firestore, semeia as entregas iniciais dos alunos cadastrados
-        if (listaEntregasSP.length === 0 && listaAlunos.length > 0) {
-          const entregasBase = [
-            {
-              alunoNome: "Guilherme Santos",
-              alunoId: listaAlunos[0]?.id || "guilherme",
-              turma: "8º Ano A",
-              atividadeId: "MAT-001",
-              atividadeTitulo: "Razão e proporção no cotidiano",
-              componente: "Matemática",
-              resultado: "correto",
-              pontosRecebidos: 20,
-              resposta: "b",
-              entregueEm: "2026-09-14T10:30:00"
-            },
-            {
-              alunoNome: "Guilherme Santos",
-              alunoId: listaAlunos[0]?.id || "guilherme",
-              turma: "8º Ano A",
-              atividadeId: "POR-001",
-              atividadeTitulo: "Interpretação e coesão textual",
-              componente: "Língua Portuguesa",
-              resultado: "correto",
-              pontosRecebidos: 20,
-              resposta: "Texto claro e bem argumentado.",
-              entregueEm: "2026-09-15T14:10:00"
-            },
-            {
-              alunoNome: "Beatriz Lima",
-              alunoId: listaAlunos[1]?.id || "beatriz",
-              turma: "8º Ano A",
-              atividadeId: "CIE-001",
-              atividadeTitulo: "Propriedades da Matéria e Tabela Periódica",
-              componente: "Ciências",
-              resultado: "correto",
-              pontosRecebidos: 20,
-              resposta: "c",
-              entregueEm: "2026-09-15T16:00:00"
-            },
-            {
-              alunoNome: "Lucas Martins",
-              alunoId: listaAlunos[2]?.id || "lucas",
-              turma: "8º Ano B",
-              atividadeId: "MAT-002",
-              atividadeTitulo: "Geometria Espacial e Volume",
-              componente: "Matemática",
-              resultado: "correto",
-              pontosRecebidos: 20,
-              resposta: "a",
-              entregueEm: "2026-09-16T08:20:00"
-            }
-          ];
-
-          for (const ent of entregasBase) {
-            const docRef = await addDoc(collection(db, "entregasTarefaSP"), {
-              ...ent,
-              criadoEm: serverTimestamp()
-            });
-            listaEntregasSP.push({ id: docRef.id, ...ent });
-          }
-        }
-
-        // Se ainda não houver notas registradas no Firestore, inicializa notas dos estudantes
-        if (listaNotas.length === 0 && listaAlunos.length > 0) {
-          const notasIniciais = [
-            {
-              alunoId: listaAlunos[0]?.id || "guilherme",
-              alunoNome: listaAlunos[0]?.nome || "Guilherme Santos",
-              alunoRA: listaAlunos[0]?.ra || "000.123.456-7 SP",
-              turma: listaAlunos[0]?.sala || "8º Ano A",
-              componente: "Matemática",
-              bimestre: "3º Bimestre",
-              notaProva: 8.5,
-              notaTarefas: 9.0,
-              notaParticipacao: 9.5,
-              media: 8.9,
-              situacao: "Aprovado",
-              observacoes: "Excelente dedicação e pontualidade nas atividades do Tarefas SP."
-            },
-            {
-              alunoId: listaAlunos[0]?.id || "guilherme",
-              alunoNome: listaAlunos[0]?.nome || "Guilherme Santos",
-              alunoRA: listaAlunos[0]?.ra || "000.123.456-7 SP",
-              turma: listaAlunos[0]?.sala || "8º Ano A",
-              componente: "Língua Portuguesa",
-              bimestre: "3º Bimestre",
-              notaProva: 8.0,
-              notaTarefas: 8.5,
-              notaParticipacao: 9.0,
-              media: 8.4,
-              situacao: "Aprovado",
-              observacoes: "Boa evolução em redação e interpretação de texto."
-            },
-            {
-              alunoId: listaAlunos[1]?.id || "beatriz",
-              alunoNome: listaAlunos[1]?.nome || "Beatriz Lima",
-              alunoRA: listaAlunos[1]?.ra || "000.234.567-8 SP",
-              turma: listaAlunos[1]?.sala || "8º Ano A",
-              componente: "Ciências da Natureza",
-              bimestre: "3º Bimestre",
-              notaProva: 7.5,
-              notaTarefas: 8.0,
-              notaParticipacao: 8.5,
-              media: 7.9,
-              situacao: "Aprovado",
-              observacoes: "Participativa nas atividades experimentais."
-            },
-            {
-              alunoId: listaAlunos[2]?.id || "lucas",
-              alunoNome: listaAlunos[2]?.nome || "Lucas Martins",
-              alunoRA: listaAlunos[2]?.ra || "000.345.678-9 SP",
-              turma: listaAlunos[2]?.sala || "8º Ano B",
-              componente: "Matemática",
-              bimestre: "3º Bimestre",
-              notaProva: 5.0,
-              notaTarefas: 5.5,
-              notaParticipacao: 6.0,
-              media: 5.4,
-              situacao: "Recuperação",
-              observacoes: "Encaminhado para reforço e recuperação contínua no contraturno."
-            }
-          ];
-
-          for (const nt of notasIniciais) {
-            const docRef = await addDoc(collection(db, "notas"), {
-              ...nt,
-              criadoEm: serverTimestamp()
-            });
-            listaNotas.push({ id: docRef.id, ...nt });
-          }
-        }
-
-        // Se ainda não houver ocorrências registradas no Firestore, inicializa registros no Livro de Ocorrências
-        if (listaOcorrencias.length === 0 && listaAlunos.length > 0) {
-          const ocorrenciasIniciais = [
-            {
-              alunoId: listaAlunos[0]?.id || "guilherme",
-              alunoNome: listaAlunos[0]?.nome || "Guilherme Santos",
-              alunoRA: listaAlunos[0]?.ra || "000.123.456-7 SP",
-              turma: listaAlunos[0]?.sala || "8º Ano A",
-              data: "2026-09-12",
-              gravidade: "Elogio",
-              tipo: "Mérito",
-              status: "Concluída",
-              descricao: "Estudante destacou-se com 100% de aproveitamento e auxiliou colegas com dificuldades na plataforma do Tarefas SP.",
-              providencias: "Registro de Mérito Escolar e comunicação aos responsáveis com congratulações da Direção.",
-              registradoPor: "Profª Helena Ramos (Coordenação)"
-            },
-            {
-              alunoId: listaAlunos[2]?.id || "lucas",
-              alunoNome: listaAlunos[2]?.nome || "Lucas Martins",
-              alunoRA: listaAlunos[2]?.ra || "000.345.678-9 SP",
-              turma: listaAlunos[2]?.sala || "8º Ano B",
-              data: "2026-09-15",
-              gravidade: "Média",
-              tipo: "Pedagógica",
-              status: "Em Acompanhamento",
-              descricao: "Não realizou as atividades domiciliares consecutivas do Tarefas SP e dispersão durante o horário pedagógico.",
-              providencias: "Atendimento individual pela coordenação pedagógica, assinatura do termo e contato com os responsáveis para agendamento presencial.",
-              registradoPor: "Prof. Marcos Souza (Coordenação Pedagógica)"
-            }
-          ];
-
-          for (const oc of ocorrenciasIniciais) {
-            const docRef = await addDoc(collection(db, "ocorrencias"), {
-              ...oc,
-              criadoEm: serverTimestamp()
-            });
-            listaOcorrencias.push({ id: docRef.id, ...oc });
-          }
-        }
-
-        // Atualiza o estado
+        // Atualiza o estado da gestão escolar
         estadoReal.alunos = listaAlunos;
         estadoReal.salas = listaSalas;
         estadoReal.guildas = listaGuildas;
         estadoReal.tarefasDocentes = listaTarefas;
         estadoReal.entregasSP = listaEntregasSP;
         estadoReal.entregasDocentes = listaEntregasDocentes;
-        estadoReal.avaliacoesNotas = listaAvaliacoes;
+        estadoReal.avaliacoesNotas = [];
         estadoReal.notas = listaNotas;
         estadoReal.ocorrencias = listaOcorrencias;
 
-        // Salva backup local para suporte a off-line
+        // Salva backup local
         localStorage.setItem(CHAVE_BACKUP, JSON.stringify({
           alunos: listaAlunos,
           salas: listaSalas,
@@ -2243,31 +1971,17 @@
         // Atualiza a interface
         renderizarTudo();
 
-        // Atualiza status da barra
-        document.getElementById("pontoConexao").style.background = "var(--verde)";
-        document.getElementById("textoStatusFirestore").textContent = `Conectado ao Firebase Firestore (${firebaseConfig.projectId})`;
+        // Atualiza status da barra institucional
+        document.getElementById("pontoConexao").style.background = "#10b981";
+        document.getElementById("textoStatusFirestore").textContent = "Modo Demonstração: Banco Local Ativo & Persistente";
         const agora = new Date();
-        document.getElementById("ultimaSincronizacao").textContent = `Última sincronização: ${agora.toLocaleTimeString("pt-BR")}`;
+        document.getElementById("ultimaSincronizacao").textContent = `Atualizado: ${agora.toLocaleTimeString("pt-BR")}`;
 
         if (mostrarAviso) {
-          notificar(`Banco sincronizado com sucesso! ${listaAlunos.length} estudantes e ${estadoReal.relatorioCompilado.length} registros computados.`);
+          notificar(`Banco local atualizado com sucesso! ${listaAlunos.length} estudantes e ${estadoReal.relatorioCompilado.length} registros computados.`);
         }
       } catch (erro) {
-        console.error("Erro na sincronização com Firestore:", erro);
-        document.getElementById("pontoConexao").style.background = "var(--vermelho)";
-        document.getElementById("textoStatusFirestore").textContent = "Aviso: Conectado com persistência local";
-        document.getElementById("ultimaSincronizacao").textContent = "Usando cache local";
-
-        // Tenta recuperar do backup local
-        const backup = localStorage.getItem(CHAVE_BACKUP);
-        if (backup) {
-          try {
-            const p = JSON.parse(backup);
-            estadoReal.alunos = p.alunos || [];
-            estadoReal.salas = p.salas || [];
-            estadoReal.guildas = p.guildas || [];
-          } catch(e) {}
-        }
+        console.error("Erro na leitura do banco local:", erro);
         compilarRelatorioReal();
         renderizarTudo();
       }
@@ -2547,9 +2261,10 @@
       const sobrenome = pedacos.slice(1).join(" ") || "Estudante";
 
       try {
-        await updateDoc(doc(db, "usuarios", id), {
-          nome: primeiroNome,
-          sobrenome: sobrenome,
+        // Salva diretamente no banco local oficial
+        const salvo = DBLocal.salvarAluno({
+          id,
+          nome,
           email,
           ra,
           turma,
@@ -2561,29 +2276,35 @@
 
         const idx = estadoReal.alunos.findIndex(a => a.id === id);
         if (idx !== -1) {
-          estadoReal.alunos[idx] = {
-            ...estadoReal.alunos[idx],
-            nome,
+          estadoReal.alunos[idx] = salvo;
+        }
+
+        // Sincroniza em segundo plano se disponível
+        try {
+          updateDoc(doc(db, "usuarios", id), {
+            nome: primeiroNome,
+            sobrenome: sobrenome,
             email,
             ra,
+            turma,
             sala: turma,
             guilda,
             xp,
             nivel
-          };
-        }
+          }).catch(() => {});
+        } catch(e) {}
 
         window.fecharModais();
         compilarRelatorioReal();
         renderizarTudo();
-        notificar(`Dados do estudante ${nome} atualizados no Firestore!`);
+        notificar(`Dados do estudante ${nome} atualizados com sucesso no banco local!`);
       } catch (err) {
         console.error("Erro ao atualizar estudante:", err);
         notificar("Erro ao atualizar dados do estudante.");
       }
     });
 
-    // Formulário de Cadastro de Aluno no Firestore
+    // Formulário de Cadastro de Aluno no Banco Local
     document.getElementById("formCadastrarAluno").addEventListener("submit", async function(e) {
       e.preventDefault();
       const nome = document.getElementById("alunoNome").value.trim();
@@ -2597,49 +2318,57 @@
       const primeiroNome = pedacos[0] || nome;
       const sobrenome = pedacos.slice(1).join(" ") || "Estudante";
 
-      const novoAluno = {
-        nome: primeiroNome,
-        sobrenome: sobrenome,
-        email,
-        ra,
-        turma: sala,
-        guilda,
-        xp,
-        tipo: "aluno",
-        ano: 2026,
-        criadoEm: serverTimestamp()
-      };
-
       try {
-        const docRef = await addDoc(collection(db, "usuarios"), novoAluno);
-        estadoReal.alunos.unshift({
-          id: docRef.id,
+        const novo = DBLocal.salvarAluno({
           nome,
           email,
           ra,
-          sala,
+          turma: sala,
+          sala: sala,
           guilda,
-          xp
+          xp,
+          tipo: "aluno"
         });
+
+        estadoReal.alunos.unshift(novo);
+
+        // Sincroniza em segundo plano se disponível
+        try {
+          addDoc(collection(db, "usuarios"), {
+            nome: primeiroNome,
+            sobrenome: sobrenome,
+            email,
+            ra,
+            turma: sala,
+            guilda,
+            xp,
+            tipo: "aluno",
+            ano: 2026,
+            criadoEm: serverTimestamp()
+          }).catch(() => {});
+        } catch(e) {}
 
         compilarRelatorioReal();
         renderizarTudo();
         this.reset();
-        notificar(`Estudante ${nome} cadastrado com sucesso no Firebase!`);
+        notificar(`Estudante ${nome} cadastrado com sucesso no banco local!`);
       } catch (err) {
         console.error("Erro ao salvar estudante:", err);
-        notificar("Erro ao salvar no banco. Verifique a conexão.");
+        notificar("Erro ao salvar estudante.");
       }
     });
 
     window.excluirAlunoBanco = async function(id) {
       if (!confirm("Deseja realmente remover este estudante do banco de dados?")) return;
       try {
-        await deleteDoc(doc(db, "usuarios", id));
+        DBLocal.excluirAluno(id);
         estadoReal.alunos = estadoReal.alunos.filter(a => a.id !== id);
+        try {
+          deleteDoc(doc(db, "usuarios", id)).catch(() => {});
+        } catch(e) {}
         compilarRelatorioReal();
         renderizarTudo();
-        notificar("Estudante removido do banco de dados.");
+        notificar("Estudante removido com sucesso do banco local.");
       } catch(err) {
         console.error("Erro ao excluir estudante:", err);
         notificar("Erro ao remover estudante do banco.");
@@ -2700,21 +2429,27 @@
       const lema = document.getElementById("guildaLema").value.trim();
       const lider = document.getElementById("guildaLider").value.trim();
 
-      const nova = {
-        nome,
-        cor,
-        lema,
-        lider: lider || "A definir",
-        pontos: 1000,
-        criadoEm: serverTimestamp()
-      };
-
       try {
-        const docRef = await addDoc(collection(db, "guildas"), nova);
-        estadoReal.guildas.push({ id: docRef.id, ...nova });
+        const nova = DBLocal.salvarGuilda({
+          nome,
+          cor,
+          lema,
+          lider: lider || "A definir",
+          pontos: 1000
+        });
+
+        estadoReal.guildas.push(nova);
+
+        try {
+          addDoc(collection(db, "guildas"), {
+            ...nova,
+            criadoEm: serverTimestamp()
+          }).catch(() => {});
+        } catch(e) {}
+
         renderizarTudo();
         this.reset();
-        notificar(`Guilda "${nome}" gravada no Firestore!`);
+        notificar(`Guilda "${nome}" cadastrada no banco local!`);
       } catch(err) {
         console.error("Erro ao cadastrar guilda:", err);
       }
@@ -2725,13 +2460,15 @@
       if (!g) return;
       g.pontos = (g.pontos || 0) + 100;
       try {
-        await updateDoc(doc(db, "guildas", id), {
-          pontos: increment(100)
-        });
+        DBLocal.salvarGuilda(g);
+        try {
+          updateDoc(doc(db, "guildas", id), {
+            pontos: increment(100)
+          }).catch(() => {});
+        } catch(e) {}
         renderizarGridGuildas();
-        notificar(`+100 XP concedidos à guilda ${g.nome} no Firestore!`);
+        notificar(`+100 XP concedidos à guilda ${g.nome}!`);
       } catch(err) {
-        console.warn("Update guilda fallback:", err);
         renderizarGridGuildas();
       }
     };
@@ -2739,10 +2476,13 @@
     window.excluirGuildaBanco = async function(id) {
       if (!confirm("Deseja realmente excluir esta guilda?")) return;
       try {
-        await deleteDoc(doc(db, "guildas", id));
+        DBLocal.excluirGuilda(id);
         estadoReal.guildas = estadoReal.guildas.filter(g => g.id !== id);
+        try {
+          deleteDoc(doc(db, "guildas", id)).catch(() => {});
+        } catch(e) {}
         renderizarTudo();
-        notificar("Guilda removida.");
+        notificar("Guilda removida do banco local.");
       } catch(err) {
         console.error("Erro ao excluir guilda:", err);
       }
@@ -2793,20 +2533,27 @@
       const turno = document.getElementById("salaTurno").value;
       const capacidade = parseInt(document.getElementById("salaCapacidade").value, 10) || 35;
 
-      const nova = {
-        nome,
-        etapa,
-        turno,
-        capacidade,
-        criadoEm: serverTimestamp()
-      };
-
       try {
-        const docRef = await addDoc(collection(db, "salas"), nova);
-        estadoReal.salas.push({ id: docRef.id, ...nova });
+        const nova = DBLocal.salvarSala({
+          nome,
+          etapa,
+          turno,
+          capacidade,
+          totalAlunos: 30
+        });
+
+        estadoReal.salas.push(nova);
+
+        try {
+          addDoc(collection(db, "salas"), {
+            ...nova,
+            criadoEm: serverTimestamp()
+          }).catch(() => {});
+        } catch(e) {}
+
         renderizarTudo();
         this.reset();
-        notificar(`Sala ${nome} cadastrada no banco de dados!`);
+        notificar(`Turma ${nome} cadastrada no banco local!`);
       } catch(err) {
         console.error("Erro ao salvar sala:", err);
       }
@@ -2815,10 +2562,13 @@
     window.excluirSalaBanco = async function(id) {
       if (!confirm("Deseja realmente remover esta sala do banco de dados?")) return;
       try {
-        await deleteDoc(doc(db, "salas", id));
+        DBLocal.excluirSala(id);
         estadoReal.salas = estadoReal.salas.filter(s => s.id !== id);
+        try {
+          deleteDoc(doc(db, "salas", id)).catch(() => {});
+        } catch(e) {}
         renderizarTudo();
-        notificar("Sala removida.");
+        notificar("Sala removida do banco local.");
       } catch(err) {
         console.error("Erro ao excluir sala:", err);
       }
@@ -3112,23 +2862,32 @@
         notaParticipacao,
         media,
         situacao,
-        observacoes,
-        criadoEm: serverTimestamp()
+        observacoes
       };
 
       try {
         if (edicaoId) {
-          await updateDoc(doc(db, "notas", edicaoId), dadosNota);
+          const salva = DBLocal.salvarNota({ id: edicaoId, ...dadosNota });
           const idx = estadoReal.notas.findIndex(n => n.id === edicaoId);
-          if (idx !== -1) estadoReal.notas[idx] = { id: edicaoId, ...dadosNota };
-          notificar("Nota atualizada com sucesso no Firestore!");
+          if (idx !== -1) estadoReal.notas[idx] = salva;
+
+          try {
+            updateDoc(doc(db, "notas", edicaoId), { ...dadosNota, atualizadoEm: serverTimestamp() }).catch(() => {});
+          } catch(e) {}
+
+          notificar("Nota atualizada com sucesso no banco local!");
           document.getElementById("notaEdicaoId").value = "";
           document.getElementById("btnSalvarNota").textContent = "💾 Salvar Nota no Banco";
           document.getElementById("btnCancelarEdicaoNota").style.display = "none";
         } else {
-          const docRef = await addDoc(collection(db, "notas"), dadosNota);
-          estadoReal.notas.unshift({ id: docRef.id, ...dadosNota });
-          notificar(`Nota de ${aluno.nome} lançada com sucesso no Firestore!`);
+          const nova = DBLocal.salvarNota(dadosNota);
+          estadoReal.notas.unshift(nova);
+
+          try {
+            addDoc(collection(db, "notas"), { ...dadosNota, criadoEm: serverTimestamp() }).catch(() => {});
+          } catch(e) {}
+
+          notificar(`Nota de ${aluno.nome} lançada com sucesso no banco local!`);
         }
 
         renderizarTabelaNotas();
@@ -3140,7 +2899,7 @@
         atualizarPreviewMediaForm();
       } catch(err) {
         console.error("Erro ao salvar nota:", err);
-        notificar("Erro ao salvar nota no Firestore.");
+        notificar("Erro ao salvar nota.");
       }
     });
 
@@ -3178,32 +2937,39 @@
       const { media, situacao } = calcularMediaNota(notaProva, notaTarefas, notaParticipacao);
 
       try {
-        await updateDoc(doc(db, "notas", id), {
+        const atualizada = DBLocal.salvarNota({
+          id,
           notaProva,
           notaTarefas,
           notaParticipacao,
           media,
           situacao,
-          observacoes,
-          atualizadoEm: serverTimestamp()
+          observacoes
         });
 
         const idx = estadoReal.notas.findIndex(n => n.id === id);
         if (idx !== -1) {
           estadoReal.notas[idx] = {
             ...estadoReal.notas[idx],
+            ...atualizada
+          };
+        }
+
+        try {
+          updateDoc(doc(db, "notas", id), {
             notaProva,
             notaTarefas,
             notaParticipacao,
             media,
             situacao,
-            observacoes
-          };
-        }
+            observacoes,
+            atualizadoEm: serverTimestamp()
+          }).catch(() => {});
+        } catch(e) {}
 
         window.fecharModais();
         renderizarTabelaNotas();
-        notificar("Nota retificada com sucesso no Firestore!");
+        notificar("Nota retificada com sucesso no banco local!");
       } catch (err) {
         console.error("Erro ao atualizar nota:", err);
         notificar("Erro ao retificar nota no banco.");
@@ -3213,11 +2979,14 @@
     window.excluirNotaBanco = async function(id) {
       if (!confirm("Deseja realmente remover esta nota do banco de dados?")) return;
       try {
-        await deleteDoc(doc(db, "notas", id));
+        DBLocal.excluirNota(id);
         estadoReal.notas = estadoReal.notas.filter(n => n.id !== id);
+        try {
+          deleteDoc(doc(db, "notas", id)).catch(() => {});
+        } catch(e) {}
         renderizarTabelaNotas();
         document.getElementById("badgeNotasQtd").textContent = estadoReal.notas.length;
-        notificar("Nota removida do banco Firestore.");
+        notificar("Nota removida do banco local.");
       } catch(err) {
         console.error("Erro ao excluir nota:", err);
         notificar("Erro ao remover nota.");
@@ -3301,7 +3070,7 @@
         return;
       }
 
-      const novaOcorrencia = {
+      const dadosOcorrencia = {
         alunoId: aluno.id,
         alunoNome: aluno.nome,
         alunoRA: aluno.ra,
@@ -3312,21 +3081,25 @@
         status,
         descricao,
         providencias,
-        registradoPor: "Equipe Gestora / Direção",
-        criadoEm: serverTimestamp()
+        registradoPor: "Equipe Gestora / Direção"
       };
 
       try {
-        const docRef = await addDoc(collection(db, "ocorrencias"), novaOcorrencia);
-        estadoReal.ocorrencias.unshift({ id: docRef.id, ...novaOcorrencia });
+        const nova = DBLocal.salvarOcorrencia(dadosOcorrencia);
+        estadoReal.ocorrencias.unshift(nova);
+
+        try {
+          addDoc(collection(db, "ocorrencias"), { ...dadosOcorrencia, criadoEm: serverTimestamp() }).catch(() => {});
+        } catch(e) {}
+
         renderizarTabelaOcorrencias();
         document.getElementById("badgeOcorrenciasQtd").textContent = estadoReal.ocorrencias.length;
         this.reset();
         document.getElementById("ocorrenciaData").value = new Date().toISOString().split("T")[0];
-        notificar(`Ocorrência de ${aluno.nome} registrada com sucesso no Livro Oficial!`);
+        notificar(`Ocorrência de ${aluno.nome} registrada com sucesso no banco local!`);
       } catch(err) {
         console.error("Erro ao registrar ocorrência:", err);
-        notificar("Erro ao registrar ocorrência no Firestore.");
+        notificar("Erro ao registrar ocorrência.");
       }
     });
 
@@ -3354,28 +3127,35 @@
       const providencias = document.getElementById("editModalOcorrenciaProvidencias").value.trim();
 
       try {
-        await updateDoc(doc(db, "ocorrencias", id), {
+        const atualizada = DBLocal.salvarOcorrencia({
+          id,
           gravidade,
           status,
           descricao,
-          providencias,
-          atualizadoEm: serverTimestamp()
+          providencias
         });
 
         const idx = estadoReal.ocorrencias.findIndex(o => o.id === id);
         if (idx !== -1) {
           estadoReal.ocorrencias[idx] = {
             ...estadoReal.ocorrencias[idx],
-            gravidade,
-            status,
-            descricao,
-            providencias
+            ...atualizada
           };
         }
 
+        try {
+          updateDoc(doc(db, "ocorrencias", id), {
+            gravidade,
+            status,
+            descricao,
+            providencias,
+            atualizadoEm: serverTimestamp()
+          }).catch(() => {});
+        } catch(e) {}
+
         window.fecharModais();
         renderizarTabelaOcorrencias();
-        notificar("Ocorrência atualizada com sucesso no Firestore!");
+        notificar("Ocorrência atualizada com sucesso no banco local!");
       } catch(err) {
         console.error("Erro ao atualizar ocorrência:", err);
         notificar("Erro ao salvar alterações da ocorrência.");
@@ -3385,11 +3165,14 @@
     window.excluirOcorrenciaBanco = async function(id) {
       if (!confirm("Deseja realmente excluir este registro de ocorrência?")) return;
       try {
-        await deleteDoc(doc(db, "ocorrencias", id));
+        DBLocal.excluirOcorrencia(id);
         estadoReal.ocorrencias = estadoReal.ocorrencias.filter(o => o.id !== id);
+        try {
+          deleteDoc(doc(db, "ocorrencias", id)).catch(() => {});
+        } catch(e) {}
         renderizarTabelaOcorrencias();
         document.getElementById("badgeOcorrenciasQtd").textContent = estadoReal.ocorrencias.length;
-        notificar("Registro de ocorrência excluído com sucesso.");
+        notificar("Registro de ocorrência excluído do banco local.");
       } catch(err) {
         console.error("Erro ao excluir ocorrência:", err);
         notificar("Erro ao excluir ocorrência.");
@@ -3558,6 +3341,18 @@
         const alvo = document.getElementById(botao.dataset.modulo);
         if (alvo) alvo.classList.add("ativa");
       });
+    });
+
+    document.getElementById("btnResetarDemo")?.addEventListener("click", () => {
+      if (confirm("Deseja redefinir todos os dados locais de demonstração para o padrão da escola?")) {
+        DBLocal.resetarParaPadrao();
+        sincronizarBancoFirestore(false);
+        notificar("Banco local restaurado para os dados oficiais de demonstração!");
+      }
+    });
+
+    document.getElementById("btnSincronizarReal")?.addEventListener("click", () => {
+      sincronizarBancoFirestore(true);
     });
 
     // INICIALIZAÇÃO AUTOMÁTICA

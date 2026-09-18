@@ -687,6 +687,8 @@
     }
     from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
+    import DBLocal from "./js/db-local.js";
+
 
     const firebaseConfig = {
       apiKey: "AIzaSyCey_SsTCeHuTKwBaZ-Eo6_7LRa4l-5A80",
@@ -714,26 +716,32 @@
     }
 
     async function salvarPerfilAluno(uid, emailStr, turmaStr) {
+      const pedacos = (emailStr || "estudante").split("@")[0].split(/[._-]/);
+      const nomeFormatado = pedacos[0].charAt(0).toUpperCase() + pedacos[0].slice(1);
+      const sobrenomeFormatado = pedacos[1] ? (pedacos[1].charAt(0).toUpperCase() + pedacos[1].slice(1)) : "Estudante";
+
+      const perfilLocal = {
+        id: uid || "aluno_1",
+        nome: nomeFormatado || "Guilherme",
+        sobrenome: sobrenomeFormatado || "Santos",
+        email: emailStr || "aluno@escola.sp.gov.br",
+        turma: turmaStr || "8º Ano A",
+        tipo: "aluno",
+        ano: 2026,
+        xp: 420,
+        nivel: 4,
+        ra: "000.123.456-7 SP",
+        atualizadoEm: new Date().toISOString()
+      };
+
+      DBLocal.salvarPerfilAluno(perfilLocal);
+      DBLocal.definirUsuarioAtivo(perfilLocal);
+
       try {
         const perfilRef = doc(db, "usuarios", uid);
         const perfilSnap = await getDoc(perfilRef);
         if (!perfilSnap.exists()) {
-          const pedacos = (emailStr || "estudante").split("@")[0].split(/[._-]/);
-          const nomeFormatado = pedacos[0].charAt(0).toUpperCase() + pedacos[0].slice(1);
-          const sobrenomeFormatado = pedacos[1] ? (pedacos[1].charAt(0).toUpperCase() + pedacos[1].slice(1)) : "Estudante";
-
-          await setDoc(perfilRef, {
-            nome: nomeFormatado || "Guilherme",
-            sobrenome: sobrenomeFormatado || "Santos",
-            email: emailStr || "aluno@escola.sp.gov.br",
-            turma: turmaStr || "8ºA",
-            tipo: "aluno",
-            ano: 2026,
-            xp: 420,
-            nivel: 4,
-            ra: "000.123.456-7 SP",
-            atualizadoEm: new Date().toISOString()
-          });
+          await setDoc(perfilRef, perfilLocal);
         }
       } catch (e) {
         console.warn("Perfil local em fallback:", e);

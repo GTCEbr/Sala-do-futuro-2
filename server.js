@@ -81,7 +81,7 @@ Responda ESTRITAMENTE em formato JSON com o seguinte schema:
 }`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-3.8-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           responseMimeType: 'application/json',
@@ -123,7 +123,7 @@ Diretrizes:
 - Responda em até 150 palavras.`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-3.8-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt,
         config: { temperature: 0.6 }
       });

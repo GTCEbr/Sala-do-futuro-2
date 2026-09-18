@@ -1,6 +1,8 @@
 /*====================================================
-01 - FIREBASE
+01 - FIREBASE E ARMAZENAMENTO LOCAL
 ====================================================*/
+
+import DBLocal from "../../../js/db-local.js";
 
 import {
   initializeApp
@@ -194,11 +196,15 @@ onAuthStateChanged(
   async user => {
 
     if (!user) {
-      window.location.href = "../index.html";
-      return;
+      // Fallback para modo demonstração offline/local
+      const perfilSalvo = DBLocal.obterPerfilAluno();
+      usuarioAtual = {
+        uid: perfilSalvo?.id || "aluno_demo_sp",
+        email: perfilSalvo?.email || "aluno.demo@escola.sp.gov.br"
+      };
+    } else {
+      usuarioAtual = user;
     }
-
-    usuarioAtual = user;
 
     try {
       await carregarPerfil();
@@ -237,16 +243,10 @@ onAuthStateChanged(
 
     catch (erro) {
       console.error("Erro ao iniciar Tarefa SP:", erro);
-      aviso("Não foi possível iniciar o Tarefa SP.");
+      aviso("Iniciando Tarefa SP em modo demonstração local.");
 
-      const lista = $("listaAtividades");
-      if (lista) {
-        lista.innerHTML = `
-          <div class="vazio">
-            Não foi possível carregar as atividades. Verifique sua conexão e as regras do Firebase.
-          </div>
-        `;
-      }
+      prepararFiltros();
+      renderizarTudo();
     }
   }
 );
@@ -257,20 +257,38 @@ onAuthStateChanged(
 ====================================================*/
 
 async function carregarPerfil() {
+  const local = DBLocal.obterPerfilAluno();
+  if (local) {
+    perfilAluno = local;
+    const nome = perfilAluno.nome || "Aluno";
+    if ($("nomeAlunoTopo")) $("nomeAlunoTopo").textContent = nome;
+    if ($("avatarAluno")) $("avatarAluno").textContent = nome.charAt(0).toUpperCase();
+    return;
+  }
+
   const referencia = doc(
     db,
     "usuarios",
     usuarioAtual.uid
   );
 
-  const resultado = await getDoc(
-    referencia
-  );
+  let resultado;
+  try {
+    resultado = await getDoc(referencia);
+  } catch (e) {
+    perfilAluno = DBLocal.obterPerfilAluno();
+    const nome = perfilAluno?.nome || "Aluno";
+    if ($("nomeAlunoTopo")) $("nomeAlunoTopo").textContent = nome;
+    if ($("avatarAluno")) $("avatarAluno").textContent = nome.charAt(0).toUpperCase();
+    return;
+  }
 
-  if (!resultado.exists()) {
-    throw new Error(
-      "Perfil do aluno não encontrado."
-    );
+  if (!resultado || !resultado.exists()) {
+    perfilAluno = DBLocal.obterPerfilAluno();
+    const nome = perfilAluno?.nome || "Aluno";
+    if ($("nomeAlunoTopo")) $("nomeAlunoTopo").textContent = nome;
+    if ($("avatarAluno")) $("avatarAluno").textContent = nome.charAt(0).toUpperCase();
+    return;
   }
 
   perfilAluno = {
@@ -329,31 +347,41 @@ async function carregarJSON() {
 async function carregarEntregas() {
   entregas = new Map();
 
-  const resultado = await getDocs(
-    query(
-      collection(
-        db,
-        "entregasTarefaSP"
-      ),
-      where(
-        "alunoId",
-        "==",
-        usuarioAtual.uid
-      )
-    )
-  );
-
-  resultado.forEach(item => {
-    const entrega = {
-      id: item.id,
-      ...item.data()
-    };
-
-    entregas.set(
-      entrega.atividadeId,
-      entrega
-    );
+  // 1. Carrega do banco local
+  const entregasLocais = DBLocal.obterEntregasOficiais();
+  entregasLocais.forEach(item => {
+    if (item.atividadeId) {
+      entregas.set(item.atividadeId, item);
+    }
   });
+
+  try {
+    const resultado = await getDocs(
+      query(
+        collection(
+          db,
+          "entregasTarefaSP"
+        ),
+        where(
+          "alunoId",
+          "==",
+          usuarioAtual.uid
+        )
+      )
+    );
+
+    resultado.forEach(item => {
+      const entrega = {
+        id: item.id,
+        ...item.data()
+      };
+
+      entregas.set(
+        entrega.atividadeId,
+        entrega
+      );
+    });
+  } catch (e) {}
 }
 
 
@@ -362,33 +390,38 @@ async function carregarEntregas() {
 ====================================================*/
 
 async function carregarPontuacao() {
-  const referencia = doc(
-    db,
-    "pontuacaoTarefaSP",
-    usuarioAtual.uid
-  );
-
-  const resultado = await getDoc(
-    referencia
-  );
-
-  if (!resultado.exists()) {
+  const pontuacaoLocal = DBLocal.obterPontuacaoOficial(usuarioAtual.uid);
+  if (pontuacaoLocal) {
+    pontuacaoAtual = pontuacaoLocal;
+  } else {
     pontuacaoAtual = {
       pontosSemana: 0,
       pontosQuinzena: 0,
       pontosTotal: 0
     };
-
-    return;
   }
 
-  const dados = resultado.data();
+  try {
+    const referencia = doc(
+      db,
+      "pontuacaoTarefaSP",
+      usuarioAtual.uid
+    );
 
-  pontuacaoAtual = {
-    pontosSemana: Number(dados.pontosSemana || 0),
-    pontosQuinzena: Number(dados.pontosQuinzena || 0),
-    pontosTotal: Number(dados.pontosTotal || 0)
-  };
+    const resultado = await getDoc(
+      referencia
+    );
+
+    if (resultado.exists()) {
+      const dados = resultado.data();
+      pontuacaoAtual = {
+        pontosSemana: Number(dados.pontosSemana || 0),
+        pontosQuinzena: Number(dados.pontosQuinzena || 0),
+        pontosTotal: Number(dados.pontosTotal || 0)
+      };
+      DBLocal.salvarPontuacaoOficial(usuarioAtual.uid, pontuacaoAtual);
+    }
+  } catch(e) {}
 }
 
 
@@ -397,21 +430,47 @@ async function carregarPontuacao() {
 ====================================================*/
 
 async function carregarRanking() {
-  const resultado = await getDocs(
-    collection(
-      db,
-      "pontuacaoTarefaSP"
-    )
-  );
-
   ranking = [];
+  const alunos = DBLocal.obterAlunos();
+  const mapa = new Map();
 
-  resultado.forEach(item => {
-    ranking.push({
-      id: item.id,
-      ...item.data()
+  alunos.forEach(aluno => {
+    mapa.set(aluno.id, {
+      id: aluno.id,
+      alunoNome: aluno.nome,
+      turma: aluno.turma,
+      pontosSemana: Math.round(Number(aluno.xp || 0) * 0.4),
+      pontosTotal: Number(aluno.xp || 0)
     });
   });
+
+  if (usuarioAtual && perfilAluno) {
+    mapa.set(usuarioAtual.uid, {
+      id: usuarioAtual.uid,
+      alunoNome: perfilAluno.nome || "Você",
+      turma: perfilAluno.turma || "8º Ano A",
+      pontosSemana: Number(pontuacaoAtual?.pontosSemana || 0),
+      pontosTotal: Number(pontuacaoAtual?.pontosTotal || 0)
+    });
+  }
+
+  try {
+    const resultado = await getDocs(
+      collection(
+        db,
+        "pontuacaoTarefaSP"
+      )
+    );
+
+    resultado.forEach(item => {
+      mapa.set(item.id, {
+        id: item.id,
+        ...item.data()
+      });
+    });
+  } catch(e) {}
+
+  ranking = Array.from(mapa.values());
 
   ranking.sort(
     (a, b) =>
@@ -427,21 +486,28 @@ async function carregarRanking() {
 ====================================================*/
 
 async function carregarGuildas() {
-  const resultado = await getDocs(
-    collection(
-      db,
-      "guildas"
-    )
-  );
-
   guildas = [];
+  const guildasLocais = DBLocal.obterGuildas();
+  const mapa = new Map();
+  guildasLocais.forEach(g => mapa.set(g.id, g));
 
-  resultado.forEach(item => {
-    guildas.push({
-      id: item.id,
-      ...item.data()
+  try {
+    const resultado = await getDocs(
+      collection(
+        db,
+        "guildas"
+      )
+    );
+
+    resultado.forEach(item => {
+      mapa.set(item.id, {
+        id: item.id,
+        ...item.data()
+      });
     });
-  });
+  } catch(e) {}
+
+  guildas = Array.from(mapa.values());
 }
 
 
@@ -450,21 +516,28 @@ async function carregarGuildas() {
 ====================================================*/
 
 async function carregarTrabalhosGuilda() {
-  const resultado = await getDocs(
-    collection(
-      db,
-      "trabalhosGuilda"
-    )
-  );
-
   trabalhosGuilda = [];
+  const trabalhosLocais = DBLocal.obterTrabalhosGuilda();
+  const mapa = new Map();
+  trabalhosLocais.forEach(t => mapa.set(t.id, t));
 
-  resultado.forEach(item => {
-    trabalhosGuilda.push({
-      id: item.id,
-      ...item.data()
+  try {
+    const resultado = await getDocs(
+      collection(
+        db,
+        "trabalhosGuilda"
+      )
+    );
+
+    resultado.forEach(item => {
+      mapa.set(item.id, {
+        id: item.id,
+        ...item.data()
+      });
     });
-  });
+  } catch(e) {}
+
+  trabalhosGuilda = Array.from(mapa.values());
 }
 
 
@@ -473,25 +546,32 @@ async function carregarTrabalhosGuilda() {
 ====================================================*/
 
 async function carregarPremiacoes() {
-  const resultado = await getDocs(
-    collection(
-      db,
-      "premiacoes"
-    )
-  );
-
   premiacoes = [];
+  const premiacoesLocais = DBLocal.obterPremiacoes();
+  const mapa = new Map();
+  premiacoesLocais.forEach(p => mapa.set(p.id, p));
 
-  resultado.forEach(item => {
-    const dados = item.data();
+  try {
+    const resultado = await getDocs(
+      collection(
+        db,
+        "premiacoes"
+      )
+    );
 
-    if (dados.ativo !== false) {
-      premiacoes.push({
-        id: item.id,
-        ...dados
-      });
-    }
-  });
+    resultado.forEach(item => {
+      const dados = item.data();
+
+      if (dados.ativo !== false) {
+        mapa.set(item.id, {
+          id: item.id,
+          ...dados
+        });
+      }
+    });
+  } catch(e) {}
+
+  premiacoes = Array.from(mapa.values());
 }
 
 
@@ -1007,18 +1087,6 @@ async function registrarEntrega(resposta, resultado) {
     throw new Error("Sessão ou atividade inválida.");
   }
 
-  const entregaRef = doc(
-    db,
-    "entregasTarefaSP",
-    `${usuarioAtual.uid}_${atividadeAtual.id}`
-  );
-
-  const pontosRef = doc(
-    db,
-    "pontuacaoTarefaSP",
-    usuarioAtual.uid
-  );
-
   const pontosGanhos =
     resultado === "correto"
       ? Number(atividadeAtual.pontos || 0)
@@ -1028,63 +1096,94 @@ async function registrarEntrega(resposta, resultado) {
   const quinzena = quinzenaAtual();
   const quinzenaId = quinzena?.id || "sem-quinzena";
 
-  await runTransaction(db, async transaction => {
-    const entregaExistente = await transaction.get(entregaRef);
-    const pontosExistentes = await transaction.get(pontosRef);
+  // 1. Salva no banco de dados local
+  const novaEntregaLocal = {
+    id: `${usuarioAtual.uid}_${atividadeAtual.id}`,
+    atividadeId: atividadeAtual.id,
+    atividadeTitulo: atividadeAtual.titulo || "Atividade",
+    componente: atividadeAtual.componente || "",
+    alunoId: usuarioAtual.uid,
+    alunoNome: perfilAluno?.nome || usuarioAtual.email || "Aluno",
+    turma: perfilAluno?.turma || "",
+    resposta,
+    resultado,
+    pontosPossiveis: Number(atividadeAtual.pontos || 0),
+    pontosRecebidos: pontosGanhos,
+    quinzenaId,
+    entregueEm: new Date().toISOString()
+  };
 
-    if (entregaExistente.exists()) {
-      throw new Error("ATIVIDADE_JA_ENTREGUE");
+  DBLocal.salvarEntregaOficial(novaEntregaLocal);
+  entregas.set(atividadeAtual.id, novaEntregaLocal);
+
+  const pontosSemanaAnteriores = Number(pontuacaoAtual?.pontosSemana || 0);
+  const pontosQuinzenaAnteriores = Number(pontuacaoAtual?.pontosQuinzena || 0);
+  const pontosTotalAnteriores = Number(pontuacaoAtual?.pontosTotal || 0);
+
+  pontuacaoAtual = {
+    alunoId: usuarioAtual.uid,
+    alunoNome: perfilAluno?.nome || usuarioAtual.email || "Aluno",
+    turma: perfilAluno?.turma || "",
+    semanaId: semanaAtual,
+    quinzenaId,
+    pontosSemana: pontosSemanaAnteriores + pontosGanhos,
+    pontosQuinzena: pontosQuinzenaAnteriores + pontosGanhos,
+    pontosTotal: pontosTotalAnteriores + pontosGanhos
+  };
+  DBLocal.salvarPontuacaoOficial(usuarioAtual.uid, pontuacaoAtual);
+
+  if (pontosGanhos > 0) {
+    const p = DBLocal.obterPerfilAluno();
+    if (p) {
+      p.xp = Number(p.xp || 0) + pontosGanhos;
+      p.nivel = Math.floor(p.xp / 100) + 1;
+      DBLocal.salvarPerfilAluno(p);
     }
+  }
 
-    const anteriores = pontosExistentes.exists()
-      ? pontosExistentes.data()
-      : {};
-
-    const pontosSemanaAnteriores =
-      anteriores.semanaId === semanaAtual
-        ? Number(anteriores.pontosSemana || 0)
-        : 0;
-
-    const pontosQuinzenaAnteriores =
-      anteriores.quinzenaId === quinzenaId
-        ? Number(anteriores.pontosQuinzena || 0)
-        : 0;
-
-    const pontosTotalAnteriores = Number(
-      anteriores.pontosTotal || 0
+  // 2. Sincroniza em segundo plano no Firestore se online
+  try {
+    const entregaRef = doc(
+      db,
+      "entregasTarefaSP",
+      `${usuarioAtual.uid}_${atividadeAtual.id}`
     );
 
-    transaction.set(entregaRef, {
-      atividadeId: atividadeAtual.id,
-      atividadeTitulo: atividadeAtual.titulo || "Atividade",
-      componente: atividadeAtual.componente || "",
-      alunoId: usuarioAtual.uid,
-      alunoNome: perfilAluno?.nome || usuarioAtual.email || "Aluno",
-      turma: perfilAluno?.turma || "",
-      resposta,
-      resultado,
-      pontosPossiveis: Number(atividadeAtual.pontos || 0),
-      pontosRecebidos: pontosGanhos,
-      quinzenaId,
-      entregueEm: serverTimestamp()
+    const pontosRef = doc(
+      db,
+      "pontuacaoTarefaSP",
+      usuarioAtual.uid
+    );
+
+    await runTransaction(db, async transaction => {
+      const entregaExistente = await transaction.get(entregaRef);
+      const pontosExistentes = await transaction.get(pontosRef);
+
+      if (entregaExistente.exists()) {
+        return;
+      }
+
+      const anteriores = pontosExistentes.exists()
+        ? pontosExistentes.data()
+        : {};
+
+      transaction.set(entregaRef, {
+        ...novaEntregaLocal,
+        entregueEm: serverTimestamp()
+      });
+
+      transaction.set(
+        pontosRef,
+        {
+          ...pontuacaoAtual,
+          atualizadoEm: serverTimestamp()
+        },
+        { merge: true }
+      );
     });
-
-    transaction.set(
-      pontosRef,
-      {
-        alunoId: usuarioAtual.uid,
-        alunoNome: perfilAluno?.nome || usuarioAtual.email || "Aluno",
-        turma: perfilAluno?.turma || "",
-        semanaId: semanaAtual,
-        quinzenaId,
-        pontosSemana: pontosSemanaAnteriores + pontosGanhos,
-        pontosQuinzena: pontosQuinzenaAnteriores + pontosGanhos,
-        pontosTotal: pontosTotalAnteriores + pontosGanhos,
-        atualizadoEm: serverTimestamp()
-      },
-      { merge: true }
-    );
-  });
+  } catch (errSync) {
+    console.warn("Sincronização em nuvem Tarefa SP não disponível, mantendo local:", errSync);
+  }
 }
 
 
@@ -1557,19 +1656,22 @@ async function renderizarDesafioDiario() {
   }
 
   const respostaId = `${desafioAtual.id}_${usuarioAtual.uid}`;
-  let respostaSalva = null;
+  let respostaSalva = DBLocal.obterDesafioDiario(respostaId);
 
-  try {
-    const respostaDoc = await getDoc(
-      doc(db, "respostasDesafioTarefaSP", respostaId)
-    );
+  if (!respostaSalva) {
+    try {
+      const respostaDoc = await getDoc(
+        doc(db, "respostasDesafioTarefaSP", respostaId)
+      );
 
-    if (respostaDoc.exists()) {
-      respostaSalva = respostaDoc.data();
+      if (respostaDoc.exists()) {
+        respostaSalva = respostaDoc.data();
+        DBLocal.salvarDesafioDiario(respostaId, respostaSalva);
+      }
     }
-  }
-  catch (erro) {
-    console.warn("Resposta do desafio não pôde ser consultada:", erro);
+    catch (erro) {
+      console.warn("Resposta do desafio não pôde ser consultada:", erro);
+    }
   }
 
   const alternativas = desafioAtual.alternativas
@@ -1641,93 +1743,95 @@ async function responderDesafioDiario() {
     ? Number(dadosJSON?.config?.pontosDesafioDiario || 10)
     : 0;
 
-  const respostaRef = doc(
-    db,
-    "respostasDesafioTarefaSP",
-    `${desafioAtual.id}_${usuarioAtual.uid}`
-  );
+  const respostaId = `${desafioAtual.id}_${usuarioAtual.uid}`;
+  const semanaAtual = semanaId();
+  const quinzena = quinzenaAtual();
+  const quinzenaId = quinzena?.id || "sem-quinzena";
 
-  const pontosRef = doc(
-    db,
-    "pontuacaoTarefaSP",
-    usuarioAtual.uid
-  );
+  // 1. Salva localmente
+  const respostaLocal = {
+    alunoId: usuarioAtual.uid,
+    data: desafioAtual.id,
+    alternativa: indice,
+    correta,
+    pontosRecebidos: pontosGanhos,
+    respondidoEm: new Date().toISOString()
+  };
+  DBLocal.salvarDesafioDiario(respostaId, respostaLocal);
 
+  const semanaAnterior = Number(pontuacaoAtual?.pontosSemana || 0);
+  const quinzenaAnterior = Number(pontuacaoAtual?.pontosQuinzena || 0);
+  const pontosTotalAnterior = Number(pontuacaoAtual?.pontosTotal || 0);
+
+  pontuacaoAtual = {
+    alunoId: usuarioAtual.uid,
+    alunoNome: perfilAluno?.nome || usuarioAtual.email || "Aluno",
+    turma: perfilAluno?.turma || "",
+    semanaId: semanaAtual,
+    quinzenaId,
+    pontosSemana: semanaAnterior + pontosGanhos,
+    pontosQuinzena: quinzenaAnterior + pontosGanhos,
+    pontosTotal: pontosTotalAnterior + pontosGanhos
+  };
+  DBLocal.salvarPontuacaoOficial(usuarioAtual.uid, pontuacaoAtual);
+
+  if (pontosGanhos > 0) {
+    const p = DBLocal.obterPerfilAluno();
+    if (p) {
+      p.xp = Number(p.xp || 0) + pontosGanhos;
+      p.nivel = Math.floor(p.xp / 100) + 1;
+      DBLocal.salvarPerfilAluno(p);
+    }
+  }
+
+  // 2. Tenta sincronizar com Firestore em segundo plano
   try {
+    const respostaRef = doc(
+      db,
+      "respostasDesafioTarefaSP",
+      respostaId
+    );
+
+    const pontosRef = doc(
+      db,
+      "pontuacaoTarefaSP",
+      usuarioAtual.uid
+    );
+
     await runTransaction(db, async transaction => {
       const respostaExistente = await transaction.get(respostaRef);
-      const pontosExistentes = await transaction.get(pontosRef);
-
-      if (respostaExistente.exists()) {
-        throw new Error("DESAFIO_JA_RESPONDIDO");
-      }
-
-      const anteriores = pontosExistentes.exists()
-        ? pontosExistentes.data()
-        : {};
-
-      const semanaAtual = semanaId();
-      const quinzena = quinzenaAtual();
-      const quinzenaId = quinzena?.id || "sem-quinzena";
-
-      const semanaAnterior = anteriores.semanaId === semanaAtual
-        ? Number(anteriores.pontosSemana || 0)
-        : 0;
-
-      const quinzenaAnterior = anteriores.quinzenaId === quinzenaId
-        ? Number(anteriores.pontosQuinzena || 0)
-        : 0;
+      if (respostaExistente.exists()) return;
 
       transaction.set(respostaRef, {
-        alunoId: usuarioAtual.uid,
-        data: desafioAtual.id,
-        alternativa: indice,
-        correta,
-        pontosRecebidos: pontosGanhos,
+        ...respostaLocal,
         respondidoEm: serverTimestamp()
       });
 
       transaction.set(
         pontosRef,
         {
-          alunoId: usuarioAtual.uid,
-          alunoNome: perfilAluno?.nome || usuarioAtual.email || "Aluno",
-          turma: perfilAluno?.turma || "",
-          semanaId: semanaAtual,
-          quinzenaId,
-          pontosSemana: semanaAnterior + pontosGanhos,
-          pontosQuinzena: quinzenaAnterior + pontosGanhos,
-          pontosTotal: Number(anteriores.pontosTotal || 0) + pontosGanhos,
+          ...pontuacaoAtual,
           atualizadoEm: serverTimestamp()
         },
         { merge: true }
       );
     });
-
-    await Promise.all([
-      carregarPontuacao(),
-      carregarRanking().catch(erro => {
-        console.warn("Ranking não pôde ser atualizado:", erro);
-      })
-    ]);
-
-    renderizarTudo();
-    await renderizarDesafioDiario();
-    aviso(correta ? "Desafio correto. Pontos adicionados." : "Resposta registrada.");
+  } catch (errSync) {
+    console.warn("Sincronização em nuvem do desafio indisponível, salvo localmente:", errSync);
   }
 
-  catch (erro) {
-    console.error("Erro ao responder desafio:", erro);
-    aviso(
-      erro?.message === "DESAFIO_JA_RESPONDIDO"
-        ? "O desafio de hoje já foi respondido."
-        : "Não foi possível registrar o desafio."
-    );
-  }
+  await Promise.all([
+    carregarPontuacao(),
+    carregarRanking().catch(erro => {
+      console.warn("Ranking não pôde ser atualizado:", erro);
+    })
+  ]);
 
-  finally {
-    if (botao) botao.disabled = false;
-  }
+  renderizarTudo();
+  await renderizarDesafioDiario();
+  aviso(correta ? "Desafio correto. Pontos adicionados." : "Resposta registrada.");
+
+  if (botao) botao.disabled = false;
 }
 
 

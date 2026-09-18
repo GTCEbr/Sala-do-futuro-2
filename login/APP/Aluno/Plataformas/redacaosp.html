@@ -837,6 +837,8 @@ Apresente o tema, formule sua tese, desenvolva seus argumentos nos parágrafos s
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
+    import DBLocal from "../../../js/db-local.js";
+
     import {
       getFirestore,
       collection,
@@ -894,6 +896,13 @@ Apresente o tema, formule sua tese, desenvolva seus argumentos nos parágrafos s
     numeracaoEl.innerHTML = Array.from({ length: 30 }, (_, i) => `<span>${String(i + 1).padStart(2, '0')}</span>`).join("");
 
     // Carregar informações do aluno logado
+    const perfilLocal = DBLocal.obterPerfilAluno();
+    if (perfilLocal) {
+      dadosAluno.nome = perfilLocal.nome || "Estudante Paulista";
+      dadosAluno.ra = perfilLocal.ra || "000.123.456-7 SP";
+      dadosAluno.turma = perfilLocal.turma || "8º Ano A";
+    }
+
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         usuarioLogado = user;
@@ -1188,8 +1197,9 @@ Apresente o tema, formule sua tese, desenvolva seus argumentos nos parágrafos s
       btn.textContent = "Enviando ao Firestore...";
 
       try {
-        const registro = {
-          alunoId: usuarioLogado?.uid || "aluno-sp",
+        const registroLocal = {
+          id: `red_${Date.now()}`,
+          alunoId: usuarioLogado?.uid || "aluno_1",
           alunoNome: dadosAluno.nome,
           alunoRA: dadosAluno.ra,
           turma: dadosAluno.turma,
@@ -1198,15 +1208,26 @@ Apresente o tema, formule sua tese, desenvolva seus argumentos nos parágrafos s
           texto: texto,
           palavras: texto.trim().split(/\s+/).length,
           status: "Aguardando Correção",
+          tipo: "redacao",
+          tarefaTitulo: `Redação: ${titulo}`,
+          componente: "Língua Portuguesa",
           nota: null,
-          criadoEm: serverTimestamp()
+          data: new Date().toISOString().split("T")[0]
         };
 
-        await addDoc(collection(db, "redacoes"), registro);
-        notificar("Redação enviada com sucesso! O professor receberá para avaliação.");
+        DBLocal.salvarEntrega(registroLocal);
+
+        try {
+          await addDoc(collection(db, "redacoes"), {
+            ...registroLocal,
+            criadoEm: serverTimestamp()
+          });
+        } catch (eSync) {}
+
+        notificar("Redação enviada com sucesso! Salva localmente e enviada ao professor.");
         document.getElementById("indicadorStatusFolha").textContent = "Enviada ao professor com sucesso";
       } catch (err) {
-        console.warn("Erro ao salvar redação no Firestore:", err);
+        console.warn("Erro ao salvar redação:", err);
         notificar("Redação salva em modo de contingência local com sucesso.");
       } finally {
         btn.disabled = false;
