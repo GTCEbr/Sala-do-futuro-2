@@ -809,17 +809,18 @@ form {
     type="submit"
     class="acessar"
     id="entrar">
-
     Acessar
-
   </button>
-
 </div>
 
-<div style="margin-top: 14px; text-align: center;">
-  <button type="button" id="btnDemoPais" style="background: #eef5fc; border: 1px solid #bdd6ee; color: #1d5a9e; padding: 10px 16px; border-radius: 12px; font-weight: 600; cursor: pointer; width: 100%; font-size: 0.95rem; transition: all 0.2s;">
-    Acessar Portal do Responsável (Demonstração)
-  </button>
+<!-- Atalhos de Responsáveis para Simulação Offline -->
+<div style="margin-top: 20px; padding: 16px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 14px; text-align: left;">
+  <p style="font-size: 0.85rem; font-weight: 700; color: #1d5a9e; margin-bottom: 8px;">
+    👨‍👩‍👧 Selecionar Estudante para Acompanhamento Familiar:
+  </p>
+  <div id="listaEstudantesPais" style="display: flex; flex-direction: column; gap: 6px;">
+    <!-- Preenchido via script -->
+  </div>
 </div>
 
 </form>
@@ -921,113 +922,91 @@ new window.VLibras.Widget(
 import {
   initializeApp
 }
-
 from
 "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 
-
 import {
   getAuth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signInAnonymously
+  signInWithEmailAndPassword
 }
 from
 "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 
+import DBLocal from "./js/db-local.js";
 
 const firebaseConfig = {
-
-  apiKey:
-  "AIzaSyCey_SsTCeHuTKwBaZ-Eo6_7LRa4l-5A80",
-
-  authDomain:
-  "salafuturov2prot.firebaseapp.com",
-
-  projectId:
-  "salafuturov2prot",
-
-  storageBucket:
-  "salafuturov2prot.firebasestorage.app",
-
-  messagingSenderId:
-  "352042722106",
-
-  appId:
-  "1:352042722106:web:395ba7ef400d1421426603",
-
-  measurementId:
-  "G-LW16X3NHH8"
-
+  apiKey: "AIzaSyCey_SsTCeHuTKwBaZ-Eo6_7LRa4l-5A80",
+  authDomain: "salafuturov2prot.firebaseapp.com",
+  projectId: "salafuturov2prot",
+  storageBucket: "salafuturov2prot.firebasestorage.app",
+  messagingSenderId: "352042722106",
+  appId: "1:352042722106:web:395ba7ef400d1421426603",
+  measurementId: "G-LW16X3NHH8"
 };
 
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-/*----------Iniciar Firebase----------*/
+const loginForm = document.getElementById("loginForm");
+const mensagem = document.getElementById("mensagem");
+const entrar = document.getElementById("entrar");
+const listaEstudantesPais = document.getElementById("listaEstudantesPais");
 
-const app =
-initializeApp(firebaseConfig);
+let alunoSelecionadoId = "aluno_1";
 
-const auth =
-getAuth(app);
-
-
-/*----------Elementos----------*/
-
-const loginForm =
-document.getElementById(
-  "loginForm"
-);
-
-const mensagem =
-document.getElementById(
-  "mensagem"
-);
-
-const entrar =
-document.getElementById(
-  "entrar"
-);
-
-const btnDemoPais =
-document.getElementById(
-  "btnDemoPais"
-);
-
-
-/*----------Mensagens----------*/
-
-function mostrarMensagem(
-  tipo,
-  texto
-) {
-
-  mensagem.className =
-  tipo;
-
-  mensagem.textContent =
-  texto;
-
+function mostrarMensagem(tipo, texto) {
+  mensagem.className = tipo;
+  mensagem.textContent = texto;
 }
 
+// Renderiza os estudantes disponíveis para o responsável selecionar e simular
+function renderizarOpcoesEstudantes() {
+  if (!listaEstudantesPais) return;
+  const alunos = DBLocal.obterAlunos();
+  listaEstudantesPais.innerHTML = "";
 
-/*----------Login----------*/
+  alunos.forEach((aluno, index) => {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.style.cssText = `display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: ${index === 0 ? "#eff6ff" : "#ffffff"}; border: 1px solid ${index === 0 ? "#93c5fd" : "#cbd5e1"}; border-radius: 8px; font-size: 0.82rem; color: #1e293b; cursor: pointer; text-align: left; transition: all 0.2s;`;
+    
+    item.innerHTML = `
+      <div>
+        <strong style="color:#1d5a9e;">Responsável por ${aluno.nome}</strong>
+        <span style="display:block; color:#64748b; font-size:0.75rem;">Estudante: ${aluno.nome} • RA: ${aluno.ra}</span>
+      </div>
+      <span style="background:#e0f2fe; color:#0369a1; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 0.75rem;">
+        ${aluno.turma || aluno.sala || "8ºA"}
+      </span>
+    `;
 
-loginForm.addEventListener(
-"submit",
-async function(event) {
+    item.addEventListener("click", () => {
+      alunoSelecionadoId = aluno.id;
+      document.getElementById("email").value = `familia.${aluno.id}@educacao.sp.gov.br`;
+      document.getElementById("senha").value = "123456";
 
+      Array.from(listaEstudantesPais.children).forEach(filho => {
+        filho.style.background = "#ffffff";
+        filho.style.borderColor = "#cbd5e1";
+      });
+      item.style.background = "#eff6ff";
+      item.style.borderColor = "#93c5fd";
+
+      mostrarMensagem("sucesso", `Acompanhando: ${aluno.nome}. Clique em Acessar.`);
+    });
+
+    listaEstudantesPais.appendChild(item);
+  });
+}
+
+renderizarOpcoesEstudantes();
+
+// Login Simulado 100% Offline para Responsáveis
+loginForm.addEventListener("submit", function(event) {
   event.preventDefault();
 
-  const email =
-  document
-  .getElementById("email")
-  .value
-  .trim();
-
-  const senha =
-  document
-  .getElementById("senha")
-  .value;
+  const email = document.getElementById("email").value.trim();
+  const senha = document.getElementById("senha").value;
 
   if (!email) {
     mostrarMensagem("erro", "Por favor, digite seu e-mail cadastrado.");
@@ -1039,109 +1018,28 @@ async function(event) {
     return;
   }
 
-  mostrarMensagem(
-    "carregando",
-    "Entrando..."
-  );
-
-  entrar.disabled =
-  true;
-
-  entrar.textContent =
-  "Acessando...";
-
-  try {
-
-    await
-    signInWithEmailAndPassword(
-      auth,
-      email,
-      senha
-    );
-
-    mostrarMensagem(
-      "sucesso",
-      "Login realizado com sucesso."
-    );
-
-    entrar.textContent =
-    "Sucesso";
-
-    setTimeout(
-    function() {
-
-      window.location.href =
-      "Pais/index.html";
-
-    },
-    600
-    );
-
-  }
-
-  catch(error) {
-
-    console.warn("Tentativa de login responsável:", error.code || error.message);
-
-    if (
-      error.code === "auth/invalid-credential" ||
-      error.code === "auth/user-not-found" ||
-      error.code === "auth/invalid-login-credentials"
-    ) {
-      mostrarMensagem("carregando", "Registrando primeiro acesso do responsável...");
-      try {
-        await createUserWithEmailAndPassword(auth, email, senha);
-        mostrarMensagem("sucesso", "Acesso criado e validado com sucesso! Entrando...");
-        entrar.textContent = "Sucesso";
-        setTimeout(function() {
-          window.location.href = "Pais/index.html";
-        }, 600);
-        return;
-      } catch (createErr) {
-        console.warn("Aviso auto-cadastro responsável:", createErr);
-        if (createErr.code === "auth/email-already-in-use") {
-          mostrarMensagem("erro", "Senha incorreta para este e-mail. Utilize o botão de demonstração caso prefira.");
-        } else {
-          mostrarMensagem("erro", "Não foi possível validar as credenciais. Clique no botão de Demonstração abaixo.");
-        }
-      }
-    } else if (error.code === "auth/wrong-password") {
-      mostrarMensagem(
-        "erro",
-        "Senha incorreta. Verifique os dados digitados."
-      );
-    } else {
-      mostrarMensagem(
-        "erro",
-        "Não foi possível autenticar. Utilize o acesso de demonstração abaixo."
-      );
-    }
-
-    entrar.disabled =
-    false;
-
-    entrar.textContent =
-    "Acessar";
-
-  }
-
-});
-
-btnDemoPais?.addEventListener("click", async function() {
-  mostrarMensagem("carregando", "Acessando portal de demonstração...");
+  mostrarMensagem("carregando", "Validando acesso do responsável no banco local...");
   entrar.disabled = true;
+  entrar.textContent = "Acessando...";
+
   try {
+    const responsavelAutenticado = DBLocal.autenticarResponsavel(email, senha, alunoSelecionadoId);
+    
     try {
-      await signInAnonymously(auth);
-    } catch(e) {
-      console.warn("Aviso login anônimo responsável:", e);
-    }
-    mostrarMensagem("sucesso", "Acesso liberado! Entrando...");
+      signInWithEmailAndPassword(auth, email, senha).catch(() => {});
+    } catch (e) {}
+
+    mostrarMensagem("sucesso", `Acesso liberado para o responsável de ${responsavelAutenticado.alunoNome}! Abrindo Portal...`);
+    entrar.textContent = "Sucesso";
+
     setTimeout(function() {
       window.location.href = "Pais/index.html";
     }, 500);
-  } catch(err) {
-    window.location.href = "Pais/index.html";
+  } catch (err) {
+    console.error("Erro no login do responsável:", err);
+    mostrarMensagem("erro", err.message || "Não foi possível validar o acesso do responsável.");
+    entrar.disabled = false;
+    entrar.textContent = "Acessar";
   }
 });
 

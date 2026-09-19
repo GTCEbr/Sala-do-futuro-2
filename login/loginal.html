@@ -619,10 +619,14 @@
             <button type="submit" class="acessar" id="entrar">Acessar</button>
           </div>
 
-          <div style="margin-top: 14px; text-align: center;">
-            <button type="button" id="btnDemo" style="background: #eef5fc; border: 1px solid #bdd6ee; color: #1d5a9e; padding: 10px 16px; border-radius: 12px; font-weight: 600; cursor: pointer; width: 100%; font-size: 0.95rem; transition: all 0.2s;">
-              Entrar como Aluno Convidado / Demonstração
-            </button>
+          <!-- Seleção de Alunos Cadastrados para Simulação -->
+          <div style="margin-top: 20px; padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; text-align: left;">
+            <p style="font-size: 0.85rem; font-weight: 700; color: #1d5a9e; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+              <span>👤</span> Contas de Estudantes Cadastradas (Clique para preencher):
+            </p>
+            <div id="listaContasAlunos" style="display: flex; flex-direction: column; gap: 6px;">
+              <!-- Preenchido via script -->
+            </div>
           </div>
 
         </form>
@@ -707,7 +711,7 @@
     const loginForm = document.getElementById("loginForm");
     const mensagem = document.getElementById("mensagem");
     const entrar = document.getElementById("entrar");
-    const btnDemo = document.getElementById("btnDemo");
+    const listaContasAlunos = document.getElementById("listaContasAlunos");
 
     function mostrarMensagem(tipo, texto) {
       mensagem.className = "";
@@ -715,57 +719,52 @@
       mensagem.textContent = texto;
     }
 
-    async function salvarPerfilAluno(uid, emailStr, turmaStr) {
-      const pedacos = (emailStr || "estudante").split("@")[0].split(/[._-]/);
-      const nomeFormatado = pedacos[0].charAt(0).toUpperCase() + pedacos[0].slice(1);
-      const sobrenomeFormatado = pedacos[1] ? (pedacos[1].charAt(0).toUpperCase() + pedacos[1].slice(1)) : "Estudante";
+    // Renderiza a lista de estudantes cadastrados para preenchimento ágil
+    function renderizarContasAlunos() {
+      if (!listaContasAlunos) return;
+      const alunos = DBLocal.obterAlunos();
+      listaContasAlunos.innerHTML = "";
 
-      const perfilLocal = {
-        id: uid || "aluno_1",
-        nome: nomeFormatado || "Guilherme",
-        sobrenome: sobrenomeFormatado || "Santos",
-        email: emailStr || "aluno@escola.sp.gov.br",
-        turma: turmaStr || "8º Ano A",
-        tipo: "aluno",
-        ano: 2026,
-        xp: 420,
-        nivel: 4,
-        ra: "000.123.456-7 SP",
-        atualizadoEm: new Date().toISOString()
-      };
+      alunos.forEach(aluno => {
+        const item = document.createElement("button");
+        item.type = "button";
+        item.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.82rem; color: #1e293b; cursor: pointer; text-align: left; transition: all 0.2s;";
+        item.onmouseenter = () => { item.style.background = "#eff6ff"; item.style.borderColor = "#93c5fd"; };
+        item.onmouseleave = () => { item.style.background = "#ffffff"; item.style.borderColor = "#cbd5e1"; };
+        
+        item.innerHTML = `
+          <div>
+            <strong style="color:#1d5a9e;">${aluno.nome}</strong>
+            <span style="display:block; color:#64748b; font-size:0.75rem;">${aluno.email} • RA: ${aluno.ra}</span>
+          </div>
+          <span style="background:#e0f2fe; color:#0369a1; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 0.75rem;">
+            ${aluno.turma || aluno.sala || "8ºA"}
+          </span>
+        `;
 
-      DBLocal.salvarPerfilAluno(perfilLocal);
-      DBLocal.definirUsuarioAtivo(perfilLocal);
+        item.addEventListener("click", () => {
+          document.getElementById("email").value = aluno.email;
+          document.getElementById("turma").value = aluno.turma || aluno.sala || "8ºA";
+          document.getElementById("senha").value = "123456";
+          mostrarMensagem("sucesso", `Credenciais de ${aluno.nome} preenchidas! Clique em Acessar.`);
+        });
 
-      try {
-        const perfilRef = doc(db, "usuarios", uid);
-        const perfilSnap = await getDoc(perfilRef);
-        if (!perfilSnap.exists()) {
-          await setDoc(perfilRef, perfilLocal);
-        }
-      } catch (e) {
-        console.warn("Perfil local em fallback:", e);
-      }
+        listaContasAlunos.appendChild(item);
+      });
     }
 
-    async function realizarAcessoDireto(usuario, emailStr, turmaStr) {
-      await salvarPerfilAluno(usuario.uid, emailStr, turmaStr);
-      mostrarMensagem("sucesso", "Login realizado com sucesso! Carregando a Sala do Futuro...");
-      entrar.textContent = "Sucesso";
-      setTimeout(() => {
-        window.location.href = "APP/Aluno/index.html";
-      }, 600);
-    }
+    renderizarContasAlunos();
 
+    // Login Simulado 100% Offline
     loginForm.addEventListener("submit", async function(event) {
       event.preventDefault();
 
-      const email = document.getElementById("email").value.trim();
+      const emailOuRa = document.getElementById("email").value.trim();
       const senha = document.getElementById("senha").value;
       const turma = document.getElementById("turma")?.value?.trim() || "8ºA";
 
-      if (!email) {
-        mostrarMensagem("erro", "Por favor, digite seu e-mail institucional.");
+      if (!emailOuRa) {
+        mostrarMensagem("erro", "Por favor, digite seu e-mail institucional ou RA.");
         return;
       }
 
@@ -774,81 +773,35 @@
         return;
       }
 
-      mostrarMensagem("carregando", "Autenticando estudante...");
+      mostrarMensagem("carregando", "Autenticando estudante no banco local...");
       entrar.disabled = true;
       entrar.textContent = "Acessando...";
 
       try {
-        // Tenta o login com o e-mail e senha informados
-        const credencial = await signInWithEmailAndPassword(auth, email, senha);
-        await realizarAcessoDireto(credencial.user, email, turma);
-        return;
-      } catch (error) {
-        console.warn("Status de login inicial:", error.code || error.message);
-
-        // Se o usuário ainda não foi cadastrado ou credencial não encontrada,
-        // realiza o registro automático (primeiro acesso do aluno)
-        if (
-          error.code === "auth/invalid-credential" ||
-          error.code === "auth/user-not-found" ||
-          error.code === "auth/invalid-login-credentials"
-        ) {
-          mostrarMensagem("carregando", "Registrando primeiro acesso de estudante...");
-          try {
-            const novaConta = await createUserWithEmailAndPassword(auth, email, senha);
-            await realizarAcessoDireto(novaConta.user, email, turma);
-            return;
-          } catch (createErr) {
-            console.warn("Tentativa de auto-cadastro:", createErr);
-            if (createErr.code === "auth/email-already-in-use") {
-              mostrarMensagem("erro", "Senha incorreta para este e-mail. Caso prefira, use o botão de Demonstração abaixo.");
-            } else if (createErr.code === "auth/weak-password") {
-              mostrarMensagem("erro", "A senha precisa ter pelo menos 6 caracteres.");
-            } else {
-              mostrarMensagem("erro", "Credenciais não validadas. Você pode usar o botão 'Aluno Convidado / Demonstração' abaixo.");
-            }
-          }
-        } else if (error.code === "auth/wrong-password") {
-          mostrarMensagem("erro", "Senha incorreta. Verifique os dados digitados ou utilize o modo de demonstração.");
-        } else if (error.code === "auth/too-many-requests") {
-          mostrarMensagem("erro", "Muitas tentativas simultâneas. Utilize o Acesso de Demonstração abaixo.");
-        } else {
-          mostrarMensagem("erro", "Acesso não autorizado. Você pode usar o modo Demonstração para testar.");
+        // 1. Autenticação simulada imediata e persistente no DBLocal
+        const alunoAutenticado = DBLocal.autenticarAluno(emailOuRa, senha);
+        if (turma) {
+          alunoAutenticado.turma = turma;
+          alunoAutenticado.sala = turma;
+          DBLocal.salvarAluno(alunoAutenticado);
         }
 
-        entrar.disabled = false;
-        entrar.textContent = "Acessar";
-      }
-    });
-
-    btnDemo?.addEventListener("click", async function() {
-      mostrarMensagem("carregando", "Acessando ambiente de demonstração...");
-      entrar.disabled = true;
-      try {
-        let userAtual = null;
+        // 2. Sincronização em segundo plano não-bloqueante com Firebase (se disponível)
         try {
-          const cred = await signInAnonymously(auth);
-          userAtual = cred.user;
-        } catch (anonErr) {
-          console.warn("Login anônimo não habilitado, usando credencial de demonstração:", anonErr);
-          try {
-            const cred = await signInWithEmailAndPassword(auth, "aluno.demo@escola.sp.gov.br", "SalaFuturo2026");
-            userAtual = cred.user;
-          } catch (credErr) {
-            const nova = await createUserWithEmailAndPassword(auth, "aluno.demo@escola.sp.gov.br", "SalaFuturo2026");
-            userAtual = nova.user;
-          }
-        }
-        if (userAtual) {
-          await salvarPerfilAluno(userAtual.uid, "aluno.demo@escola.sp.gov.br", "8ºA");
-        }
-        mostrarMensagem("sucesso", "Acesso liberado com sucesso!");
+          signInWithEmailAndPassword(auth, alunoAutenticado.email, senha).catch(() => {});
+        } catch (e) {}
+
+        mostrarMensagem("sucesso", `Bem-vindo(a), ${alunoAutenticado.nome}! Acessando a Sala do Futuro...`);
+        entrar.textContent = "Sucesso";
+
         setTimeout(() => {
           window.location.href = "APP/Aluno/index.html";
         }, 500);
-      } catch (fallbackErr) {
-        console.warn("Fallback final para o painel do aluno:", fallbackErr);
-        window.location.href = "APP/Aluno/index.html";
+      } catch (error) {
+        console.error("Erro na autenticação:", error);
+        mostrarMensagem("erro", error.message || "Não foi possível validar o acesso.");
+        entrar.disabled = false;
+        entrar.textContent = "Acessar";
       }
     });
 

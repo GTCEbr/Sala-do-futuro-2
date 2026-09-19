@@ -1,92 +1,411 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sala do futuro v2</title>
-    
-    <!-- CSS da página  -->
-    <style>
-        body {
-            background: black;
-            color: white;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            flex-direction: column;
-        }
-        
-        #timer {
-            background: #ff3b30;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            font-weight: bold;
-            z-index: 100;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acesso do Servidor e Docente | Sala do Futuro V2</title>
+  
+  <style>
+    :root {
+      --azul-gov: #1d5a9e;
+      --azul-hover: #15467c;
+      --fundo: #f1f5f9;
+      --card-bg: #ffffff;
+      --texto-primario: #0f172a;
+      --texto-secundario: #475569;
+      --borda: #cbd5e1;
+      --borda-foco: #2563eb;
+      --erro: #dc2626;
+      --sucesso: #16a34a;
+    }
 
-        .card {
-            background: #1a1a1a;
-            padding: 24px;
-            border-radius: 16px;
-            border: 1px solid #333;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        img {
-            max-width: 200px;
-            margin-top: 20px;
-            opacity: 0.8;
-        }
-    </style>
+    body {
+      background-color: var(--fundo);
+      color: var(--texto-primario);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px 16px;
+    }
+
+    .container-login {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 440px;
+      border-radius: 16px;
+      border: 1px solid var(--borda);
+      padding: 32px 28px;
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.08);
+    }
+
+    .cabecalho-login {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .logo-sp {
+      height: 48px;
+      max-width: 100%;
+      object-fit: contain;
+      margin-bottom: 12px;
+    }
+
+    .titulo-login {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--texto-primario);
+      margin-bottom: 4px;
+    }
+
+    .subtitulo-login {
+      font-size: 0.9rem;
+      color: var(--texto-secundario);
+      line-height: 1.4;
+    }
+
+    .campo-form {
+      margin-bottom: 18px;
+    }
+
+    .label-campo {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--texto-primario);
+      margin-bottom: 6px;
+    }
+
+    .input-texto {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--borda);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      color: var(--texto-primario);
+      background: #ffffff;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .input-texto:focus {
+      border-color: var(--borda-foco);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .senha-container {
+      position: relative;
+    }
+
+    .btn-toggle-senha {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      color: var(--texto-secundario);
+      padding: 4px;
+    }
+
+    .mensagem-feedback {
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      display: none;
+      font-weight: 500;
+    }
+
+    .mensagem-feedback.visivel {
+      display: block;
+    }
+
+    .mensagem-feedback.erro {
+      background: #fef2f2;
+      color: var(--erro);
+      border: 1px solid #fecaca;
+    }
+
+    .mensagem-feedback.sucesso {
+      background: #f0fdf4;
+      color: var(--sucesso);
+      border: 1px solid #bbf7d0;
+    }
+
+    .mensagem-feedback.carregando {
+      background: #eff6ff;
+      color: var(--azul-gov);
+      border: 1px solid #bfdbfe;
+    }
+
+    .btn-entrar {
+      width: 100%;
+      background: var(--azul-gov);
+      color: #ffffff;
+      border: none;
+      padding: 13px 20px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-entrar:hover {
+      background: var(--azul-hover);
+    }
+
+    .btn-entrar:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .secao-atalhos {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--borda);
+    }
+
+    .titulo-atalhos {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--azul-gov);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .lista-docentes {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .item-docente {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: #f8fafc;
+      border: 1px solid var(--borda);
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 0.85rem;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .item-docente:hover {
+      background: #eff6ff;
+      border-color: #93c5fd;
+    }
+
+    .rodape-login {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .link-voltar {
+      color: var(--texto-secundario);
+      font-size: 0.85rem;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .link-voltar:hover {
+      color: var(--texto-primario);
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
 
-    <!-- Simulação do tempo ou bomba invisivel -->
-    <div id="timer">10</div>
-
-    <div class="card" style="text-align: center; max-width: 380px; width: 90%;">
-        <h1>Sala do Futuro V2</h1>
-        <p style="color: #bbb; margin-bottom: 20px;">Ambiente integrado para Professores e Servidores da Rede Estadual.</p>
-        
-        <button id="btnAcessarAgora" style="background: #2f80ed; color: #fff; border: none; padding: 12px 24px; border-radius: 12px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; transition: opacity 0.2s;">
-            Acessar Painel do Docente Agora
-        </button>
-
-        <div style="margin-top: 14px;">
-            <a href="../index.html" style="color: #888; font-size: 0.9rem; text-decoration: none;">Voltar para escolha de perfil</a>
-        </div>
-        
-        <!-- Imagem e imagem... -->
-        <img src="../logosp.png" alt="Logo do governo de sp">
+  <main class="container-login" id="containerLogin">
+    <div class="cabecalho-login">
+      <img src="../logosp.png" alt="Governo do Estado de São Paulo" class="logo-sp">
+      <h1 class="titulo-login">Sala do Futuro V2</h1>
+      <p class="subtitulo-login">Portal Oficial de Professores e Servidores da Educação</p>
     </div>
 
-    <!-- Batata do temporizador -->
-    <script>
-        let segundos = 10;
-        
-        document.getElementById('btnAcessarAgora')?.addEventListener('click', () => {
-            window.location.href = "Prof/Index.html";
+    <form id="formLoginDocente" novalidate>
+      <div class="campo-form">
+        <label for="emailDocente" class="label-campo">E-mail institucional do Servidor</label>
+        <input 
+          type="email" 
+          id="emailDocente" 
+          class="input-texto" 
+          placeholder="professor@escola.sp.gov.br" 
+          value="professor@escola.sp.gov.br"
+          required 
+          autocomplete="username"
+        >
+      </div>
+
+      <div class="campo-form">
+        <label for="senhaDocente" class="label-campo">Senha</label>
+        <div class="senha-container">
+          <input 
+            type="password" 
+            id="senhaDocente" 
+            class="input-texto" 
+            placeholder="Digite sua senha de acesso" 
+            value="123456"
+            required 
+            autocomplete="current-password"
+          >
+          <button type="button" id="btnToggleSenha" class="btn-toggle-senha" aria-label="Mostrar ou ocultar senha">👁</button>
+        </div>
+      </div>
+
+      <div id="mensagemDocente" class="mensagem-feedback" role="alert"></div>
+
+      <button type="submit" id="btnAcessarDocente" class="btn-entrar">Acessar Painel do Professor</button>
+
+      <div class="secao-atalhos">
+        <span class="titulo-atalhos">
+          <span>📚</span> Docentes Cadastrados (Clique para selecionar):
+        </span>
+        <div class="lista-docentes" id="listaDocentesCadastrados">
+          <!-- Preenchido dinamicamente via JS -->
+        </div>
+      </div>
+
+      <div class="rodape-login">
+        <a href="../Index.html" class="link-voltar">← Voltar para a página principal</a>
+      </div>
+    </form>
+  </main>
+
+  <script type="module">
+    import DBLocal from "./js/db-local.js";
+
+    const form = document.getElementById("formLoginDocente");
+    const emailInput = document.getElementById("emailDocente");
+    const senhaInput = document.getElementById("senhaDocente");
+    const btnAcessar = document.getElementById("btnAcessarDocente");
+    const mensagem = document.getElementById("mensagemDocente");
+    const listaDocentes = document.getElementById("listaDocentesCadastrados");
+    const btnToggleSenha = document.getElementById("btnToggleSenha");
+
+    // Toggle de visibilidade da senha
+    btnToggleSenha?.addEventListener("click", () => {
+      const tipo = senhaInput.getAttribute("type") === "password" ? "text" : "password";
+      senhaInput.setAttribute("type", tipo);
+    });
+
+    function exibirMensagem(tipo, texto) {
+      mensagem.className = `mensagem-feedback visivel ${tipo}`;
+      mensagem.textContent = texto;
+    }
+
+    // Lista de docentes disponíveis
+    const docentes = [
+      {
+        nome: "Prof. Carlos Eduardo Silva",
+        email: "professor@escola.sp.gov.br",
+        disciplina: "Matemática",
+        turma: "8º Ano A"
+      },
+      {
+        nome: "Profª Helena Ramos",
+        email: "helena.ramos@escola.sp.gov.br",
+        disciplina: "Língua Portuguesa",
+        turma: "8º Ano B"
+      },
+      {
+        nome: "Prof. Marcos Souza",
+        email: "marcos.souza@escola.sp.gov.br",
+        disciplina: "Ciências da Natureza",
+        turma: "9º Ano A"
+      },
+      {
+        nome: "Profª Juliana Paes",
+        email: "juliana.paes@escola.sp.gov.br",
+        disciplina: "História & Geografia",
+        turma: "1º Ano EM"
+      }
+    ];
+
+    function renderizarDocentes() {
+      if (!listaDocentes) return;
+      listaDocentes.innerHTML = "";
+
+      docentes.forEach(doc => {
+        const item = document.createElement("div");
+        item.className = "item-docente";
+        item.innerHTML = `
+          <div>
+            <strong style="color: var(--azul-gov);">${doc.nome}</strong>
+            <span style="display:block; color: var(--texto-secundario); font-size: 0.75rem;">${doc.email} • ${doc.disciplina}</span>
+          </div>
+          <span style="background: #e2e8f0; color: #334155; padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">
+            ${doc.turma}
+          </span>
+        `;
+
+        item.addEventListener("click", () => {
+          emailInput.value = doc.email;
+          senhaInput.value = "123456";
+          exibirMensagem("sucesso", `Docente selecionado: ${doc.nome}. Clique em Acessar.`);
         });
 
-        const intervalo = setInterval(() => {
-            segundos--;
-            const timerElement = document.getElementById('timer');
-            if (timerElement) {
-                timerElement.innerText = segundos;
-            }
-            
-            if (segundos <= 0) {
-                clearInterval(intervalo);
-                window.location.href = "Prof/Index.html";
-            }
-        }, 1000);
-    </script>
+        listaDocentes.appendChild(item);
+      });
+    }
+
+    renderizarDocentes();
+
+    // Login Simulado 100% Offline para Professores
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const email = emailInput.value.trim();
+      const senha = senhaInput.value;
+
+      if (!email) {
+        exibirMensagem("erro", "Por favor, informe seu e-mail institucional de professor.");
+        return;
+      }
+
+      if (senha.length < 6) {
+        exibirMensagem("erro", "A senha precisa ter no mínimo 6 dígitos.");
+        return;
+      }
+
+      exibirMensagem("carregando", "Autenticando servidor docente no banco local...");
+      btnAcessar.disabled = true;
+      btnAcessar.textContent = "Acessando...";
+
+      try {
+        const docenteAutenticado = DBLocal.autenticarProfessor(email, senha);
+        exibirMensagem("sucesso", `Bem-vindo(a), ${docenteAutenticado.nome}! Abrindo Painel do Docente...`);
+        btnAcessar.textContent = "Sucesso";
+
+        setTimeout(() => {
+          window.location.href = "Prof/Index.html";
+        }, 500);
+      } catch (err) {
+        console.error("Erro no login docente:", err);
+        exibirMensagem("erro", err.message || "Erro na validação do servidor.");
+        btnAcessar.disabled = false;
+        btnAcessar.textContent = "Acessar Painel do Professor";
+      }
+    });
+  </script>
 
 </body>
 </html>

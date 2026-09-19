@@ -265,7 +265,7 @@
       </div>
     </div>
     <div class="topo-acoes">
-      <a href="../../Index.html" class="btn-sair">Sair</a>
+      <a href="../loginre.html" id="btnSairPais" class="btn-sair">Sair</a>
     </div>
   </header>
 
@@ -276,35 +276,41 @@
         <h1>Acompanhamento Pedagógico</h1>
         <p>Acompanhe a frequência escolar, notas e recados da instituição de ensino.</p>
       </div>
-      <div class="tag-estudante">
-        <div class="avatar">AL</div>
+      <div class="tag-estudante" id="cardEstudanteVinculado">
+        <div class="avatar" id="avatarEstudante">GS</div>
         <div>
-          <strong>Aluno Conectado</strong>
-          <small style="display:block; color:var(--texto);">Ensino Fundamental / Médio</small>
+          <strong id="nomeEstudanteVinculado">Guilherme Santos</strong>
+          <small id="detalheEstudanteVinculado" style="display:block; color:var(--texto);">8º Ano A • RA: 000.123.456-7 SP</small>
         </div>
       </div>
     </section>
 
+    <!-- Seletor Rápido de Filho/Estudante -->
+    <div style="background: #ffffff; border: 1px solid var(--borda); border-radius: 12px; padding: 12px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+      <span style="font-size: 0.85rem; font-weight: 700; color: var(--azul);">Filhos / Estudantes Cadastrados:</span>
+      <div id="seletorFilhosPais" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+    </div>
+
     <div class="grade-resumo">
       <div class="card-metrica">
         <span>Frequência Bimestral</span>
-        <strong class="status-positivo">94%</strong>
+        <strong class="status-positivo" id="metricaFrequencia">94%</strong>
         <small class="status-positivo">Regular (Meta: ≥ 75%)</small>
       </div>
       <div class="card-metrica">
         <span>Média Geral</span>
-        <strong class="status-positivo">8.4</strong>
+        <strong class="status-positivo" id="metricaMedia">8.4</strong>
         <small class="status-positivo">Acima da média escolar</small>
       </div>
       <div class="card-metrica">
         <span>Atividades Concluídas</span>
-        <strong>18 / 20</strong>
-        <small class="status-atencao">2 pendentes esta semana</small>
+        <strong id="metricaTarefas">18 / 20</strong>
+        <small class="status-atencao" id="detalheTarefas">2 pendentes esta semana</small>
       </div>
       <div class="card-metrica">
         <span>Pontuação Gamificada</span>
-        <strong>420 XP</strong>
-        <small style="color:var(--azul);">Nível 4 • Sala do Futuro</small>
+        <strong id="metricaXp">420 XP</strong>
+        <small style="color:var(--azul);" id="detalheNivel">Nível 4 • Sala do Futuro</small>
       </div>
     </div>
 
@@ -321,7 +327,7 @@
                 <th>Situação</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="corpoTabelaNotas">
               <tr>
                 <td>Língua Portuguesa</td>
                 <td>8.5</td>
@@ -446,6 +452,129 @@
     document.getElementById("pararLeitura")?.addEventListener("click", () => {
       window.speechSynthesis.cancel();
     });
+  </script>
+
+  <script type="module">
+    import DBLocal from "../js/db-local.js";
+
+    let alunoAtualId = null;
+
+    function inicializarPainelPais() {
+      const usuarioAtivo = DBLocal.obterUsuarioAtivo();
+      const alunos = DBLocal.obterAlunos();
+
+      if (usuarioAtivo && usuarioAtivo.tipo === "responsavel" && usuarioAtivo.alunoId) {
+        alunoAtualId = usuarioAtivo.alunoId;
+      } else if (usuarioAtivo && usuarioAtivo.tipo === "aluno") {
+        alunoAtualId = usuarioAtivo.id;
+      } else {
+        alunoAtualId = alunos[0]?.id || "aluno_1";
+      }
+
+      renderizarSeletorFilhos(alunos);
+      carregarDadosEstudante(alunoAtualId);
+    }
+
+    function renderizarSeletorFilhos(alunos) {
+      const seletor = document.getElementById("seletorFilhosPais");
+      if (!seletor) return;
+      seletor.innerHTML = "";
+
+      alunos.forEach(aluno => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        const ativo = aluno.id === alunoAtualId;
+        btn.style.cssText = `padding: 6px 12px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid ${ativo ? "var(--azul)" : "var(--borda)"}; background: ${ativo ? "var(--azul)" : "#ffffff"}; color: ${ativo ? "#ffffff" : "var(--texto-escuro)"};`;
+        btn.textContent = `${aluno.nome} (${aluno.turma || aluno.sala || "8ºA"})`;
+
+        btn.addEventListener("click", () => {
+          alunoAtualId = aluno.id;
+          renderizarSeletorFilhos(alunos);
+          carregarDadosEstudante(aluno.id);
+        });
+
+        seletor.appendChild(btn);
+      });
+    }
+
+    function carregarDadosEstudante(alunoId) {
+      const alunos = DBLocal.obterAlunos();
+      const estudante = alunos.find(a => a.id === alunoId) || alunos[0];
+      if (!estudante) return;
+
+      // Atualiza cabeçalho do aluno
+      const nomeEl = document.getElementById("nomeEstudanteVinculado");
+      const detalheEl = document.getElementById("detalheEstudanteVinculado");
+      const avatarEl = document.getElementById("avatarEstudante");
+
+      if (nomeEl) nomeEl.textContent = estudante.nome;
+      if (detalheEl) detalheEl.textContent = `${estudante.turma || estudante.sala || "8º Ano A"} • RA: ${estudante.ra} • Guilda: ${estudante.guilda || "Águias"}`;
+      if (avatarEl) {
+        const partes = estudante.nome.split(" ");
+        avatarEl.textContent = (partes[0]?.[0] || "A") + (partes[1]?.[0] || "L");
+      }
+
+      // Atualiza métricas
+      const metricaXp = document.getElementById("metricaXp");
+      const detalheNivel = document.getElementById("detalheNivel");
+      if (metricaXp) metricaXp.textContent = `${estudante.xp || 420} XP`;
+      if (detalheNivel) detalheNivel.textContent = `Nível ${estudante.nivel || 4} • Sala do Futuro`;
+
+      // Tarefas entregues e pendentes
+      const todasTarefas = DBLocal.obterTarefas();
+      const entregas = DBLocal.obterEntregas();
+      const entregasAluno = entregas.filter(e => e.alunoId === estudante.id || e.alunoNome === estudante.nome);
+      
+      const metricaTarefas = document.getElementById("metricaTarefas");
+      const detalheTarefas = document.getElementById("detalheTarefas");
+      if (metricaTarefas) metricaTarefas.textContent = `${entregasAluno.length} / ${todasTarefas.length}`;
+      if (detalheTarefas) {
+        const pendentes = Math.max(0, todasTarefas.length - entregasAluno.length);
+        detalheTarefas.textContent = pendentes > 0 ? `${pendentes} tarefas ativas na plataforma` : "Todas as atividades em dia!";
+      }
+
+      // Notas do boletim
+      const todasNotas = DBLocal.obterNotas();
+      const notasAluno = todasNotas.filter(n => n.alunoId === estudante.id || n.alunoNome === estudante.nome);
+      const corpoTabela = document.getElementById("corpoTabelaNotas");
+
+      if (corpoTabela) {
+        if (notasAluno.length > 0) {
+          corpoTabela.innerHTML = "";
+          let somaMedias = 0;
+
+          notasAluno.forEach(nota => {
+            const tr = document.createElement("tr");
+            const media = Number(nota.media || nota.notaTarefas || 8.0);
+            somaMedias += media;
+            const badgeClass = media >= 9.0 ? "badge-azul" : (media >= 6.0 ? "badge-verde" : "badge-vermelho");
+            const situacaoTexto = media >= 9.0 ? "Destaque" : (media >= 6.0 ? "Aprovado" : "Atenção");
+
+            tr.innerHTML = `
+              <td><strong>${nota.componente}</strong></td>
+              <td>${nota.bimestre || "2º Bimestre"}</td>
+              <td>${media.toFixed(1)}</td>
+              <td><span class="badge-nota ${badgeClass}">${situacaoTexto}</span></td>
+            `;
+            corpoTabela.appendChild(tr);
+          });
+
+          const mediaGeral = somaMedias / notasAluno.length;
+          const metricaMedia = document.getElementById("metricaMedia");
+          if (metricaMedia) metricaMedia.textContent = mediaGeral.toFixed(1);
+        }
+      }
+    }
+
+    // Botão Sair limpa a sessão local
+    document.getElementById("btnSairPais")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      DBLocal.fazerLogout();
+      window.location.href = "../loginre.html";
+    });
+
+    // Inicia imediatamente
+    inicializarPainelPais();
   </script>
 </body>
 </html>

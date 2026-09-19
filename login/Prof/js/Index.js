@@ -175,120 +175,77 @@ function gerarCodigo(
 
 
 /*========================================
-LOGIN
+LOGIN E INICIALIZAÇÃO OFFLINE
 ========================================*/
+
+function inicializarPerfilDocenteLocal() {
+  const ativo = DBLocal.obterUsuarioAtivo();
+  if (ativo && (ativo.tipo === "professor" || ativo.tipo === "docente")) {
+    usuarioAtual = {
+      uid: ativo.id,
+      email: ativo.email || "professor@escola.sp.gov.br",
+      nome: ativo.nome || "Prof. Carlos Eduardo Silva"
+    };
+  } else {
+    usuarioAtual = {
+      uid: "prof_1",
+      email: "professor@escola.sp.gov.br",
+      nome: "Prof. Carlos Eduardo Silva"
+    };
+  }
+
+  if ($("professorEmail")) {
+    $("professorEmail").textContent = `${usuarioAtual.nome} | ${usuarioAtual.email}`;
+  }
+
+  if ($("statusFirebase")) {
+    $("statusFirebase").textContent = "Painel do Docente Conectado (100% Offline)";
+  }
+
+  atualizarPainel();
+}
+
+// Inicialização imediata offline
+inicializarPerfilDocenteLocal();
 
 onAuthStateChanged(
 auth,
 async function(user) {
+  if (user) {
+    usuarioAtual = user;
+    if ($("professorEmail")) {
+      $("professorEmail").textContent = user.email || user.uid;
+    }
+    if ($("statusFirebase")) {
+      $("statusFirebase").textContent = "Docente Conectado";
+    }
 
-  if (!user) {
     try {
-      const { signInAnonymously } = await import("https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js");
-      await signInAnonymously(auth);
-      return;
-    } catch (e) {
-      console.warn("Usando perfil demonstrativo de professor:", e);
-      usuarioAtual = { uid: "prof_seduc", email: "professor@escola.sp.gov.br" };
-      if ($("professorEmail")) {
-        $("professorEmail").textContent = "Prof. Coordenador | professor@escola.sp.gov.br";
+      const perfil = await getDoc(doc(db, "usuarios", user.uid));
+      if (perfil.exists()) {
+        const dados = perfil.data();
+        if (dados.nome && $("professorEmail")) {
+          $("professorEmail").textContent = dados.nome + " | " + user.email;
+        }
       }
-      if ($("statusFirebase")) {
-        $("statusFirebase").textContent = "Painel do Docente Conectado";
-      }
-      atualizarPainel();
-      return;
+    } catch (erro) {
+      console.warn("Sincronização em nuvem não disponível, operando em modo offline.");
     }
+    atualizarPainel();
   }
-
-  usuarioAtual = user;
-
-
-  if ($("professorEmail")) {
-
-    $("professorEmail")
-    .textContent =
-    user.email || user.uid;
-
-  }
-
-
-  if ($("statusFirebase")) {
-
-    $("statusFirebase")
-    .textContent =
-    "Firebase conectado";
-
-  }
-
-
-  try {
-
-    const perfil = await getDoc(
-
-      doc(
-        db,
-        "usuarios",
-        user.uid
-      )
-
-    );
-
-
-    if (perfil.exists()) {
-
-      const dados =
-      perfil.data();
-
-
-      if (
-        dados.nome &&
-        $("professorEmail")
-      ) {
-
-        $("professorEmail")
-        .textContent =
-
-        dados.nome +
-        " | " +
-        user.email;
-
-      }
-
-    }
-
-  }
-
-  catch(erro) {
-
-    console.error(
-      erro
-    );
-
-  }
-
-
-  atualizarPainel();
-
 });
 
 
 /*----------Sair----------*/
 
 if ($("sairBtn")) {
-
-  $("sairBtn")
-  .addEventListener(
-  "click",
-  async function() {
-
-    await signOut(auth);
-
-    window.location.href =
-    "../login/logingov.html";
-
+  $("sairBtn").addEventListener("click", async function() {
+    DBLocal.fazerLogout();
+    try {
+      await signOut(auth);
+    } catch(e) {}
+    window.location.href = "../logingov.html";
   });
-
 }
 
 

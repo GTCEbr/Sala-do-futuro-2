@@ -116,29 +116,106 @@ const DADOS_INICIAIS = {
       prazo: "2026-09-25",
       pontosXP: 40,
       status: "ativa",
-      descricao: "Resolva os 4 desafios práticos envolvendo proporcionalidade e equações lineares no cotidiano da escola.",
+      descricao: "Resolva os 4 desafios práticos envolvendo proporcionalidade e equações lineares no cotidiano da escola e do comércio local.",
       anexos: []
     },
     {
       id: "tar_2",
-      titulo: "Crônica Escolar e Expressão Poética",
+      titulo: "Crônica Escolar e Recursos Expressivos",
       componente: "Língua Portuguesa",
       turma: "8º Ano A",
       prazo: "2026-09-28",
-      pontosXP: 40,
+      pontosXP: 45,
       status: "ativa",
-      descricao: "Produza uma crônica breve sobre o cotidiano da sua escola utilizando figuras de linguagem e recursos expressivos.",
+      descricao: "Produza uma crônica breve sobre um momento marcante do dia a dia escolar utilizando figuras de linguagem como metáfora, personificação e ironia.",
       anexos: []
     },
     {
       id: "tar_3",
-      titulo: "Transformações Químicas e Reações",
+      titulo: "Transformações Químicas e Evidências Práticas",
       componente: "Ciências",
-      turma: "8º Ano B",
+      turma: "8º Ano A",
       prazo: "2026-09-30",
       pontosXP: 50,
       status: "ativa",
-      descricao: "Descreva a evidência de reação química no experimento com bicarbonato de sódio e vinagre.",
+      descricao: "Descreva a evidência de reação química no experimento com bicarbonato de sódio e vinagre (liberação de CO2, variação de temperatura e coloração).",
+      anexos: []
+    },
+    {
+      id: "tar_4",
+      titulo: "Revolução Constitucionalista de 1932 em SP",
+      componente: "História",
+      turma: "8º Ano A",
+      prazo: "2026-10-02",
+      pontosXP: 40,
+      status: "ativa",
+      descricao: "Analise cartazes de mobilização popular e cartas históricas de voluntários paulistas durante o movimento cívico de 1932.",
+      anexos: []
+    },
+    {
+      id: "tar_5",
+      titulo: "Bacias Hidrográficas e Urbanização Paulistana",
+      componente: "Geografia",
+      turma: "8º Ano A",
+      prazo: "2026-10-05",
+      pontosXP: 40,
+      status: "ativa",
+      descricao: "Mapeie os principais afluentes do Rio Tietê e discuta os impactos da impermeabilização do solo nas enchentes urbanas de São Paulo.",
+      anexos: []
+    },
+    {
+      id: "tar_6",
+      titulo: "Climate Change & Sustainable School Actions",
+      componente: "Inglês",
+      turma: "8º Ano A",
+      prazo: "2026-10-08",
+      pontosXP: 35,
+      status: "ativa",
+      descricao: "Read the article about renewable energy and write a 5-point action plan in English for energy conservation in your school.",
+      anexos: []
+    },
+    {
+      id: "tar_7",
+      titulo: "Semana de Arte Moderna e Antropofagia Cultural",
+      componente: "Arte",
+      turma: "8º Ano A",
+      prazo: "2026-10-10",
+      pontosXP: 35,
+      status: "ativa",
+      descricao: "Crie um esboço visual ou releitura artística inspirada no Abaporu de Tarsila do Amaral e comente suas cores, linhas e formas.",
+      anexos: []
+    },
+    {
+      id: "tar_8",
+      titulo: "Educação Financeira: Orçamento Familiar Consciente",
+      componente: "Educação Financeira",
+      turma: "8º Ano A",
+      prazo: "2026-10-12",
+      pontosXP: 45,
+      status: "ativa",
+      descricao: "Elabore uma planilha prática simulada com a regra 50-30-20 (gastos essenciais, desejos e poupança) para uma renda hipotética familiar.",
+      anexos: []
+    },
+    {
+      id: "tar_9",
+      titulo: "Geometria Espacial: Prismas e Cilindros no Mundo Real",
+      componente: "Matemática",
+      turma: "8º Ano B",
+      prazo: "2026-09-29",
+      pontosXP: 45,
+      status: "ativa",
+      descricao: "Identifique embalagens cilíndricas e prismáticas em sua rotina e calcule suas áreas laterais e capacidades volumétricas aproximadas.",
+      anexos: []
+    },
+    {
+      id: "tar_10",
+      titulo: "Genética Básica: Leis de Mendel e Hereditariedade",
+      componente: "Ciências",
+      turma: "9º Ano A",
+      prazo: "2026-10-03",
+      pontosXP: 50,
+      status: "ativa",
+      descricao: "Resolva cruzamentos genéticos utilizando o Quadro de Punnett para alelos dominantes e recessivos determinantes de características físicas.",
       anexos: []
     }
   ],
@@ -162,9 +239,42 @@ const DADOS_INICIAIS = {
       alunoNome: "Beatriz Lima",
       turma: "8º Ano A",
       data: "2026-09-17",
-      status: "Entregue",
+      status: "Avaliação",
       nota: 9.5,
       devolutiva: "Resolução clara e precisa com justificativa completa."
+    },
+    {
+      id: "ent_3",
+      tarefaId: "tar_2",
+      alunoId: "aluno_1",
+      alunoNome: "Guilherme Santos",
+      turma: "8º Ano A",
+      data: "2026-09-18",
+      status: "Avaliação",
+      nota: 8.5,
+      devolutiva: "Ótima narrativa, personagens expressivos e uso coerente das figuras de linguagem."
+    },
+    {
+      id: "ent_4",
+      tarefaId: "tar_3",
+      alunoId: "aluno_1",
+      alunoNome: "Guilherme Santos",
+      turma: "8º Ano A",
+      data: "2026-09-18",
+      status: "Entregue",
+      nota: null,
+      devolutiva: "Aguardando devolutiva pedagógica do professor."
+    },
+    {
+      id: "ent_5",
+      tarefaId: "tar_2",
+      alunoId: "aluno_2",
+      alunoNome: "Beatriz Lima",
+      turma: "8º Ano A",
+      data: "2026-09-18",
+      status: "Avaliação",
+      nota: 9.0,
+      devolutiva: "Sensibilidade admirável e excelente riqueza de vocabulário."
     }
   ],
 
@@ -320,6 +430,29 @@ const DADOS_INICIAIS = {
     }
   ],
 
+  comunicados: [
+    {
+      id: "com_1",
+      tipo: "Comunica SP",
+      titulo: "Reunião Pedagógica Bimestral",
+      conteudo: "Convidamos todos os estudantes e familiares para a devolutiva pedagógica e alinhamento das metas de aprendizagem na próxima sexta-feira.",
+      mensagem: "Convidamos todos os estudantes e familiares para a devolutiva pedagógica e alinhamento das metas de aprendizagem na próxima sexta-feira.",
+      autor: "Coordenação Pedagógica",
+      destino: "TODOS",
+      data: "2026-09-17"
+    },
+    {
+      id: "com_2",
+      tipo: "Aviso da Escola",
+      titulo: "Olimpíada de Robótica e Gamificação",
+      conteudo: "As inscrições para a Maratona de Guildas e Programação estão abertas. Procure o coordenador da sua guilda.",
+      mensagem: "As inscrições para a Maratona de Guildas e Programação estão abertas. Procure o coordenador da sua guilda.",
+      autor: "Prof. Carlos Eduardo Silva",
+      destino: "8º Ano A",
+      data: "2026-09-18"
+    }
+  ],
+
   usuarioAtivo: {
     id: "aluno_1",
     nome: "Guilherme Santos",
@@ -359,6 +492,7 @@ class DBLocalMotor {
           entregasSP: parsed.entregasSP || DADOS_INICIAIS.entregasSP,
           notas: parsed.notas || DADOS_INICIAIS.notas,
           ocorrencias: parsed.ocorrencias || DADOS_INICIAIS.ocorrencias,
+          comunicados: parsed.comunicados || DADOS_INICIAIS.comunicados,
           usuarioAtivo: parsed.usuarioAtivo || DADOS_INICIAIS.usuarioAtivo
         };
       }
@@ -419,6 +553,36 @@ class DBLocalMotor {
     this.dados.usuarios = this.dados.usuarios.filter(u => u.id !== id);
     this.salvar();
     return true;
+  }
+
+  // --- PERFIL DO ALUNO (COMPATIBILIDADE TAREFA SP E REDAÇÃO SP) ---
+  obterPerfilAluno() {
+    this.carregar();
+    const ativo = this.obterUsuarioAtivo();
+    if (ativo && (ativo.tipo === "aluno" || !ativo.tipo)) {
+      return ativo;
+    }
+    try {
+      const salvo = localStorage.getItem("perfilAluno") || localStorage.getItem("usuarioLogado");
+      if (salvo) {
+        const parsed = JSON.parse(salvo);
+        if (parsed && (parsed.tipo === "aluno" || !parsed.tipo)) return parsed;
+      }
+    } catch (e) {}
+    const alunos = this.obterAlunos();
+    return alunos[0] || null;
+  }
+
+  salvarPerfilAluno(perfil) {
+    if (!perfil) return null;
+    this.carregar();
+    const salvo = this.salvarAluno(perfil);
+    this.definirUsuarioAtivo(salvo);
+    try {
+      localStorage.setItem("perfilAluno", JSON.stringify(salvo));
+      localStorage.setItem("usuarioLogado", JSON.stringify(salvo));
+    } catch (e) {}
+    return salvo;
   }
 
   // --- SALAS ---
@@ -729,6 +893,208 @@ class DBLocalMotor {
     return true;
   }
 
+  // --- COMUNICADOS E AVISOS ---
+  obterComunicados() {
+    this.carregar();
+    return this.dados.comunicados || DADOS_INICIAIS.comunicados || [];
+  }
+
+  salvarComunicado(comunicado) {
+    this.carregar();
+    if (!this.dados.comunicados) this.dados.comunicados = [];
+    const id = comunicado.id || `com_${Date.now()}`;
+    const idx = this.dados.comunicados.findIndex(c => c.id === id);
+    const registro = {
+      data: new Date().toISOString().split("T")[0],
+      autor: "Coordenação Pedagógica",
+      destino: "TODOS",
+      tipo: "Comunica SP",
+      ...comunicado,
+      id
+    };
+    if (idx !== -1) {
+      this.dados.comunicados[idx] = { ...this.dados.comunicados[idx], ...registro };
+    } else {
+      this.dados.comunicados.unshift(registro);
+    }
+    this.salvar();
+    return registro;
+  }
+
+  excluirComunicado(id) {
+    this.carregar();
+    if (!this.dados.comunicados) return true;
+    this.dados.comunicados = this.dados.comunicados.filter(c => c.id !== id);
+    this.salvar();
+    return true;
+  }
+
+  // --- ALIASES PARA DOCENTES E SALA DE AULA ---
+  obterTarefasDocentes() {
+    return this.obterTarefas();
+  }
+
+  salvarTarefaDocente(tarefa) {
+    return this.salvarTarefa(tarefa);
+  }
+
+  obterEntregasDocentes() {
+    return this.obterEntregas();
+  }
+
+  salvarEntregaDocente(entrega) {
+    return this.salvarEntrega(entrega);
+  }
+
+  salvarAvaliacaoDocente(dados) {
+    this.carregar();
+    const entregas = this.obterEntregas();
+    const idx = entregas.findIndex(e => 
+      e.id === dados.id || 
+      (e.tarefaId === dados.tarefaId && e.alunoId === dados.alunoId)
+    );
+    let registro;
+    if (idx !== -1) {
+      entregas[idx] = {
+        ...entregas[idx],
+        ...dados,
+        status: "Avaliação",
+        atualizadoEm: new Date().toISOString()
+      };
+      registro = entregas[idx];
+    } else {
+      registro = this.salvarEntrega({
+        ...dados,
+        status: "Avaliação"
+      });
+    }
+
+    // Atualiza ou insere também na lista de notas se houver componente
+    if (dados.nota !== undefined && dados.nota !== null && dados.componente) {
+      this.salvarNota({
+        alunoId: dados.alunoId,
+        alunoNome: dados.alunoNome || "Estudante",
+        alunoRA: dados.alunoRA || "000.123.456-7 SP",
+        turma: dados.turma || "8º Ano A",
+        componente: dados.componente,
+        bimestre: dados.bimestre || "2º Bimestre",
+        notaTarefas: Number(dados.nota),
+        media: Number(dados.nota),
+        situacao: Number(dados.nota) >= 6.0 ? "Aprovado" : "Em Recuperação",
+        observacoes: dados.devolutiva || "Avaliação de atividade prática realizada pelo professor."
+      });
+    }
+
+    this.salvar();
+    return registro;
+  }
+
+  // --- AUTENTICAÇÃO SIMULADA 100% OFFLINE ---
+  autenticarAluno(identificador, senha = "") {
+    this.carregar();
+    const idLimpo = String(identificador || "").trim().toLowerCase();
+    if (!idLimpo) throw new Error("Por favor, informe seu e-mail institucional ou RA.");
+
+    const alunos = this.obterAlunos();
+    let encontrado = alunos.find(a => 
+      (a.email && a.email.toLowerCase() === idLimpo) ||
+      (a.ra && a.ra.toLowerCase().replace(/[^a-z0-9]/g, "") === idLimpo.replace(/[^a-z0-9]/g, "")) ||
+      (a.nome && a.nome.toLowerCase() === idLimpo) ||
+      (a.id && a.id.toLowerCase() === idLimpo)
+    );
+
+    if (!encontrado) {
+      // Auto-cadastro local para simulação imediata com qualquer e-mail/RA
+      const pedacos = idLimpo.split("@")[0].split(/[._-]/);
+      const primeiroNome = pedacos[0] ? pedacos[0].charAt(0).toUpperCase() + pedacos[0].slice(1) : "Estudante";
+      const sobrenome = pedacos[1] ? pedacos[1].charAt(0).toUpperCase() + pedacos[1].slice(1) : "Paulista";
+      
+      encontrado = {
+        id: `aluno_${Date.now()}`,
+        nome: `${primeiroNome} ${sobrenome}`,
+        email: idLimpo.includes("@") ? idLimpo : `${idLimpo}@aluno.sp.gov.br`,
+        ra: idLimpo.includes("@") ? `000.${Math.floor(100+Math.random()*900)}.${Math.floor(100+Math.random()*900)}-0 SP` : idLimpo,
+        turma: "8º Ano A",
+        sala: "8º Ano A",
+        guilda: "Águias da Sabedoria",
+        xp: 380,
+        nivel: 3,
+        tipo: "aluno",
+        ano: 2026
+      };
+      this.salvarAluno(encontrado);
+    }
+
+    this.definirUsuarioAtivo(encontrado);
+    this.salvarPerfilAluno(encontrado);
+    try {
+      localStorage.setItem("usuarioLogado", JSON.stringify(encontrado));
+    } catch (e) {}
+
+    return encontrado;
+  }
+
+  autenticarProfessor(email, senha = "") {
+    this.carregar();
+    const emailLimpo = String(email || "").trim().toLowerCase();
+    const usuarios = this.dados.usuarios || [];
+    let prof = usuarios.find(u => 
+      u.tipo === "professor" && 
+      ((u.email && u.email.toLowerCase() === emailLimpo) || (u.nome && u.nome.toLowerCase().includes(emailLimpo)))
+    );
+
+    if (!prof) {
+      prof = usuarios.find(u => u.tipo === "professor") || {
+        id: "prof_1",
+        nome: "Prof. Carlos Eduardo Silva",
+        email: emailLimpo || "professor@escola.sp.gov.br",
+        disciplina: "Matemática",
+        cargo: "Docente e Coordenador",
+        tipo: "professor"
+      };
+    }
+
+    this.definirUsuarioAtivo(prof);
+    try {
+      localStorage.setItem("usuarioLogado", JSON.stringify(prof));
+    } catch (e) {}
+
+    return prof;
+  }
+
+  autenticarResponsavel(email, senha = "", alunoId = "aluno_1") {
+    this.carregar();
+    const emailLimpo = String(email || "").trim().toLowerCase();
+    const alunos = this.obterAlunos();
+    const alunoVinculado = alunos.find(a => a.id === alunoId) || alunos[0];
+
+    const responsavel = {
+      id: `resp_${Date.now()}`,
+      nome: `Responsável por ${alunoVinculado.nome}`,
+      email: emailLimpo || `responsavel.${alunoVinculado.id}@familia.sp.gov.br`,
+      tipo: "responsavel",
+      alunoId: alunoVinculado.id,
+      alunoNome: alunoVinculado.nome,
+      alunoRA: alunoVinculado.ra,
+      turma: alunoVinculado.turma || alunoVinculado.sala
+    };
+
+    this.definirUsuarioAtivo(responsavel);
+    try {
+      localStorage.setItem("usuarioLogado", JSON.stringify(responsavel));
+    } catch (e) {}
+
+    return responsavel;
+  }
+
+  fazerLogout() {
+    this.definirUsuarioAtivo(null);
+    try {
+      localStorage.removeItem("usuarioLogado");
+    } catch (e) {}
+    return true;
+  }
+
   // --- USUÁRIO ATIVO ---
   obterUsuarioAtivo() {
     this.carregar();
@@ -747,6 +1113,10 @@ class DBLocalMotor {
     this.dados = JSON.parse(JSON.stringify(DADOS_INICIAIS));
     this.salvar();
     return this.dados;
+  }
+
+  resetarParaPadrao() {
+    return this.resetarDados();
   }
 }
 
