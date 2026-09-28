@@ -196,6 +196,15 @@
       📝 Lançar Notas
     </button>
 
+    <button
+      class="menu-botao"
+      data-pagina="ocorrencias"
+      id="menuOcorrenciasBtn"
+      style="background:#fefce8; color:#a16207; border:1px solid #fde047; font-weight:600;"
+    >
+      📋 Ocorrências & Visto dos Pais
+    </button>
+
     <a
       href="../Adm/index.html"
       class="menu-botao"
@@ -270,12 +279,10 @@
 
 
   <div
-    class="status-firebase"
-    id="statusFirebase"
+    style="padding: 8px 14px; border-radius: 999px; background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;"
+    id="statusBancoLocal"
   >
-
-    Firebase: verificando...
-
+    🟢 Banco Local: 100% Conectado
   </div>
 
 
@@ -368,7 +375,7 @@ INICIO
 
     Ao salvar a aula,
     cada linha vira uma tarefa
-    no Firebase com seu proprio ID.
+    no banco local com seu proprio ID.
 
   </p>
 
@@ -835,7 +842,7 @@ AULAS E TAREFAS
         <span>📂</span> Importar Atividades em JSON / Catálogo Padrão SP
       </h2>
       <p style="color: #0284c7;">
-        Suba um arquivo <code>.json</code> com suas atividades prontas ou carregue o catálogo padrão do Currículo Paulista para publicar em lote no Firebase.
+        Suba um arquivo <code>.json</code> com suas atividades prontas ou carregue o catálogo padrão do Currículo Paulista para publicar em lote no Banco Local.
       </p>
     </div>
     <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -866,8 +873,8 @@ AULAS E TAREFAS
       <strong id="contadorAtividadesJson" style="color:#0f172a; font-size:1rem;">Atividades Encontradas</strong>
       <div style="display:flex; gap:10px;">
         <button type="button" class="botao" id="btnSelecionarTodasJson">Selecionar Todas</button>
-        <button type="button" class="botao primario" id="btnPublicarJsonFirestore" style="background:#16a34a; border-color:#16a34a;">
-          🚀 Publicar Selecionadas no Firestore
+        <button type="button" class="botao primario" id="btnPublicarJsonLocal" style="background:#16a34a; border-color:#16a34a;">
+          🚀 Publicar Selecionadas no Banco Local
         </button>
       </div>
     </div>
@@ -984,8 +991,8 @@ AULAS E TAREFAS
       <button type="button" class="botao" id="iaBtnCopiarTexto" style="background:#f1f5f9;">
         <span>📋</span> Copiar Conteúdo
       </button>
-      <button type="button" class="botao primario" id="iaBtnSalvarFirestore" style="background:#16a34a; border-color:#16a34a;">
-        <span>💾</span> Publicar e Disponibilizar no Firestore para Alunos
+      <button type="button" class="botao primario" id="iaBtnSalvarLocal" style="background:#16a34a; border-color:#16a34a;">
+        <span>💾</span> Publicar e Disponibilizar no Banco Local para Alunos
       </button>
     </div>
   </div>
@@ -1117,7 +1124,7 @@ ENTREGAS
 
   <input
     id="entregaTarefaId"
-    placeholder="Cole o ID gerado pelo Firebase"
+    placeholder="Ex: tar_1 ou selecione da lista"
   >
 
 </div>
@@ -2350,6 +2357,141 @@ NOTAS DAS AVALIAÇÕES
 </section>
 
 <!========================================
+LIVRO DE OCORRÊNCIAS & VISTO DOS PAIS
+========================================>
+<section
+  class="pagina"
+  id="pagina-ocorrencias"
+>
+  <div class="cartao" style="margin-bottom: 24px; border-left: 5px solid #d97706;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+      <div>
+        <h2 style="font-size:1.4rem; color:#b45309; margin-bottom:6px; display:flex; align-items:center; gap:8px;">
+          <span>📋</span> Livro de Ocorrências Pedagógicas & Ciência dos Pais
+        </h2>
+        <p style="color:#475569; font-size:0.95rem; margin:0;">
+          Registre advertências, observações comportamentais, atrasos ou elogios com solicitação de <strong>Assinatura Digital de Ciência</strong> para os responsáveis diretamente no Portal dos Pais.
+        </p>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <span class="badge" id="badgeOcorrenciasPendentesProf" style="background:#fef3c7; color:#92400e; font-size:12px; padding:6px 12px; border-radius:20px; font-weight:bold;">
+          ⏳ 0 aguardando assinatura
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grade" style="display:grid; grid-template-columns: minmax(320px, 1fr) minmax(360px, 1.4fr); gap: 20px; align-items:start;">
+    
+    <!-- Formulário de Registro de Ocorrência -->
+    <article class="card">
+      <h3 style="display:flex; align-items:center; gap:8px; margin-bottom:14px; color:#1e293b;">
+        <span>✍️</span> Registrar Nova Ocorrência
+      </h3>
+      
+      <form id="formNovaOcorrenciaProf" style="display:flex; flex-direction:column; gap:12px;">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+          <div>
+            <label for="ocTurmaSelect" style="display:block; font-size:12px; font-weight:bold; margin-bottom:4px; color:#334155;">Turma / Sala *</label>
+            <select id="ocTurmaSelect" required style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid #cbd5e1; font-size:14px;">
+              <option value="8º Ano A">8º Ano A</option>
+              <option value="8º Ano B">8º Ano B</option>
+              <option value="9º Ano A">9º Ano A</option>
+              <option value="9º Ano B">9º Ano B</option>
+            </select>
+          </div>
+          <div>
+            <label for="ocDataInput" style="display:block; font-size:12px; font-weight:bold; margin-bottom:4px; color:#334155;">Data do Fato *</label>
+            <input type="date" id="ocDataInput" required style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid #cbd5e1; font-size:14px;">
+          </div>
+        </div>
+
+        <div>
+          <label for="ocAlunoSelect" style="display:block; font-size:12px; font-weight:bold; margin-bottom:4px; color:#334155;">Estudante Envolvido *</label>
+          <select id="ocAlunoSelect" required style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid #cbd5e1; font-size:14px;">
+            <option value="">Selecione o estudante...</option>
+          </select>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:10px;">
+          <div>
+            <label for="ocTipoSelect" style="display:block; font-size:12px; font-weight:bold; margin-bottom:4px; color:#334155;">Natureza da Ocorrência *</label>
+            <select id="ocTipoSelect" required style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid #cbd5e1; font-size:14px;">
+              <option value="Não realização de tarefas no Tarefas SP">Não realização de tarefas no Tarefas SP</option>
+              <option value="Atraso no início da aula / período">Atraso no início da aula / período</option>
+              <option value="Uso indevido de aparelho celular / fone">Uso indevido de aparelho celular / fone</option>
+              <option value="Indisciplina / Conflito em sala de aula">Indisciplina / Conflito em sala de aula</option>
+              <option value="Dificuldade de Aprendizagem / Apoio">Dificuldade de Aprendizagem / Apoio</option>
+              <option value="Elogio e Mérito Cidadão">Elogio e Mérito Cidadão</option>
+              <option value="Outra ocorrência pedagógica">Outra ocorrência pedagógica</option>
+            </select>
+          </div>
+          <div>
+            <label for="ocGravidadeSelect" style="display:block; font-size:12px; font-weight:bold; margin-bottom:4px; color:#334155;">Gravidade *</label>
+            <select id="ocGravidadeSelect" required style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid #cbd5e1; font-size:14px;">
+              <option value="Leve">Leve</option>
+              <option value="Média" selected>Média</option>
+              <option value="Alta">Alta</option>
+              <option value="Elogio">Elogio / Mérito</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label for="ocDescricaoInput" style="display:block; font-size:12px; font-weight:bold; margin-bottom:4px; color:#334155;">Relato Circunstanciado dos Fatos *</label>
+          <textarea id="ocDescricaoInput" rows="3" required placeholder="Descreva objetivamente a situação ocorrida com o estudante em sala..." style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; font-family:inherit; font-size:13px;"></textarea>
+        </div>
+
+        <div>
+          <label for="ocProvidenciasInput" style="display:block; font-size:12px; font-weight:bold; margin-bottom:4px; color:#334155;">Providências Adotadas pelo Docente *</label>
+          <textarea id="ocProvidenciasInput" rows="2" required placeholder="Ex.: Conversa de mediação, notificação formal e solicitação de ciência aos responsáveis." style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; font-family:inherit; font-size:13px;"></textarea>
+        </div>
+
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px;">
+          <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; cursor:pointer; color:#1e293b;">
+            <input type="checkbox" id="ocRequerAssinatura" checked style="width:16px; height:16px;">
+            <span>Solicitar Ciência e Assinatura Digital do Responsável</span>
+          </label>
+          <p style="margin:4px 0 0 24px; font-size:11px; color:#64748b;">
+            O responsável receberá um alerta imediato no Portal dos Pais para assinar digitalmente e deixar parecer.
+          </p>
+        </div>
+
+        <button type="submit" id="btnSalvarOcorrenciaProf" style="background:#d97706; color:#ffffff; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 10px rgba(217,119,6,0.25);">
+          <span>💾</span> Registrar Ocorrência e Notificar Responsáveis
+        </button>
+      </form>
+    </article>
+
+    <!-- Lista de Ocorrências Registradas -->
+    <article class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+        <h3 style="margin:0; color:#1e293b;">Histórico de Ocorrências & Assinaturas</h3>
+        <div style="display:flex; gap:8px;">
+          <select id="ocFiltroTurma" style="padding:6px 8px; border-radius:6px; border:1px solid #cbd5e1; font-size:12px;">
+            <option value="TODAS">Todas as Turmas</option>
+            <option value="8º Ano A">8º Ano A</option>
+            <option value="8º Ano B">8º Ano B</option>
+            <option value="9º Ano A">9º Ano A</option>
+            <option value="9º Ano B">9º Ano B</option>
+          </select>
+          <select id="ocFiltroStatus" style="padding:6px 8px; border-radius:6px; border:1px solid #cbd5e1; font-size:12px;">
+            <option value="TODOS">Todos os Status</option>
+            <option value="PENDENTE">⚠️ Pendente de Assinatura</option>
+            <option value="ASSINADO">✅ Assinado pelos Pais</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="listaOcorrenciasProf" style="display:flex; flex-direction:column; gap:12px; max-height:600px; overflow-y:auto; padding-right:4px;">
+        <p class="vazio">Carregando ocorrências...</p>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!========================================
 GERADOR INTELIGENTE DE ATIVIDADES COM IA (GEMINI)
 ========================================>
 <section
@@ -2483,8 +2625,8 @@ GERADOR INTELIGENTE DE ATIVIDADES COM IA (GEMINI)
           <span>🔊</span> Ouvir Atividade com Leitor de Voz
         </button>
 
-        <button type="button" id="iaBtnSalvarFirestore" style="background:#16a34a; color:#ffffff; border:none; padding:12px; border-radius:8px; font-weight:bold; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 12px rgba(22,163,74,0.25);">
-          <span>💾</span> Publicar e Disponibilizar no Firestore para Alunos
+        <button type="button" id="iaBtnSalvarLocal" style="background:#16a34a; color:#ffffff; border:none; padding:12px; border-radius:8px; font-weight:bold; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 12px rgba(22,163,74,0.25);">
+          <span>💾</span> Publicar e Disponibilizar no Banco Local para Alunos
         </button>
 
         <button type="button" id="iaBtnCopiarTexto" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; padding:8px; border-radius:6px; font-size:0.85rem; cursor:pointer;">

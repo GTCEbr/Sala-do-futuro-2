@@ -34,7 +34,7 @@ MENU LATERAL
     <button class="menu-botao" data-pagina="notas"><span class="menu-icone">N</span>Boletim e Avaliações</button>
     <button class="menu-botao" data-pagina="agenda"><span class="menu-icone">A</span>Agenda</button>
     <button class="menu-botao" data-pagina="mensagens"><span class="menu-icone">M</span>Mensagens <span class="contador-menu" id="contadorMensagensMenu">0</span></button>
-    <button class="menu-botao" data-pagina="progresso"><span class="menu-icone">XP</span>Progressão</button>
+    <button class="menu-botao" data-pagina="progresso"><span class="menu-icone">🏆</span>Rankings & Guildas</button>
     <button class="menu-botao" data-pagina="pesquisa"><span class="menu-icone">P</span>Pesquisa</button>
     <button class="menu-botao" data-pagina="carteirinha"><span class="menu-icone">C</span>Carteirinha do estudante</button>
     <button class="menu-botao" data-pagina="perfil"><span class="menu-icone">U</span>Perfil</button>
@@ -68,6 +68,29 @@ CONTEUDO
     <strong id="nomeTopo">Aluno</strong>
   </div>
 </header>
+
+<!-- Barra de Conectividade e Modo Offline Inteligente -->
+<div class="barra-offline-aluno" id="barraOfflineAluno" style="background:#ffffff; border-bottom:1px solid #e2e8f0; padding:10px 20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; font-size:13px;">
+  <div style="display:flex; align-items:center; gap:8px;">
+    <span class="ponto-rede" id="pontoRedeAluno" style="width:10px; height:10px; border-radius:50%; background:#10b981; display:inline-block; box-shadow:0 0 0 3px rgba(16,185,129,0.2);"></span>
+    <strong id="textoStatusRedeAluno" style="color:#0f172a;">Rede Conectada (Online)</strong>
+    <span id="badgeFilaOfflineAluno" style="background:#f1f5f9; color:#475569; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">
+      0 tarefas na fila de sync
+    </span>
+  </div>
+
+  <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+    <button type="button" id="btnBaixarPacoteOffline" style="background:#f8fafc; border:1px solid #cbd5e1; color:#334155; padding:6px 12px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px;" title="Baixar todas as atividades para resolver sem internet">
+      <span>📥</span> Baixar Tarefas Offline
+    </button>
+    <button type="button" id="btnToggleModoOffline" style="background:#eff6ff; border:1px solid #93c5fd; color:#1d4ed8; padding:6px 12px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px;" title="Testar funcionamento sem sinal de internet">
+      <span>📡</span> Simular Modo Offline
+    </button>
+    <button type="button" id="btnSincronizarFilaManual" style="background:#10b981; border:none; color:#ffffff; padding:6px 12px; border-radius:6px; font-size:12px; font-weight:700; cursor:pointer; display:none; align-items:center; gap:6px;">
+      <span>🔄</span> Sincronizar Fila (<span id="contBtnSync">0</span>)
+    </button>
+  </div>
+</div>
 
 <!========================================
 INICIO
@@ -148,17 +171,65 @@ ATIVIDADES INTERNAS
 <section class="pagina" id="pagina-tarefas">
   <div class="pagina-cabecalho">
     <h1>Atividades</h1>
-    <p>Atividades internas publicadas pelos professores.</p>
+    <p>Atividades interativas curriculares no padrão CMSP / SEDUC-SP.</p>
   </div>
 
   <div class="filtros-linha">
     <button class="filtro-tarefa ativo" data-filtro-tarefa="pendentes">Pendentes</button>
     <button class="filtro-tarefa" data-filtro-tarefa="entregues">Entregues</button>
+    <button class="filtro-tarefa" data-filtro-tarefa="offline">💾 Disponíveis Offline</button>
+    <button class="filtro-tarefa" data-filtro-tarefa="fila">⏳ Fila Offline (<span id="contFilaOffline">0</span>)</button>
     <button class="filtro-tarefa" data-filtro-tarefa="todas">Todas</button>
   </div>
 
   <div id="listaTarefas" class="lista-cartoes">
     <p class="vazio">Carregando atividades...</p>
+  </div>
+</section>
+
+<!========================================
+EXECUTAR ATIVIDADE (CMSP RUNNER)
+========================================>
+<section class="pagina" id="pagina-executar-tarefa">
+  <div class="cmsp-runner-topo">
+    <div class="cmsp-runner-nav-topo">
+      <button class="cmsp-btn-voltar" id="cmspBtnVoltar" type="button">
+        <span aria-hidden="true">‹</span> Voltar para Atividades
+      </button>
+      <span class="cmsp-selo-seduc">SEDUC-SP • CMSP Interativo</span>
+    </div>
+
+    <div class="cmsp-info-tarefa">
+      <div class="cmsp-tags-tarefa">
+        <span class="cmsp-badge disciplina" id="cmspComponente">Componente</span>
+        <span class="cmsp-badge turma" id="cmspTurma">Turma</span>
+        <span class="cmsp-badge xp" id="cmspXp">0 XP</span>
+        <span class="cmsp-badge prazo" id="cmspPrazo">Prazo</span>
+      </div>
+      <h1 class="cmsp-titulo-tarefa" id="cmspTitulo">Título da Atividade</h1>
+      <p class="cmsp-desc-tarefa" id="cmspDescricao">Descrição da atividade</p>
+      <div id="bannerCmspOffline" style="display:none; background:#fffbeb; border:1px solid #fde68a; color:#92400e; padding:8px 12px; border-radius:8px; margin-top:10px; font-size:12px; font-weight:600; align-items:center; gap:8px;">
+        <span>📡</span> <strong>Modo Offline Ativo:</strong> Você pode responder e finalizar a atividade normalmente. Os pontos e a entrega serão salvos com segurança no seu dispositivo e sincronizados assim que a internet for restabelecida.
+      </div>
+    </div>
+  </div>
+
+  <div class="cmsp-regua-wrapper">
+    <div class="cmsp-regua-label">
+      <span>Progresso da atividade</span>
+      <strong id="cmspProgressoTexto">0 de 6 respondidas</strong>
+    </div>
+    <div class="cmsp-regua-questoes" id="cmspReguaQuestoes" role="tablist" aria-label="Navegação entre questões">
+      <!-- Gerado dinamicamente: 01, 02, 03... -->
+    </div>
+  </div>
+
+  <div id="cmspContainerQuestao">
+    <!-- Renderizado dinamicamente pelo runner -->
+  </div>
+
+  <div id="cmspContainerResultado" style="display: none;">
+    <!-- Renderizado dinamicamente com gabarito comentado -->
   </div>
 </section>
 
@@ -303,6 +374,44 @@ PROGRESSAO
     <div class="barra-xp" aria-label="Progresso de XP"><div id="barraXpPreenchida"></div></div>
     <p id="textoXp">0 de 100 XP</p>
   </div>
+
+  <div class="grade-dupla" style="margin-top: 18px;">
+    <article class="card-conteudo" id="cardMinhaGuilda">
+      <h2>🛡️ Minha Guilda</h2>
+      <div id="conteudoMinhaGuilda">
+        <p class="vazio">Carregando informações da guilda...</p>
+      </div>
+    </article>
+
+    <article class="card-conteudo" id="cardRankingGuildas">
+      <h2>🏆 Ranking Geral de Guildas (Tarefas SP)</h2>
+      <div id="conteudoRankingGuildas">
+        <p class="vazio">Carregando ranking de guildas...</p>
+      </div>
+    </article>
+  </div>
+
+  <article class="card-conteudo" style="margin-top: 18px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+      <h2 style="margin:0;">🥇 Ranking da Turma (XP em Atividades)</h2>
+      <span style="font-size:12px; color:#64748b;">Pontos somados ao resolver o Tarefas SP</span>
+    </div>
+    <div class="tabela-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Posição</th>
+            <th>Estudante</th>
+            <th>Guilda</th>
+            <th>XP Acumulado</th>
+          </tr>
+        </thead>
+        <tbody id="tabelaRankingTurma">
+          <tr><td colspan="4">Carregando ranking da turma...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </article>
 </section>
 
 <!========================================

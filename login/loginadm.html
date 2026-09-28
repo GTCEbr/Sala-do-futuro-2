@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acesso da Gestão Escolar e Coordenação | Sala do Futuro V2</title>
+  
+  <style>
+    :root {
+      --azul-gov: #1d5a9e;
+      --azul-escuro: #0f3a6e;
+      --azul-hover: #15467c;
+      --fundo: #f8fafc;
+      --card-bg: #ffffff;
+      --texto-primario: #0f172a;
+      --texto-secundario: #475569;
+      --borda: #cbd5e1;
+      --borda-foco: #2563eb;
+      --ouro-gestao: #b45309;
+      --erro: #dc2626;
+      --sucesso: #16a34a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--fundo);
+      color: var(--texto-primario);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px 16px;
+      background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    .container-login {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 480px;
+      border-radius: 18px;
+      border: 1px solid var(--borda);
+      padding: 36px 30px;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container-login::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #1d5a9e, #b45309, #2563eb);
+    }
+
+    .cabecalho-login {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .logo-sp {
+      height: 52px;
+      max-width: 100%;
+      object-fit: contain;
+      margin-bottom: 12px;
+    }
+
+    .titulo-login {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--texto-primario);
+      margin-bottom: 4px;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitulo-login {
+      font-size: 0.92rem;
+      color: var(--texto-secundario);
+      line-height: 1.45;
+    }
+
+    .badge-gestao {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-top: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .campo-form {
+      margin-bottom: 18px;
+    }
+
+    .label-campo {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--texto-primario);
+      margin-bottom: 6px;
+    }
+
+    .input-texto {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--borda);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      color: var(--texto-primario);
+      background: #ffffff;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .input-texto:focus {
+      border-color: var(--borda-foco);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .senha-container {
+      position: relative;
+    }
+
+    .btn-toggle-senha {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--texto-secundario);
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 4px;
+    }
+
+    .btn-entrar {
+      width: 100%;
+      background: var(--azul-gov);
+      color: #ffffff;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 4px 12px rgba(29, 90, 158, 0.25);
+      margin-top: 10px;
+    }
+
+    .btn-entrar:hover {
+      background: var(--azul-hover);
+    }
+
+    .btn-entrar:active {
+      transform: scale(0.99);
+    }
+
+    .btn-entrar:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .mensagem-feedback {
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .mensagem-feedback.visivel {
+      display: block;
+    }
+
+    .mensagem-feedback.erro {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: var(--erro);
+    }
+
+    .mensagem-feedback.sucesso {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: var(--sucesso);
+    }
+
+    .secao-atalhos {
+      margin-top: 24px;
+      border-top: 1px dashed var(--borda);
+      padding-top: 18px;
+    }
+
+    .titulo-atalhos {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--texto-secundario);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .lista-gestores {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .item-gestor {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background: #f8fafc;
+      border: 1px solid var(--borda);
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .item-gestor:hover {
+      background: #eff6ff;
+      border-color: #93c5fd;
+      transform: translateX(2px);
+    }
+
+    .rodape-login {
+      margin-top: 24px;
+      text-align: center;
+    }
+
+    .link-voltar {
+      color: var(--texto-secundario);
+      font-size: 0.88rem;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .link-voltar:hover {
+      color: var(--texto-primario);
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <main class="container-login" id="containerLogin">
+    <div class="cabecalho-login">
+      <img src="../logosp.png" alt="Governo do Estado de São Paulo" class="logo-sp">
+      <h1 class="titulo-login">Sala do Futuro V2</h1>
+      <p class="subtitulo-login">Portal de Administração, Gestão Escolar e Supervisão</p>
+      <span class="badge-gestao">🏛️ SEDUC-SP • Diretoria de Ensino</span>
+    </div>
+
+    <form id="formLoginGestao" novalidate>
+      <div class="campo-form">
+        <label for="emailGestao" class="label-campo">E-mail funcional do Gestor ou Supervisor</label>
+        <input 
+          type="email" 
+          id="emailGestao" 
+          class="input-texto" 
+          placeholder="diretoria.escola@educacao.sp.gov.br" 
+          value="diretoria.escola@educacao.sp.gov.br"
+          required 
+          autocomplete="username"
+        >
+      </div>
+
+      <div class="campo-form">
+        <label for="senhaGestao" class="label-campo">Senha de Acesso Institucional</label>
+        <div class="senha-container">
+          <input 
+            type="password" 
+            id="senhaGestao" 
+            class="input-texto" 
+            placeholder="Digite sua senha de acesso" 
+            value="123456"
+            required 
+            autocomplete="current-password"
+          >
+          <button type="button" id="btnToggleSenha" class="btn-toggle-senha" aria-label="Mostrar ou ocultar senha">👁</button>
+        </div>
+      </div>
+
+      <div id="mensagemGestao" class="mensagem-feedback" role="alert"></div>
+
+      <button type="submit" id="btnAcessarGestao" class="btn-entrar">
+        <span>🔐</span> Acessar Painel de Gestão & ADM
+      </button>
+
+      <div class="secao-atalhos">
+        <span class="titulo-atalhos">
+          <span>👥</span> Gestores e Supervisores Disponíveis (Clique para preencher):
+        </span>
+        <div class="lista-gestores" id="listaGestoresCadastrados">
+          <!-- Preenchido dinamicamente via JS -->
+        </div>
+      </div>
+
+      <div class="rodape-login">
+        <a href="../index.html" class="link-voltar">← Voltar para a página principal</a>
+      </div>
+    </form>
+  </main>
+
+  <script type="module">
+    import DBLocal from "./js/db-local.js";
+
+    const form = document.getElementById("formLoginGestao");
+    const emailInput = document.getElementById("emailGestao");
+    const senhaInput = document.getElementById("senhaGestao");
+    const btnAcessar = document.getElementById("btnAcessarGestao");
+    const mensagem = document.getElementById("mensagemGestao");
+    const listaGestores = document.getElementById("listaGestoresCadastrados");
+    const btnToggleSenha = document.getElementById("btnToggleSenha");
+
+    // Toggle de visibilidade da senha
+    btnToggleSenha?.addEventListener("click", () => {
+      const tipo = senhaInput.getAttribute("type") === "password" ? "text" : "password";
+      senhaInput.setAttribute("type", tipo);
+    });
+
+    function exibirMensagem(tipo, texto) {
+      mensagem.className = `mensagem-feedback visivel ${tipo}`;
+      mensagem.textContent = texto;
+    }
+
+    // Perfis de Gestão predefinidos para agilizar a demonstração
+    const gestores = [
+      {
+        nome: "Diretora Ana Paula Ramos",
+        email: "diretoria.escola@educacao.sp.gov.br",
+        cargo: "Diretora de Escola",
+        setor: "Direção Geral"
+      },
+      {
+        nome: "Prof. Coordenador Roberto Mendes",
+        email: "coordenacao.pedagogica@educacao.sp.gov.br",
+        cargo: "Coord. Gestão Pedagógica (CGP)",
+        setor: "Pedagógico"
+      },
+      {
+        nome: "Profa. Supervisora Marina Costa",
+        email: "supervisao.desbc@educacao.sp.gov.br",
+        cargo: "Supervisora de Ensino",
+        setor: "TI / Diretoria de Ensino DESBC"
+      },
+      {
+        nome: "Secretário Escolar Fernando Dias",
+        email: "secretaria.escola@educacao.sp.gov.br",
+        cargo: "Organização Escolar (GOE)",
+        setor: "Secretaria"
+      }
+    ];
+
+    function renderizarGestores() {
+      if (!listaGestores) return;
+      listaGestores.innerHTML = "";
+
+      gestores.forEach(g => {
+        const item = document.createElement("div");
+        item.className = "item-gestor";
+        item.innerHTML = `
+          <div>
+            <strong style="color: var(--azul-gov); display:block;">${g.nome}</strong>
+            <span style="display:block; color: var(--texto-secundario); font-size: 0.76rem;">${g.email}</span>
+            <small style="color: var(--ouro-gestao); font-weight:600; font-size:0.75rem;">${g.cargo}</small>
+          </div>
+          <span style="background: #e2e8f0; color: #1e293b; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.72rem; white-space:nowrap;">
+            ${g.setor}
+          </span>
+        `;
+
+        item.addEventListener("click", () => {
+          emailInput.value = g.email;
+          senhaInput.value = "123456";
+          exibirMensagem("sucesso", `Perfil selecionado: ${g.nome} (${g.cargo}). Clique em Acessar.`);
+        });
+
+        listaGestores.appendChild(item);
+      });
+    }
+
+    renderizarGestores();
+
+    // Login no Banco Local para Gestão
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const email = emailInput.value.trim();
+      const senha = senhaInput.value;
+
+      if (!email) {
+        exibirMensagem("erro", "Por favor, informe seu e-mail institucional de gestão.");
+        return;
+      }
+
+      if (senha.length < 6) {
+        exibirMensagem("erro", "A senha precisa ter no mínimo 6 dígitos.");
+        return;
+      }
+
+      exibirMensagem("sucesso", "Autenticando credenciais na SEDUC-SP e Banco Local...");
+      btnAcessar.disabled = true;
+      btnAcessar.innerHTML = "<span>⏳</span> Acessando painel...";
+
+      try {
+        const gestorAutenticado = DBLocal.autenticarGestao(email, senha);
+        exibirMensagem("sucesso", `Bem-vindo(a), ${gestorAutenticado.nome}! Redirecionando para a Gestão Escolar...`);
+
+        setTimeout(() => {
+          window.location.href = "Adm/index.html";
+        }, 500);
+      } catch (err) {
+        console.error("Erro no login gestao:", err);
+        exibirMensagem("erro", err.message || "Erro na validação das credenciais de gestão.");
+        btnAcessar.disabled = false;
+        btnAcessar.innerHTML = "<span>🔐</span> Acessar Painel de Gestão & ADM";
+      }
+    });
+  </script>
+
+</body>
+</html>

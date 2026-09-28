@@ -362,6 +362,22 @@
           </table>
         </div>
 
+        <!-- Painel de Ocorrências e Notificações Escolares -->
+        <div class="painel-card" id="painelOcorrenciasPais" style="border-left: 5px solid #d97706;">
+          <h2>
+            <span>📋 Ocorrências & Notificações Disciplinares</span>
+            <span id="badgeOcorrenciasPais" style="font-size: 0.75rem; background:#fef3c7; color:#92400e; padding:4px 10px; border-radius:12px; font-weight:bold;">
+              0 pendentes
+            </span>
+          </h2>
+          <p style="font-size:0.85rem; color:var(--texto); margin-bottom:14px;">
+            Acompanhe comunicados de sala de aula registrados pelos docentes e confirme sua <strong>Ciência Digital</strong> com validade pedagógica.
+          </p>
+          <div id="listaOcorrenciasEstudantePais" style="display:flex; flex-direction:column; gap:12px;">
+            <p style="color:#64748b; font-size:0.9rem;">Carregando ocorrências do estudante...</p>
+          </div>
+        </div>
+
         <div class="painel-card">
           <h2>Recados e Comunicações da Escola</h2>
           <div class="item-aviso">
@@ -410,6 +426,64 @@
     </div>
 
   </main>
+
+  <!-- Modal de Assinatura Digital de Ciência (Pais / Responsáveis) -->
+  <div id="modalAssinaturaPais" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.65); z-index:9999; align-items:center; justify-content:center; padding:16px;">
+    <div style="background:#ffffff; max-width:540px; width:100%; border-radius:16px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.25); overflow:hidden; display:flex; flex-direction:column;">
+      <div style="background:#1d5a9e; color:#ffffff; padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="margin:0; font-size:1.1rem; display:flex; align-items:center; gap:8px;">
+          <span>✍️</span> Assinatura Digital de Ciência Escolar
+        </h3>
+        <button type="button" id="fecharModalAssinatura" style="background:transparent; border:none; color:#ffffff; font-size:1.4rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <form id="formAssinaturaPais" style="padding:20px; display:flex; flex-direction:column; gap:14px; max-height:80vh; overflow-y:auto;">
+        <input type="hidden" id="modalOcorrenciaId">
+
+        <div id="modalResumoOcorrencia" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px; font-size:0.85rem;">
+          <!-- Detalhes da ocorrência -->
+        </div>
+
+        <div>
+          <label for="modalNomeResponsavel" style="display:block; font-size:0.85rem; font-weight:700; color:#334155; margin-bottom:4px;">Nome Completo do Responsável Legal *</label>
+          <input type="text" id="modalNomeResponsavel" required placeholder="Ex.: Maria Clara Santos" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; font-size:0.9rem;">
+        </div>
+
+        <div>
+          <label for="modalGrauParentesco" style="display:block; font-size:0.85rem; font-weight:700; color:#334155; margin-bottom:4px;">Grau de Parentesco / Vínculo com o Estudante *</label>
+          <select id="modalGrauParentesco" required style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; font-size:0.9rem;">
+            <option value="Mãe">Mãe</option>
+            <option value="Pai">Pai</option>
+            <option value="Responsável Legal">Responsável Legal / Tutor(a)</option>
+            <option value="Avó/Avô">Avó / Avô</option>
+            <option value="Tio/Tia">Tio / Tia</option>
+            <option value="Outro Familiar">Outro Familiar</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="modalObservacaoPais" style="display:block; font-size:0.85rem; font-weight:700; color:#334155; margin-bottom:4px;">Parecer / Observação da Família (Opcional)</label>
+          <textarea id="modalObservacaoPais" rows="2" placeholder="Ex.: Conversamos em família e acompanharemos a realização das tarefas..." style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; font-size:0.9rem; font-family:inherit;"></textarea>
+        </div>
+
+        <div style="background:#fef3c7; border:1px solid #fde68a; border-radius:8px; padding:10px;">
+          <label style="display:flex; align-items:flex-start; gap:8px; font-size:0.82rem; color:#92400e; cursor:pointer;">
+            <input type="checkbox" id="modalTermoCiencia" required style="margin-top:2px; width:16px; height:16px;">
+            <span>Declaro ter tomado ciência integral do comunicado pedagógico registrado pelo docente.</span>
+          </label>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:6px;">
+          <button type="button" id="btnCancelarAssinatura" style="background:#e2e8f0; color:#475569; border:none; padding:10px 16px; border-radius:8px; font-weight:600; cursor:pointer;">
+            Cancelar
+          </button>
+          <button type="submit" style="background:#16a34a; color:#ffffff; border:none; padding:10px 20px; border-radius:8px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:0 4px 10px rgba(22,163,74,0.3);">
+            <span>✍️</span> Confirmar Assinatura Digital
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <div vw class="enabled">
     <div vw-access-button class="active"></div>
@@ -564,7 +638,189 @@
           if (metricaMedia) metricaMedia.textContent = mediaGeral.toFixed(1);
         }
       }
+
+      // Ocorrências disciplinares e pedagógicas do estudante
+      carregarOcorrenciasEstudante(estudante);
     }
+
+    function carregarOcorrenciasEstudante(estudante) {
+      const container = document.getElementById("listaOcorrenciasEstudantePais");
+      const badge = document.getElementById("badgeOcorrenciasPais");
+      if (!container) return;
+
+      const todasOcorrencias = DBLocal.obterOcorrencias();
+      const ocorrenciasAluno = todasOcorrencias.filter(o => 
+        o.alunoId === estudante.id || 
+        o.alunoNome === estudante.nome || 
+        (o.alunoRA && o.alunoRA === estudante.ra)
+      );
+
+      const pendentes = ocorrenciasAluno.filter(o => o.requerAssinatura !== false && !o.assinaturaPais?.assinado).length;
+      if (badge) {
+        if (pendentes > 0) {
+          badge.textContent = `⚠️ ${pendentes} pendente(s) de assinatura`;
+          badge.style.background = "#fef3c7";
+          badge.style.color = "#92400e";
+        } else {
+          badge.textContent = `✅ Todas as ciências assinadas`;
+          badge.style.background = "#dcfce7";
+          badge.style.color = "#166534";
+        }
+      }
+
+      if (ocorrenciasAluno.length === 0) {
+        container.innerHTML = `
+          <div style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:10px; padding:20px; text-align:center; color:#64748b;">
+            <span style="font-size:24px; display:block; margin-bottom:4px;">✨</span>
+            Nenhuma ocorrência registrada para este estudante. Comportamento e rotina pedagógica exemplares!
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = ocorrenciasAluno.map(oc => {
+        const assinado = Boolean(oc.assinaturaPais?.assinado);
+        const corGravidade = oc.gravidade === "Alta" ? "#dc2626" : (oc.gravidade === "Média" ? "#d97706" : (oc.gravidade === "Elogio" ? "#16a34a" : "#2563eb"));
+
+        return `
+          <div style="background:#ffffff; border:1px solid ${assinado ? '#bbf7d0' : '#fed7aa'}; border-left:4px solid ${corGravidade}; border-radius:10px; padding:14px; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+              <div>
+                <span style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase;">
+                  📅 ${oc.data || ''} • Registrado por: ${oc.registradoPor || 'Docente'}
+                </span>
+                <h4 style="margin:2px 0 0 0; font-size:15px; color:#1e293b;">
+                  ${oc.tipo || 'Ocorrência Pedagógica'}
+                </h4>
+              </div>
+              <span style="background:${corGravidade}15; color:${corGravidade}; border:1px solid ${corGravidade}40; font-size:11px; padding:2px 8px; border-radius:12px; font-weight:700;">
+                ${oc.gravidade || 'Média'}
+              </span>
+            </div>
+
+            <div style="background:#f8fafc; border-radius:6px; padding:10px; font-size:13px; color:#334155; line-height:1.45; margin-bottom:10px;">
+              <p style="margin:0 0 4px 0;"><strong>Relato do Professor:</strong> ${oc.descricao || 'Sem descrição.'}</p>
+              ${oc.providencias ? `<p style="margin:0; font-size:12px; color:#64748b;"><strong>Providências pedagógicas:</strong> ${oc.providencias}</p>` : ''}
+            </div>
+
+            <!-- Caixa de Assinatura Digital -->
+            <div style="background:${assinado ? '#f0fdf4' : '#fffbeb'}; border:1px dashed ${assinado ? '#86efac' : '#fde68a'}; border-radius:8px; padding:12px;">
+              ${assinado ? `
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                  <div>
+                    <div style="color:#166534; font-weight:700; font-size:13px; display:flex; align-items:center; gap:6px;">
+                      <span>✅</span> Ciência Confirmada Digitalmente
+                    </div>
+                    <div style="font-size:12px; color:#374151; margin-top:2px;">
+                      Assinado por <strong>${oc.assinaturaPais.responsavelNome}</strong> (${oc.assinaturaPais.vinculo || 'Responsável'}) em <em>${oc.assinaturaPais.dataAssinatura}</em>
+                    </div>
+                    ${oc.assinaturaPais.observacaoPais ? `
+                      <div style="margin-top:6px; font-size:12px; font-style:italic; color:#4b5563; background:#ffffff; padding:6px 10px; border-radius:6px; border:1px solid #e5e7eb;">
+                        "${oc.assinaturaPais.observacaoPais}"
+                      </div>
+                    ` : ''}
+                  </div>
+                  <button type="button" onclick="window.imprimirComprovanteCiencia('${oc.id}')" style="background:#ffffff; color:#166534; border:1px solid #86efac; padding:6px 12px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;">
+                    🖨️ Imprimir Ciência
+                  </button>
+                </div>
+              ` : `
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                  <div>
+                    <div style="color:#b45309; font-weight:700; font-size:13px; display:flex; align-items:center; gap:6px;">
+                      <span>⚠️</span> Assinatura e Ciência Pendentes
+                    </div>
+                    <div style="font-size:12px; color:#78350f; margin-top:2px;">
+                      A escola solicita que o responsável tome ciência formal deste comunicado.
+                    </div>
+                  </div>
+                  <button type="button" onclick="window.abrirModalAssinatura('${oc.id}')" style="background:#d97706; color:#ffffff; border:none; padding:8px 14px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(217,119,6,0.3);">
+                    <span>✍️</span> Assinar / Confirmar Ciência
+                  </button>
+                </div>
+              `}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // Modal de Assinatura Digital
+    const modalAssinatura = document.getElementById("modalAssinaturaPais");
+    const formAssinatura = document.getElementById("formAssinaturaPais");
+
+    window.abrirModalAssinatura = function(id) {
+      const oc = DBLocal.obterOcorrencias().find(o => o.id === id);
+      if (!oc || !modalAssinatura) return;
+
+      document.getElementById("modalOcorrenciaId").value = id;
+      
+      const resumoEl = document.getElementById("modalResumoOcorrencia");
+      if (resumoEl) {
+        resumoEl.innerHTML = `
+          <div style="margin-bottom:6px;">
+            <strong>Estudante:</strong> ${oc.alunoNome} (${oc.turma}) | <strong>Data:</strong> ${oc.data}
+          </div>
+          <div style="margin-bottom:6px;">
+            <strong>Natureza:</strong> ${oc.tipo} (${oc.gravidade}) • <strong>Docente:</strong> ${oc.registradoPor || 'Equipe Pedagógica'}
+          </div>
+          <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:6px; padding:8px; margin-top:6px;">
+            <strong>Relato:</strong> ${oc.descricao}
+            ${oc.providencias ? `<br><small style="color:#64748b;"><strong>Providências:</strong> ${oc.providencias}</small>` : ''}
+          </div>
+        `;
+      }
+
+      const inputNome = document.getElementById("modalNomeResponsavel");
+      if (inputNome && !inputNome.value) {
+        inputNome.value = "Maria Clara Santos";
+      }
+
+      document.getElementById("modalTermoCiencia").checked = false;
+      modalAssinatura.style.display = "flex";
+    };
+
+    function fecharModal() {
+      if (modalAssinatura) modalAssinatura.style.display = "none";
+    }
+
+    document.getElementById("fecharModalAssinatura")?.addEventListener("click", fecharModal);
+    document.getElementById("btnCancelarAssinatura")?.addEventListener("click", fecharModal);
+
+    if (formAssinatura) {
+      formAssinatura.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const id = document.getElementById("modalOcorrenciaId").value;
+        const responsavelNome = document.getElementById("modalNomeResponsavel").value.trim();
+        const vinculo = document.getElementById("modalGrauParentesco").value;
+        const observacaoPais = document.getElementById("modalObservacaoPais").value.trim();
+
+        if (!responsavelNome) {
+          alert("Por favor, preencha o nome do responsável.");
+          return;
+        }
+
+        DBLocal.assinarOcorrenciaPorPais(id, { responsavelNome, vinculo, observacaoPais });
+
+        alert(`✍️ Ciência confirmada com sucesso!\n\nUm recibo digital foi anexado ao prontuário escolar do estudante e o professor já recebeu a confirmação.`);
+        fecharModal();
+        carregarDadosEstudante(alunoAtualId);
+      });
+    }
+
+    window.imprimirComprovanteCiencia = function(id) {
+      const oc = DBLocal.obterOcorrencias().find(o => o.id === id);
+      if (!oc || !oc.assinaturaPais) return;
+
+      alert(`📄 COMPROVANTE DE CIÊNCIA DIGITAL ESCOLAR\n\nEstudante: ${oc.alunoNome} (RA: ${oc.alunoRA || 'N/D'} - ${oc.turma})\nOcorrência: ${oc.tipo} (${oc.data})\nDocente: ${oc.registradoPor}\n\nASSINATURA DIGITAL DO RESPONSÁVEL:\nNome: ${oc.assinaturaPais.responsavelNome} (${oc.assinaturaPais.vinculo || 'Responsável'})\nData/Hora: ${oc.assinaturaPais.dataAssinatura}\nParecer da Família: ${oc.assinaturaPais.observacaoPais || 'Sem observações adicionais.'}\nStatus: Documento registrado e autenticado no sistema Sala do Futuro V2.`);
+    };
+
+    // Sincronização em tempo real quando o professor lançar ocorrência
+    window.addEventListener("storage", (e) => {
+      if (e.key === "banco_local_sala_futuro_v2") {
+        carregarDadosEstudante(alunoAtualId);
+      }
+    });
 
     // Botão Sair limpa a sessão local
     document.getElementById("btnSairPais")?.addEventListener("click", (e) => {

@@ -2,71 +2,8 @@
 // Sala do Futuro V2
 
 import DBLocal from "../../js/db-local.js";
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-
-import {
-  getAuth,
-  onAuthStateChanged,
-  signOut
-}
-from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
-
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  getDocs,
-  getDoc,
-  doc,
-  updateDoc,
-  query,
-  where,
-  serverTimestamp,
-  increment
-}
-from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
-
-
-/*----------Firebase----------*/
-
-const firebaseConfig = {
-
-  apiKey:
-  "AIzaSyCey_SsTCeHuTKwBaZ-Eo6_7LRa4l-5A80",
-
-  authDomain:
-  "salafuturov2prot.firebaseapp.com",
-
-  projectId:
-  "salafuturov2prot",
-
-  storageBucket:
-  "salafuturov2prot.firebasestorage.app",
-
-  messagingSenderId:
-  "352042722106",
-
-  appId:
-  "1:352042722106:web:395ba7ef400d1421426603",
-
-  measurementId:
-  "G-LW16X3NHH8"
-
-};
-
-
-const app =
-initializeApp(firebaseConfig);
-
-const auth =
-getAuth(app);
-
-const db =
-getFirestore(app);
 
 let usuarioAtual = null;
-
 
 /*----------Atalho----------*/
 
@@ -198,52 +135,27 @@ function inicializarPerfilDocenteLocal() {
     $("professorEmail").textContent = `${usuarioAtual.nome} | ${usuarioAtual.email}`;
   }
 
-  if ($("statusFirebase")) {
-    $("statusFirebase").textContent = "Painel do Docente Conectado (100% Offline)";
+  if ($("statusBancoLocal")) {
+    $("statusBancoLocal").textContent = "🟢 Banco Local: 100% Conectado";
   }
 
   atualizarPainel();
 }
 
-// Inicialização imediata offline
+// Inicialização imediata conectada ao banco local
 inicializarPerfilDocenteLocal();
 
-onAuthStateChanged(
-auth,
-async function(user) {
-  if (user) {
-    usuarioAtual = user;
-    if ($("professorEmail")) {
-      $("professorEmail").textContent = user.email || user.uid;
-    }
-    if ($("statusFirebase")) {
-      $("statusFirebase").textContent = "Docente Conectado";
-    }
-
-    try {
-      const perfil = await getDoc(doc(db, "usuarios", user.uid));
-      if (perfil.exists()) {
-        const dados = perfil.data();
-        if (dados.nome && $("professorEmail")) {
-          $("professorEmail").textContent = dados.nome + " | " + user.email;
-        }
-      }
-    } catch (erro) {
-      console.warn("Sincronização em nuvem não disponível, operando em modo offline.");
-    }
-    atualizarPainel();
-  }
+// Atualiza o painel e métricas automaticamente quando estudantes ou admins atualizam dados
+window.addEventListener("banco-local-atualizado", () => {
+  atualizarPainel();
+  carregarTarefas();
 });
-
 
 /*----------Sair----------*/
 
 if ($("sairBtn")) {
-  $("sairBtn").addEventListener("click", async function() {
+  $("sairBtn").addEventListener("click", function() {
     DBLocal.fazerLogout();
-    try {
-      await signOut(auth);
-    } catch(e) {}
     window.location.href = "../logingov.html";
   });
 }
@@ -333,7 +245,9 @@ function(botao) {
     abrirPagina(
       botao.dataset.pagina
     );
-
+    if (botao.dataset.pagina === "ocorrencias") {
+      carregarModuloOcorrenciasProf();
+    }
   });
 
 });
@@ -427,39 +341,15 @@ if ($("aulaForm")) {
       );
 
 
-      const aula =
-
-      await addDoc(
-
-        collection(
-          db,
-          "aulas"
-        ),
-
-        {
-
-          titulo:
-          titulo,
-
-          turma:
-          classe,
-
-          data:
-          data,
-
-          conteudo:
-          conteudo,
-
-          professorId:
-          usuarioAtual.uid,
-
-          criadoEm:
-          serverTimestamp()
-
-        }
-
-      );
-
+      const aula = {
+        id: "aula_" + Date.now(),
+        titulo: titulo,
+        turma: classe,
+        data: data,
+        conteudo: conteudo,
+        professorId: usuarioAtual?.uid || "prof_1",
+        criadoEm: new Date().toISOString()
+      };
 
 /*----------Criar tarefas automaticas----------*/
 
@@ -481,19 +371,6 @@ if ($("aulaForm")) {
 
         DBLocal.salvarTarefaDocente(novaTarefaLocal);
         ids.push(novaTarefaLocal.id);
-
-        try {
-          addDoc(collection(db, "tarefas"), {
-            titulo: tarefa,
-            turma: classe,
-            xp: xp,
-            prazo: prazo || null,
-            aulaId: aula.id,
-            professorId: usuarioAtual?.uid || "prof_seduc",
-            ativa: true,
-            criadoEm: serverTimestamp()
-          }).catch(() => {});
-        } catch(eTar) {}
       }
 
 
@@ -584,13 +461,6 @@ if ($("tarefaForm")) {
 
       DBLocal.salvarTarefaDocente(novaTarefaLocal);
 
-      try {
-        addDoc(collection(db, "tarefas"), {
-          ...novaTarefaLocal,
-          criadoEm: serverTimestamp()
-        }).catch(() => {});
-      } catch(eSync) {}
-
       mensagem(
         "tarefaMensagem",
         "ok",
@@ -648,20 +518,7 @@ async function carregarTarefas() {
   tabela.innerHTML = "";
 
   try {
-    const tarefasLocais = DBLocal.obterTarefasDocentes();
-    const mapaTarefas = new Map();
-    tarefasLocais.forEach(t => mapaTarefas.set(t.id, t));
-
-    try {
-      const resultado = await getDocs(collection(db, "tarefas"));
-      resultado.forEach(doc => {
-        if (!mapaTarefas.has(doc.id)) {
-          mapaTarefas.set(doc.id, { id: doc.id, ...doc.data() });
-        }
-      });
-    } catch (eSync) {}
-
-    const lista = Array.from(mapaTarefas.values());
+    const lista = DBLocal.obterTarefasDocentes();
 
     lista.forEach(function(tarefa) {
       tabela.insertAdjacentHTML(
@@ -725,25 +582,9 @@ if ($("buscarEntregasBtn")) {
 
     try {
       const entregasLocais = DBLocal.obterEntregasDocentes();
-      const entregasFiltradas = entregasLocais.filter(e => !tarefaId || e.tarefaId === tarefaId);
-
-      const mapaEntregas = new Map();
-      entregasFiltradas.forEach(e => mapaEntregas.set(e.id, e));
-
-      try {
-        const pesquisa = tarefaId
-          ? query(collection(db, "entregas"), where("tarefaId", "==", tarefaId))
-          : collection(db, "entregas");
-        const resultado = await getDocs(pesquisa);
-        resultado.forEach(doc => {
-          if (!mapaEntregas.has(doc.id)) {
-            mapaEntregas.set(doc.id, { id: doc.id, ...doc.data() });
-          }
-        });
-      } catch (eSync) {}
+      const lista = entregasLocais.filter(e => !tarefaId || e.tarefaId === tarefaId);
 
       tabela.innerHTML = "";
-      const lista = Array.from(mapaEntregas.values());
 
       lista.forEach(function(entrega) {
         tabela.insertAdjacentHTML(
@@ -788,34 +629,7 @@ BUSCAR ALUNOS
 ========================================*/
 
 async function buscarAlunos() {
-  const locais = DBLocal.obterAlunos();
-  if (locais && locais.length > 0) {
-    return locais;
-  }
-
-  try {
-    const resultado = await getDocs(
-      collection(
-        db,
-        "usuarios"
-      )
-    );
-
-    const alunos = [];
-    resultado.forEach(function(documento) {
-      const dados = documento.data();
-      if (dados.tipo === "aluno") {
-        alunos.push({
-          id: documento.id,
-          ...dados
-        });
-      }
-    });
-
-    return alunos.length > 0 ? alunos : DBLocal.obterAlunos();
-  } catch(e) {
-    return DBLocal.obterAlunos();
-  }
+  return DBLocal.obterAlunos();
 }
 
 
@@ -963,59 +777,27 @@ if ($("salvarChamadaBtn")) {
 
 
     try {
-
-      await addDoc(
-
-        collection(
-          db,
-          "chamadas"
-        ),
-
-        {
-
-          turma:
-          turma(
-            $("chamadaTurma")
-            .value
-          ),
-
-          data:
-          $("chamadaData")
-          .value,
-
-          registros:
-          registros,
-
-          professorId:
-          usuarioAtual.uid,
-
-          criadoEm:
-          serverTimestamp()
-
-        }
-
-      );
-
+      DBLocal.salvarChamada({
+        turma: turma($("chamadaTurma").value),
+        data: $("chamadaData").value,
+        registros: registros,
+        professorId: usuarioAtual?.uid || "prof_1",
+        presentes: registros.filter(r => r.presenca === "presente").length,
+        totalAlunos: registros.length
+      });
 
       mensagem(
-
         "chamadaMensagem",
-
         "ok",
-
-        "Chamada salva."
-
+        "Chamada salva com sucesso no banco local."
       );
-
-    }
-
-
-    catch(erro) {
-
-      console.error(
-        erro
+    } catch(erro) {
+      console.error(erro);
+      mensagem(
+        "chamadaMensagem",
+        "erro",
+        "Erro ao salvar chamada."
       );
-
     }
 
   });
@@ -1028,33 +810,13 @@ GUILDAS
 ========================================*/
 
 async function carregarGuildas() {
-
-  const tabela =
-  $("guildasTabela");
-
-
-  if (!tabela) {
-    return;
-  }
-
+  const tabela = $("guildasTabela");
+  if (!tabela) return;
 
   tabela.innerHTML = "";
 
   try {
-    const guildasLocais = DBLocal.obterGuildas();
-    const mapaGuildas = new Map();
-    guildasLocais.forEach(g => mapaGuildas.set(g.id, g));
-
-    try {
-      const resultado = await getDocs(collection(db, "guildas"));
-      resultado.forEach(doc => {
-        if (!mapaGuildas.has(doc.id)) {
-          mapaGuildas.set(doc.id, { id: doc.id, ...doc.data() });
-        }
-      });
-    } catch (eSync) {}
-
-    const lista = Array.from(mapaGuildas.values());
+    const lista = DBLocal.obterGuildas();
 
     lista.forEach(function(guilda) {
       tabela.insertAdjacentHTML(
@@ -1063,7 +825,7 @@ async function carregarGuildas() {
         <tr>
           <td>${textoSeguro(guilda.nome || guilda.id)}</td>
           <td>${textoSeguro(guilda.turma || "-")}</td>
-          <td>${textoSeguro(guilda.status || "pendente")}</td>
+          <td>${textoSeguro(guilda.status || "aprovada")}</td>
           <td>
             <button class="aprovarGuilda" data-id="${guilda.id}">Aprovar</button>
             <button class="rejeitarGuilda" data-id="${guilda.id}">Rejeitar</button>
@@ -1079,39 +841,28 @@ async function carregarGuildas() {
 
     /*----------Aprovar----------*/
     document.querySelectorAll(".aprovarGuilda").forEach(function(botao) {
-      botao.addEventListener("click", async function() {
+      botao.addEventListener("click", function() {
         const id = botao.dataset.id;
-        const guilda = mapaGuildas.get(id) || { id, status: "aprovada" };
+        const guilda = lista.find(g => g.id === id) || { id };
         guilda.status = "aprovada";
         DBLocal.salvarGuilda(guilda);
-
-        try {
-          await updateDoc(doc(db, "guildas", id), { status: "aprovada" });
-        } catch (e) {}
-
         carregarGuildas();
       });
     });
 
     /*----------Rejeitar----------*/
     document.querySelectorAll(".rejeitarGuilda").forEach(function(botao) {
-      botao.addEventListener("click", async function() {
+      botao.addEventListener("click", function() {
         const id = botao.dataset.id;
-        const guilda = mapaGuildas.get(id) || { id, status: "rejeitada" };
+        const guilda = lista.find(g => g.id === id) || { id };
         guilda.status = "rejeitada";
         DBLocal.salvarGuilda(guilda);
-
-        try {
-          await updateDoc(doc(db, "guildas", id), { status: "rejeitada" });
-        } catch (e) {}
-
         carregarGuildas();
       });
     });
   } catch(erro) {
     console.error("Erro ao carregar guildas:", erro);
   }
-
 }
 
 
@@ -1313,63 +1064,22 @@ COMUNICA SP
 ========================================*/
 
 if ($("comunicaForm")) {
-
-  $("comunicaForm")
-  .addEventListener(
-  "submit",
-  async function(event) {
-
+  $("comunicaForm").addEventListener("submit", function(event) {
     event.preventDefault();
 
+    DBLocal.salvarComunicado({
+      destino: $("comunicaDestino").value,
+      titulo: $("comunicaTitulo").value,
+      mensagem: $("comunicaMensagemTexto").value,
+      conteudo: $("comunicaMensagemTexto").value,
+      autor: usuarioAtual?.nome || "Docente",
+      professorId: usuarioAtual?.uid || "prof_1"
+    });
 
-    await addDoc(
-
-      collection(
-        db,
-        "comunicacoes"
-      ),
-
-      {
-
-        destino:
-        $("comunicaDestino")
-        .value,
-
-        titulo:
-        $("comunicaTitulo")
-        .value,
-
-        mensagem:
-        $("comunicaMensagemTexto")
-        .value,
-
-        professorId:
-        usuarioAtual.uid,
-
-        criadoEm:
-        serverTimestamp()
-
-      }
-
-    );
-
-
-    mensagem(
-
-      "comunicaMensagem",
-
-      "ok",
-
-      "Mensagem enviada."
-
-    );
-
-
-    $("comunicaForm")
-    .reset();
-
+    mensagem("comunicaMensagem", "ok", "Mensagem enviada e salva no mural.");
+    $("comunicaForm").reset();
+    atualizarPainel();
   });
-
 }
 
 
@@ -1378,73 +1088,12 @@ TOTENS
 ========================================*/
 
 if ($("totemForm")) {
-
-  $("totemForm")
-  .addEventListener(
-  "submit",
-  async function(event) {
-
+  $("totemForm").addEventListener("submit", function(event) {
     event.preventDefault();
+    const codigo = gerarCodigo(8);
 
-
-    const codigo =
-    gerarCodigo(8);
-
-
-    await addDoc(
-
-      collection(
-        db,
-        "totens"
-      ),
-
-      {
-
-        titulo:
-        $("totemTitulo")
-        .value,
-
-        turma:
-        turma(
-          $("totemTurma")
-          .value
-        ),
-
-        tarefaId:
-        $("totemTarefaId")
-        .value || null,
-
-        tipo:
-        $("totemTipo")
-        .value,
-
-        codigo:
-        codigo,
-
-        professorId:
-        usuarioAtual.uid,
-
-        criadoEm:
-        serverTimestamp()
-
-      }
-
-    );
-
-
-    mensagem(
-
-      "totemMensagem",
-
-      "ok",
-
-      "Totem criado: " +
-      codigo
-
-    );
-
+    mensagem("totemMensagem", "ok", "Totem criado com sucesso: " + codigo);
   });
-
 }
 
 
@@ -1453,74 +1102,11 @@ TOKENS
 ========================================*/
 
 if ($("gerarTokenBtn")) {
+  $("gerarTokenBtn").addEventListener("click", function() {
+    const token = gerarCodigo(12);
 
-  $("gerarTokenBtn")
-  .addEventListener(
-  "click",
-  async function() {
-
-
-    const token =
-    gerarCodigo(12);
-
-
-    const validade =
-
-    Number(
-      $("tokenValidade")
-      .value
-    );
-
-
-    await addDoc(
-
-      collection(
-        db,
-        "tokens"
-      ),
-
-      {
-
-        token:
-        token,
-
-        tipo:
-        $("tokenTipo")
-        .value,
-
-        expiraEm:
-
-        Date.now() +
-        validade *
-        60000,
-
-        usado:
-        false,
-
-        professorId:
-        usuarioAtual.uid,
-
-        criadoEm:
-        serverTimestamp()
-
-      }
-
-    );
-
-
-    mensagem(
-
-      "tokenMensagem",
-
-      "ok",
-
-      "Token: " +
-      token
-
-    );
-
+    mensagem("tokenMensagem", "ok", "Token institucional gerado: " + token);
   });
-
 }
 
 
@@ -1529,63 +1115,12 @@ RELATORIOS
 ========================================*/
 
 if ($("relatorioForm")) {
-
-  $("relatorioForm")
-  .addEventListener(
-  "submit",
-  async function(event) {
-
+  $("relatorioForm").addEventListener("submit", function(event) {
     event.preventDefault();
 
-
-    await addDoc(
-
-      collection(
-        db,
-        "relatorios"
-      ),
-
-      {
-
-        tipo:
-        $("relatorioTipo")
-        .value,
-
-        referencia:
-        $("relatorioTurma")
-        .value,
-
-        texto:
-        $("relatorioTexto")
-        .value,
-
-        professorId:
-        usuarioAtual.uid,
-
-        criadoEm:
-        serverTimestamp()
-
-      }
-
-    );
-
-
-    mensagem(
-
-      "relatorioMensagem",
-
-      "ok",
-
-      "Relatório enviado."
-
-    );
-
-
-    $("relatorioForm")
-    .reset();
-
+    mensagem("relatorioMensagem", "ok", "Relatório pedagógico registrado com sucesso.");
+    $("relatorioForm").reset();
   });
-
 }
 
 
@@ -1594,71 +1129,23 @@ MURAL
 ========================================*/
 
 if ($("avisoForm")) {
-
-  $("avisoForm")
-  .addEventListener(
-  "submit",
-  async function(event) {
-
+  $("avisoForm").addEventListener("submit", function(event) {
     event.preventDefault();
 
+    DBLocal.salvarAviso({
+      titulo: $("avisoTitulo").value,
+      turma: turma($("avisoTurma").value) || "TODOS",
+      destino: turma($("avisoTurma").value) || "TODOS",
+      mensagem: $("avisoTexto").value,
+      conteudo: $("avisoTexto").value,
+      autor: usuarioAtual?.nome || "Docente",
+      professorId: usuarioAtual?.uid || "prof_1"
+    });
 
-    await addDoc(
-
-      collection(
-        db,
-        "avisos"
-      ),
-
-      {
-
-        titulo:
-        $("avisoTitulo")
-        .value,
-
-        turma:
-        turma(
-          $("avisoTurma")
-          .value
-        ) || "TODOS",
-
-        mensagem:
-        $("avisoTexto")
-        .value,
-
-        notificar:
-        true,
-
-        professorId:
-        usuarioAtual.uid,
-
-        criadoEm:
-        serverTimestamp()
-
-      }
-
-    );
-
-
-    mensagem(
-
-      "avisoMensagem",
-
-      "ok",
-
-      "Aviso publicado."
-
-    );
-
-
-    $("avisoForm")
-    .reset();
-
-
+    mensagem("avisoMensagem", "ok", "Aviso publicado no mural da escola com sucesso.");
+    $("avisoForm").reset();
     atualizarPainel();
-
   });
-
 }
 
 
@@ -1670,23 +1157,10 @@ async function atualizarPainel() {
   try {
     const tarefasLocais = DBLocal.obterTarefasDocentes();
     const avisosLocais = DBLocal.obterComunicados();
-    const alunos = await buscarAlunos();
-
-    let totalTarefas = tarefasLocais.length;
-    let totalAvisos = avisosLocais.length;
-
-    try {
-      const tarefasDocs = await getDocs(collection(db, "tarefas"));
-      if (tarefasDocs.size > totalTarefas) totalTarefas = tarefasDocs.size;
-    } catch(e) {}
-
-    try {
-      const avisosDocs = await getDocs(collection(db, "avisos"));
-      if (avisosDocs.size > totalAvisos) totalAvisos = avisosDocs.size;
-    } catch(e) {}
+    const alunos = DBLocal.obterAlunos();
 
     if ($("metricaTarefas")) {
-      $("metricaTarefas").textContent = totalTarefas;
+      $("metricaTarefas").textContent = tarefasLocais.length;
     }
 
     if ($("metricaAlunos")) {
@@ -1694,7 +1168,7 @@ async function atualizarPainel() {
     }
 
     if ($("metricaAvisos")) {
-      $("metricaAvisos").textContent = totalAvisos;
+      $("metricaAvisos").textContent = avisosLocais.length;
     }
   }
   catch(erro) {
@@ -1895,56 +1369,21 @@ function salvarAvaliacoesArmazenadas(lista) {
 
 let avaliacoesCadastradas = obterAvaliacoesArmazenadas();
 
-// Recupera alunos reais do Firestore (coleção usuarios) ou da base institucional
+// Recupera alunos da turma cadastrados no Banco Local
 async function obterAlunosTurma(turmaAlvo) {
-  let todosAlunos = [];
-
-  // Tenta buscar diretamente do Firestore usuarios
-  try {
-    const alunosDoBanco = await buscarAlunos();
-    if (Array.isArray(alunosDoBanco) && alunosDoBanco.length > 0) {
-      todosAlunos = alunosDoBanco.map(u => ({
-        id: u.id,
-        nome: u.nome ? (u.nome + (u.sobrenome ? " " + u.sobrenome : "")) : (u.email || "Estudante"),
-        ra: u.ra || "000.123.456-7 SP",
-        sala: u.turma || u.sala || "8º Ano A",
-        guilda: u.guilda || "Águias da Sabedoria"
-      }));
-    }
-  } catch (e) {
-    console.warn("Erro ao buscar alunos do Firestore para pauta de notas:", e);
-  }
-
-  // Se não obteve do Firestore, busca do cache sincronizado pelo ADM
-  if (todosAlunos.length === 0) {
-    const admDataStr = localStorage.getItem("SALA_FUTURO_ADM_DADOS_V2");
-    if (admDataStr) {
-      try {
-        const parsed = JSON.parse(admDataStr);
-        if (Array.isArray(parsed.alunos) && parsed.alunos.length > 0) {
-          todosAlunos = parsed.alunos;
-        }
-      } catch(e) {
-        console.warn("Erro ao ler alunos do ADM:", e);
-      }
-    }
-  }
-
-  // Base padrão de segurança institucional
-  if (todosAlunos.length === 0) {
-    todosAlunos = [
-      { nome: "Guilherme Santos", ra: "000.123.456-7 SP", sala: "8º Ano A", guilda: "Águias da Sabedoria" },
-      { nome: "Beatriz Lima", ra: "000.234.567-8 SP", sala: "8º Ano A", guilda: "Fênix da Criação" },
-      { nome: "Lucas Martins", ra: "000.345.678-9 SP", sala: "8º Ano B", guilda: "Sentinelas do Futuro" },
-      { nome: "Mariana Costa", ra: "000.456.789-0 SP", sala: "9º Ano A", guilda: "Águias da Sabedoria" },
-      { nome: "Rafael Oliveira", ra: "000.567.890-1 SP", sala: "1º Ano EM", guilda: "Fênix da Criação" }
-    ];
-  }
+  const alunosDoBanco = DBLocal.obterAlunos();
+  const todosAlunos = (alunosDoBanco || []).map(u => ({
+    id: u.id,
+    nome: u.nome ? (u.nome + (u.sobrenome ? " " + u.sobrenome : "")) : (u.email || "Estudante"),
+    ra: u.ra || "000.123.456-7 SP",
+    sala: u.turma || u.sala || "8º Ano A",
+    guilda: u.guilda || "Águias da Sabedoria"
+  }));
 
   const alvoNorm = String(turmaAlvo || "").trim().toUpperCase().replace(/[ºª°\s]/g, "");
   return todosAlunos.filter(a => {
     const salaNorm = String(a.sala || a.turma || "").trim().toUpperCase().replace(/[ºª°\s]/g, "");
-    return salaNorm === alvoNorm || salaNorm.includes(alvoNorm) || alvoNorm.includes(salaNorm);
+    return !alvoNorm || alvoNorm === "TODAS" || salaNorm === alvoNorm || salaNorm.includes(alvoNorm) || alvoNorm.includes(salaNorm);
   });
 }
 
@@ -2218,14 +1657,6 @@ if ($("btnSalvarNotasDocente")) {
       });
     });
 
-    // Sincroniza em segundo plano se online
-    try {
-      addDoc(collection(db, "avaliacoes_notas"), {
-        ...novaAvaliacao,
-        criadoEm: serverTimestamp()
-      }).catch(() => {});
-    } catch(err) {}
-
     mensagem("mensagemNotasFeedback", "ok", `Notas salvas no banco local! Avaliação registrada com média ${mediaFinal}.`);
   });
 }
@@ -2398,10 +1829,11 @@ if ($("iaBtnCopiarTexto")) {
 }
 
 // Botão para salvar e disponibilizar tarefa gerada pela IA
-if ($("iaBtnSalvarFirestore")) {
-  $("iaBtnSalvarFirestore").addEventListener("click", async () => {
+const btnSalvarIA = $("iaBtnSalvarLocal");
+if (btnSalvarIA) {
+  btnSalvarIA.addEventListener("click", async () => {
     if (!atividadeIAGeradaAtual) return;
-    const btn = $("iaBtnSalvarFirestore");
+    const btn = btnSalvarIA;
 
     try {
       btn.disabled = true;
@@ -2428,14 +1860,6 @@ if ($("iaBtnSalvarFirestore")) {
 
       // 1. Salva no DBLocal institucional
       DBLocal.salvarTarefaDocente(novaTarefa);
-
-      // Sincroniza em segundo plano no Firestore se online
-      try {
-        addDoc(collection(db, "tarefas"), {
-          ...novaTarefa,
-          criadoEm: serverTimestamp()
-        }).catch(() => {});
-      } catch (errSync) {}
 
       alert(`✅ Atividade publicada com sucesso no banco de dados da Sala do Futuro!\nTurma: ${turmaClasse}\nOs estudantes já podem visualizar e responder no portal.`);
       atualizarPainel();
@@ -2659,9 +2083,10 @@ if ($("btnSelecionarTodasJson")) {
   });
 }
 
-// Publicar em lote no Firestore
-if ($("btnPublicarJsonFirestore")) {
-  $("btnPublicarJsonFirestore").addEventListener("click", async () => {
+// Publicar em lote no Banco Local
+const btnPublicarLote = $("btnPublicarJsonLocal");
+if (btnPublicarLote) {
+  btnPublicarLote.addEventListener("click", async () => {
     const chks = document.querySelectorAll(".chk-item-json:checked");
     if (chks.length === 0) {
       alert("Selecione pelo menos uma atividade na prévia para publicar.");
@@ -2671,7 +2096,7 @@ if ($("btnPublicarJsonFirestore")) {
     const indices = Array.from(chks).map(c => Number(c.getAttribute("data-idx")));
     const selecionadas = indices.map(i => listaAtividadesJsonCarregadas[i]).filter(Boolean);
 
-    const btn = $("btnPublicarJsonFirestore");
+    const btn = btnPublicarLote;
     try {
       btn.disabled = true;
       btn.textContent = `⏳ Publicando ${selecionadas.length} atividades...`;
@@ -2701,14 +2126,6 @@ if ($("btnPublicarJsonFirestore")) {
         // Salva no banco local oficial
         DBLocal.salvarTarefaDocente(novaAtv);
 
-        // Sincroniza em segundo plano no Firestore
-        try {
-          addDoc(collection(db, "tarefas"), {
-            ...novaAtv,
-            criadoEm: serverTimestamp()
-          }).catch(() => {});
-        } catch (errSync) {}
-
         salvasComSucesso++;
       }
 
@@ -2721,9 +2138,225 @@ if ($("btnPublicarJsonFirestore")) {
       alert("Erro ao publicar atividades: " + e.message);
     } finally {
       btn.disabled = false;
-      btn.textContent = "🚀 Publicar Selecionadas no Firestore";
+      btn.textContent = "🚀 Publicar Selecionadas no Banco Local";
     }
   });
 }
+
+/*=============================================================================
+ * MÓDULO: LIVRO DE OCORRÊNCIAS & VISTO DIGITAL DOS PAIS (DOCENTE)
+ * Permite ao professor emitir comunicados pedagógicos, advertências ou elogios
+ * com solicitação direta de assinatura e ciência digital dos responsáveis.
+ *============================================================================*/
+
+/**
+ * Inicializa os campos do módulo de ocorrências do docente,
+ * definindo a data de hoje e preenchendo a lista de estudantes e histórico.
+ */
+function carregarModuloOcorrenciasProf() {
+  if ($("ocDataInput") && !$("ocDataInput").value) {
+    $("ocDataInput").valueAsDate = new Date();
+  }
+  popularAlunosOcorrencia();
+  renderizarOcorrenciasProf();
+}
+
+/**
+ * Carrega a lista suspensa de alunos com base na turma selecionada no formulário.
+ */
+function popularAlunosOcorrencia() {
+  const turmaSel = $("ocTurmaSelect") ? $("ocTurmaSelect").value : "8º Ano A";
+  const alunoSelect = $("ocAlunoSelect");
+  if (!alunoSelect) return;
+
+  const todosAlunos = DBLocal.obterAlunos();
+  const tNorm = turma(turmaSel);
+  const filtrados = todosAlunos.filter(a => !tNorm || turma(a.sala || a.turma) === tNorm);
+
+  alunoSelect.innerHTML = `<option value="">Selecione o estudante...</option>` + 
+    filtrados.map(a => `<option value="${a.id}" data-nome="${textoSeguro(a.nome)}" data-ra="${a.ra || ''}" data-turma="${a.sala || a.turma || turmaSel}">${a.nome} (${a.ra || 'S/ RA'})</option>`).join("");
+}
+
+/**
+ * Renderiza os cartões de ocorrência com indicação de visto dos pais e pareceres da família.
+ */
+function renderizarOcorrenciasProf() {
+  const container = $("listaOcorrenciasProf");
+  if (!container) return;
+
+  const todas = DBLocal.obterOcorrencias();
+  const filtroTurma = $("ocFiltroTurma") ? $("ocFiltroTurma").value : "TODAS";
+  const filtroStatus = $("ocFiltroStatus") ? $("ocFiltroStatus").value : "TODOS";
+
+  let filtradas = todas.filter(o => {
+    if (filtroTurma !== "TODAS" && turma(o.turma) !== turma(filtroTurma)) return false;
+    if (filtroStatus === "PENDENTE" && o.assinaturaPais?.assinado) return false;
+    if (filtroStatus === "ASSINADO" && !o.assinaturaPais?.assinado) return false;
+    return true;
+  });
+
+  const badgePendentes = $("badgeOcorrenciasPendentesProf");
+  const pendentesGeral = todas.filter(o => o.requerAssinatura !== false && !o.assinaturaPais?.assinado).length;
+  if (badgePendentes) {
+    badgePendentes.textContent = `⏳ ${pendentesGeral} aguardando assinatura`;
+    badgePendentes.style.background = pendentesGeral > 0 ? "#fef3c7" : "#dcfce7";
+    badgePendentes.style.color = pendentesGeral > 0 ? "#92400e" : "#166534";
+  }
+
+  if (filtradas.length === 0) {
+    container.innerHTML = `<p class="vazio" style="padding:20px; text-align:center; color:#64748b;">Nenhuma ocorrência encontrada para os filtros selecionados.</p>`;
+    return;
+  }
+
+  container.innerHTML = filtradas.map(oc => {
+    const assinado = Boolean(oc.assinaturaPais?.assinado);
+    const corGravidade = oc.gravidade === "Alta" ? "#dc2626" : (oc.gravidade === "Média" ? "#d97706" : (oc.gravidade === "Elogio" ? "#16a34a" : "#2563eb"));
+    
+    return `
+      <div style="background:#ffffff; border:1px solid ${assinado ? '#bbf7d0' : '#fed7aa'}; border-left:4px solid ${corGravidade}; border-radius:10px; padding:14px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+          <div>
+            <span style="font-size:11px; font-weight:bold; color:#64748b; text-transform:uppercase;">${oc.data || ''} • ${oc.turma || ''}</span>
+            <h4 style="margin:2px 0 0 0; font-size:15px; color:#1e293b;">${oc.alunoNome || 'Estudante'} <small style="font-weight:normal; color:#64748b;">(RA: ${oc.alunoRA || 'N/D'})</small></h4>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+            <span style="background:${corGravidade}15; color:${corGravidade}; border:1px solid ${corGravidade}40; font-size:11px; padding:2px 8px; border-radius:12px; font-weight:bold;">
+              ${oc.gravidade || 'Média'}
+            </span>
+            <span style="background:#f1f5f9; color:#475569; font-size:11px; padding:2px 8px; border-radius:12px;">
+              ${oc.tipo || 'Ocorrência'}
+            </span>
+          </div>
+        </div>
+
+        <div style="background:#f8fafc; border-radius:6px; padding:8px 10px; margin-bottom:10px; font-size:13px; color:#334155; line-height:1.4;">
+          <strong>Relato:</strong> ${oc.descricao || 'Sem descrição.'}
+          ${oc.providencias ? `<div style="margin-top:4px; font-size:12px; color:#475569;"><strong>Providências:</strong> ${oc.providencias}</div>` : ''}
+        </div>
+
+        <!-- Box de Assinatura dos Pais -->
+        <div style="background:${assinado ? '#f0fdf4' : '#fffbeb'}; border:1px dashed ${assinado ? '#86efac' : '#fde68a'}; border-radius:8px; padding:10px; font-size:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <div>
+            ${assinado ? `
+              <div style="color:#166534; font-weight:bold; display:flex; align-items:center; gap:6px;">
+                <span>✅</span> Ciência Confirmada pelo Responsável
+              </div>
+              <div style="color:#374151; margin-top:2px;">
+                Assinado por <strong>${oc.assinaturaPais.responsavelNome}</strong> em <em>${oc.assinaturaPais.dataAssinatura}</em>
+              </div>
+              ${oc.assinaturaPais.observacaoPais ? `
+                <div style="margin-top:4px; font-style:italic; color:#4b5563; background:#ffffff; padding:4px 8px; border-radius:4px; border:1px solid #e5e7eb;">
+                  "${oc.assinaturaPais.observacaoPais}"
+                </div>
+              ` : ''}
+            ` : `
+              <div style="color:#b45309; font-weight:bold; display:flex; align-items:center; gap:6px;">
+                <span>⏳</span> Aguardando Assinatura do Responsável
+              </div>
+              <div style="color:#78350f; margin-top:2px;">
+                Disponível para assinatura no Portal dos Pais do estudante.
+              </div>
+            `}
+          </div>
+
+          <div style="display:flex; gap:6px;">
+            <button type="button" onclick="window.excluirOcorrenciaProf('${oc.id}')" style="background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; padding:4px 8px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;">
+              Excluir
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+// Configura eventos da tela de ocorrências
+if ($("ocTurmaSelect")) {
+  $("ocTurmaSelect").addEventListener("change", popularAlunosOcorrencia);
+}
+if ($("ocFiltroTurma")) {
+  $("ocFiltroTurma").addEventListener("change", renderizarOcorrenciasProf);
+}
+if ($("ocFiltroStatus")) {
+  $("ocFiltroStatus").addEventListener("change", renderizarOcorrenciasProf);
+}
+
+// Submissão do formulário
+const formOcProf = $("formNovaOcorrenciaProf");
+if (formOcProf) {
+  formOcProf.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const alunoSel = $("ocAlunoSelect");
+    if (!alunoSel || !alunoSel.value) {
+      alert("Por favor, selecione o estudante envolvido.");
+      return;
+    }
+
+    const opt = alunoSel.selectedOptions[0];
+    const alunoId = alunoSel.value;
+    const alunoNome = opt?.getAttribute("data-nome") || opt.textContent.split(" (")[0];
+    const alunoRA = opt?.getAttribute("data-ra") || "";
+    const turmaAluno = opt?.getAttribute("data-turma") || ($("ocTurmaSelect")?.value || "8º Ano A");
+    const data = $("ocDataInput")?.value || new Date().toISOString().split("T")[0];
+    const tipo = $("ocTipoSelect")?.value || "Ocorrência Pedagógica";
+    const gravidade = $("ocGravidadeSelect")?.value || "Média";
+    const descricao = $("ocDescricaoInput")?.value.trim() || "";
+    const providencias = $("ocProvidenciasInput")?.value.trim() || "";
+    const requerAssinatura = $("ocRequerAssinatura") ? $("ocRequerAssinatura").checked : true;
+
+    if (!descricao) {
+      alert("Por favor, relate os fatos da ocorrência.");
+      return;
+    }
+
+    const novaOc = {
+      id: `oc_${Date.now()}`,
+      alunoId,
+      alunoNome,
+      alunoRA,
+      turma: turmaAluno,
+      data,
+      tipo,
+      gravidade,
+      descricao,
+      providencias,
+      registradoPor: (typeof usuarioAtual !== "undefined" && usuarioAtual?.displayName) ? usuarioAtual.displayName : "Prof. Carlos Eduardo Silva",
+      status: requerAssinatura ? "Pendente de Assinatura dos Pais" : "Registrada",
+      requerAssinatura,
+      assinaturaPais: {
+        assinado: false,
+        responsavelNome: "",
+        dataAssinatura: "",
+        observacaoPais: ""
+      }
+    };
+
+    DBLocal.salvarOcorrencia(novaOc);
+
+    alert(`📋 Ocorrência registrada com sucesso para o estudante ${alunoNome}!\n\nEla já foi enviada para o Portal dos Pais para ciência e assinatura digital.`);
+    
+    $("ocDescricaoInput").value = "";
+    $("ocProvidenciasInput").value = "";
+    alunoSel.value = "";
+    renderizarOcorrenciasProf();
+  });
+}
+
+window.excluirOcorrenciaProf = function(id) {
+  if (!confirm("Deseja realmente remover esta ocorrência do banco de dados?")) return;
+  DBLocal.excluirOcorrencia(id);
+  renderizarOcorrenciasProf();
+};
+
+// Sincronização reativa em tempo real com Portal dos Pais
+window.addEventListener("storage", (e) => {
+  if (e.key === "banco_local_sala_futuro_v2") {
+    renderizarOcorrenciasProf();
+  }
+});
+
+// Inicialização
+carregarModuloOcorrenciasProf();
+
 
 

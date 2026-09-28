@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestão e Administração Escolar | Sala do Futuro V2</title>
-  <meta name="description" content="Painel administrativo da Sala do Futuro V2: dados reais sincronizados com o Firebase Firestore para estudantes, guildas, turmas e relatórios automatizados de tarefas pedagógicas.">
+  <meta name="description" content="Painel administrativo da Sala do Futuro V2: dados integrados no Banco Local para estudantes, guildas, turmas e relatórios automatizados de tarefas pedagógicas.">
   <link rel="stylesheet" href="../../css/acessibilidade-global.css">
   <style>
     :root {
@@ -871,9 +871,14 @@
       </div>
     </div>
     <div class="topo-links">
+      <div id="gestorLogadoInfo" style="display:flex; align-items:center; gap:8px; background:#f1f5f9; padding:6px 12px; border-radius:20px; font-size:0.85rem; color:#1e293b; border:1px solid #cbd5e1;">
+        <span style="font-size:16px;">👤</span>
+        <strong id="nomeGestorTopo">Diretora Ana Paula Ramos</strong>
+        <span id="cargoGestorTopo" style="font-size:0.75rem; background:#1d5a9e; color:#fff; padding:2px 6px; border-radius:10px; font-weight:600;">Diretoria</span>
+      </div>
       <a href="../Prof/Index.html" class="btn-link btn-link-sec">Área do Professor</a>
       <a href="../loginal.html" class="btn-link btn-link-sec">Portal do Aluno</a>
-      <a href="../../index.html" class="btn-link btn-link-sair">Sair</a>
+      <a href="../loginadm.html" class="btn-link btn-link-sair" id="btnSairAdm">Sair / Trocar</a>
     </div>
   </header>
 
@@ -884,7 +889,7 @@
     <div class="barra-status-conexao" id="barraStatusConexao" style="border-left-color: #10b981;">
       <div class="status-badge-live">
         <span class="ponto-status" id="pontoConexao" style="background: #10b981;"></span>
-        <span id="textoStatusFirestore">Modo Demonstração: Banco Local Ativo &amp; Persistente</span>
+        <span id="textoStatusBancoLocal">Modo Demonstração: Banco Local Ativo &amp; Persistente</span>
         <span class="badge-reais" style="background:#10b981;">100% LOCAL</span>
         <span class="badge-reais" style="background:#0284c7;">⚡ IA GEMINI CONFIGURADA</span>
       </div>
@@ -1189,7 +1194,7 @@
           <div>
             <h2>Relatórios Oficiais de Tarefas & Entregas Reais</h2>
             <p style="color:var(--texto-claro); font-size:0.9rem; margin-top:4px;">
-              Auditoria pedagógica compilada diretamente a partir dos registros de <code>entregasTarefaSP</code>, <code>entregas</code> e avaliações no Firebase Firestore.
+              Auditoria pedagógica compilada diretamente a partir dos registros de <code>entregas</code>, <code>tarefas</code> e avaliações no Banco Local.
             </p>
           </div>
           <div style="display:flex; gap:10px; flex-wrap:wrap;">
@@ -1250,7 +1255,7 @@
           <div style="background:#f8fafc; border:1px solid var(--borda-suave); padding:20px; border-radius:14px;">
             <h3 style="font-size:1rem; margin-bottom:14px; color:var(--texto-escuro); display:flex; justify-content:space-between;">
               <span>📈 Taxa Real de Conclusão por Turma</span>
-              <small style="font-size:0.75rem; color:var(--texto-claro);">Base Firestore</small>
+              <small style="font-size:0.75rem; color:var(--texto-claro);">Base Banco Local</small>
             </h3>
             <div id="graficoBarrasTurmas">
               <!-- Renderizado dinamicamente com dados reais -->
@@ -1663,7 +1668,7 @@
         </div>
         <div class="modal-rodape">
           <button type="button" class="btn-link btn-link-sec" onclick="window.fecharModais()">Cancelar</button>
-          <button type="submit" class="btn-primario">💾 Salvar no Firestore</button>
+          <button type="submit" class="btn-primario">💾 Salvar no Banco Local</button>
         </div>
       </form>
     </div>
@@ -1706,7 +1711,7 @@
         </div>
         <div class="modal-rodape">
           <button type="button" class="btn-link btn-link-sec" onclick="window.fecharModais()">Cancelar</button>
-          <button type="submit" class="btn-primario">💾 Atualizar Nota no Firestore</button>
+          <button type="submit" class="btn-primario">💾 Atualizar Nota no Banco Local</button>
         </div>
       </form>
     </div>
@@ -1761,7 +1766,7 @@
         </div>
         <div class="modal-rodape">
           <button type="button" class="btn-link btn-link-sec" onclick="window.fecharModais()">Cancelar</button>
-          <button type="submit" class="btn-primario">💾 Atualizar Ocorrência no Firestore</button>
+          <button type="submit" class="btn-primario">💾 Atualizar Ocorrência no Banco Local</button>
         </div>
       </form>
     </div>
@@ -1839,40 +1844,8 @@
   <!-- SCRIPT MODULAR INTEGRADO AO BANCO LOCAL (MODO DEMONSTRAÇÃO) -->
   <script type="module">
     import DBLocal from "../js/db-local.js";
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-    import { getAuth } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
-    import {
-      getFirestore,
-      collection,
-      doc,
-      setDoc,
-      getDoc,
-      getDocs,
-      query,
-      where,
-      addDoc,
-      updateDoc,
-      deleteDoc,
-      serverTimestamp,
-      increment
-    } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
-    // Configuração oficial do projeto Firebase Sala do Futuro
-    const firebaseConfig = {
-      apiKey: "AIzaSyCey_SsTCeHuTKwBaZ-Eo6_7LRa4l-5A80",
-      authDomain: "salafuturov2prot.firebaseapp.com",
-      projectId: "salafuturov2prot",
-      storageBucket: "salafuturov2prot.firebasestorage.app",
-      messagingSenderId: "352042722106",
-      appId: "1:352042722106:web:395ba7ef400d1421426603",
-      measurementId: "G-LW16X3NHH8"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // Estado do App carregado do Firestore
+    // Estado do App carregado do Banco Local
     const estadoReal = {
       alunos: [],
       salas: [],
@@ -1926,10 +1899,11 @@
     }
 
     // ====================================================
-    // SINCRONIZAÇÃO COMPLETA COM FIRESTORE REAL
+    // SINCRONIZAÇÃO COMPLETA COM BANCO LOCAL
     // ====================================================
-    async function sincronizarBancoFirestore(mostrarAviso = true) {
-      document.getElementById("textoStatusFirestore").textContent = "Carregando banco local...";
+    async function sincronizarBancoLocal(mostrarAviso = true) {
+      const statusEl = document.getElementById("textoStatusBancoLocal");
+      if (statusEl) statusEl.textContent = "Carregando banco local...";
       document.getElementById("pontoConexao").style.background = "#10b981";
 
       try {
@@ -1973,7 +1947,7 @@
 
         // Atualiza status da barra institucional
         document.getElementById("pontoConexao").style.background = "#10b981";
-        document.getElementById("textoStatusFirestore").textContent = "Modo Demonstração: Banco Local Ativo & Persistente";
+        if (statusEl) statusEl.textContent = "Modo Demonstração: Banco Local Ativo & Persistente";
         const agora = new Date();
         document.getElementById("ultimaSincronizacao").textContent = `Atualizado: ${agora.toLocaleTimeString("pt-BR")}`;
 
@@ -1993,7 +1967,7 @@
     function compilarRelatorioReal() {
       const registros = [];
 
-      // 1. Mapeia entregas registradas no Tarefas SP (Firestore: entregasTarefaSP)
+      // 1. Mapeia entregas registradas no Tarefas SP (Banco Local: entregasSP)
       estadoReal.entregasSP.forEach(entrega => {
         const alunoInfo = estadoReal.alunos.find(a => 
           a.id === entrega.alunoId || 
@@ -2017,7 +1991,7 @@
         });
       });
 
-      // 2. Mapeia entregas de tarefas criadas pelos professores (Firestore: entregas)
+      // 2. Mapeia entregas de tarefas criadas pelos professores (Banco Local: entregas)
       estadoReal.entregasDocentes.forEach(entrega => {
         const alunoInfo = estadoReal.alunos.find(a => 
           a.id === entrega.alunoId || 
@@ -2042,7 +2016,7 @@
         });
       });
 
-      // 3. Mapeia avaliações oficiais lançadas pelos professores (Firestore: avaliacoes_notas)
+      // 3. Mapeia avaliações oficiais lançadas pelos professores (Banco Local: notas e avaliações)
       estadoReal.avaliacoesNotas.forEach(av => {
         if (Array.isArray(av.notas)) {
           av.notas.forEach(notaItem => {
@@ -2279,21 +2253,6 @@
           estadoReal.alunos[idx] = salvo;
         }
 
-        // Sincroniza em segundo plano se disponível
-        try {
-          updateDoc(doc(db, "usuarios", id), {
-            nome: primeiroNome,
-            sobrenome: sobrenome,
-            email,
-            ra,
-            turma,
-            sala: turma,
-            guilda,
-            xp,
-            nivel
-          }).catch(() => {});
-        } catch(e) {}
-
         window.fecharModais();
         compilarRelatorioReal();
         renderizarTudo();
@@ -2332,22 +2291,6 @@
 
         estadoReal.alunos.unshift(novo);
 
-        // Sincroniza em segundo plano se disponível
-        try {
-          addDoc(collection(db, "usuarios"), {
-            nome: primeiroNome,
-            sobrenome: sobrenome,
-            email,
-            ra,
-            turma: sala,
-            guilda,
-            xp,
-            tipo: "aluno",
-            ano: 2026,
-            criadoEm: serverTimestamp()
-          }).catch(() => {});
-        } catch(e) {}
-
         compilarRelatorioReal();
         renderizarTudo();
         this.reset();
@@ -2363,9 +2306,6 @@
       try {
         DBLocal.excluirAluno(id);
         estadoReal.alunos = estadoReal.alunos.filter(a => a.id !== id);
-        try {
-          deleteDoc(doc(db, "usuarios", id)).catch(() => {});
-        } catch(e) {}
         compilarRelatorioReal();
         renderizarTudo();
         notificar("Estudante removido com sucesso do banco local.");
@@ -2440,13 +2380,6 @@
 
         estadoReal.guildas.push(nova);
 
-        try {
-          addDoc(collection(db, "guildas"), {
-            ...nova,
-            criadoEm: serverTimestamp()
-          }).catch(() => {});
-        } catch(e) {}
-
         renderizarTudo();
         this.reset();
         notificar(`Guilda "${nome}" cadastrada no banco local!`);
@@ -2461,11 +2394,6 @@
       g.pontos = (g.pontos || 0) + 100;
       try {
         DBLocal.salvarGuilda(g);
-        try {
-          updateDoc(doc(db, "guildas", id), {
-            pontos: increment(100)
-          }).catch(() => {});
-        } catch(e) {}
         renderizarGridGuildas();
         notificar(`+100 XP concedidos à guilda ${g.nome}!`);
       } catch(err) {
@@ -2478,9 +2406,6 @@
       try {
         DBLocal.excluirGuilda(id);
         estadoReal.guildas = estadoReal.guildas.filter(g => g.id !== id);
-        try {
-          deleteDoc(doc(db, "guildas", id)).catch(() => {});
-        } catch(e) {}
         renderizarTudo();
         notificar("Guilda removida do banco local.");
       } catch(err) {
@@ -2544,13 +2469,6 @@
 
         estadoReal.salas.push(nova);
 
-        try {
-          addDoc(collection(db, "salas"), {
-            ...nova,
-            criadoEm: serverTimestamp()
-          }).catch(() => {});
-        } catch(e) {}
-
         renderizarTudo();
         this.reset();
         notificar(`Turma ${nome} cadastrada no banco local!`);
@@ -2564,13 +2482,11 @@
       try {
         DBLocal.excluirSala(id);
         estadoReal.salas = estadoReal.salas.filter(s => s.id !== id);
-        try {
-          deleteDoc(doc(db, "salas", id)).catch(() => {});
-        } catch(e) {}
         renderizarTudo();
-        notificar("Sala removida do banco local.");
+        notificar("Turma removida com sucesso do banco local.");
       } catch(err) {
         console.error("Erro ao excluir sala:", err);
+        notificar("Erro ao excluir turma.");
       }
     };
 
@@ -2755,7 +2671,7 @@
 
     // Sincronizar em Tempo Real (Botão da barra)
     document.getElementById("btnSincronizarReal").addEventListener("click", async () => {
-      await sincronizarBancoFirestore(true);
+      await sincronizarBancoLocal(true);
     });
 
     // Exportação de CSV Real
@@ -2774,7 +2690,7 @@
       estadoReal.alunos.forEach(a => {
         csv += `"${a.id}";"${a.nome}";"${a.email}";"${a.ra}";"${a.sala}";"${a.guilda}";${a.xp}\n`;
       });
-      exportarCSVGenerico(csv, "estudantes_firestore_sala_do_futuro.csv");
+      exportarCSVGenerico(csv, "estudantes_sala_do_futuro.csv");
       notificar("Planilha de estudantes exportada!");
     });
 
@@ -2794,7 +2710,7 @@
         const membros = estadoReal.alunos.filter(a => a.guilda === g.nome).length;
         csv += `"${g.nome}";"${g.cor}";"${g.lema}";"${g.lider}";${g.pontos};${membros}\n`;
       });
-      exportarCSVGenerico(csv, "ranking_guildas_firestore.csv");
+      exportarCSVGenerico(csv, "ranking_guildas.csv");
       notificar("Quadro de guildas exportado!");
     });
 
@@ -2871,10 +2787,6 @@
           const idx = estadoReal.notas.findIndex(n => n.id === edicaoId);
           if (idx !== -1) estadoReal.notas[idx] = salva;
 
-          try {
-            updateDoc(doc(db, "notas", edicaoId), { ...dadosNota, atualizadoEm: serverTimestamp() }).catch(() => {});
-          } catch(e) {}
-
           notificar("Nota atualizada com sucesso no banco local!");
           document.getElementById("notaEdicaoId").value = "";
           document.getElementById("btnSalvarNota").textContent = "💾 Salvar Nota no Banco";
@@ -2882,10 +2794,6 @@
         } else {
           const nova = DBLocal.salvarNota(dadosNota);
           estadoReal.notas.unshift(nova);
-
-          try {
-            addDoc(collection(db, "notas"), { ...dadosNota, criadoEm: serverTimestamp() }).catch(() => {});
-          } catch(e) {}
 
           notificar(`Nota de ${aluno.nome} lançada com sucesso no banco local!`);
         }
@@ -2955,18 +2863,6 @@
           };
         }
 
-        try {
-          updateDoc(doc(db, "notas", id), {
-            notaProva,
-            notaTarefas,
-            notaParticipacao,
-            media,
-            situacao,
-            observacoes,
-            atualizadoEm: serverTimestamp()
-          }).catch(() => {});
-        } catch(e) {}
-
         window.fecharModais();
         renderizarTabelaNotas();
         notificar("Nota retificada com sucesso no banco local!");
@@ -2981,9 +2877,6 @@
       try {
         DBLocal.excluirNota(id);
         estadoReal.notas = estadoReal.notas.filter(n => n.id !== id);
-        try {
-          deleteDoc(doc(db, "notas", id)).catch(() => {});
-        } catch(e) {}
         renderizarTabelaNotas();
         document.getElementById("badgeNotasQtd").textContent = estadoReal.notas.length;
         notificar("Nota removida do banco local.");
@@ -3088,10 +2981,6 @@
         const nova = DBLocal.salvarOcorrencia(dadosOcorrencia);
         estadoReal.ocorrencias.unshift(nova);
 
-        try {
-          addDoc(collection(db, "ocorrencias"), { ...dadosOcorrencia, criadoEm: serverTimestamp() }).catch(() => {});
-        } catch(e) {}
-
         renderizarTabelaOcorrencias();
         document.getElementById("badgeOcorrenciasQtd").textContent = estadoReal.ocorrencias.length;
         this.reset();
@@ -3143,16 +3032,6 @@
           };
         }
 
-        try {
-          updateDoc(doc(db, "ocorrencias", id), {
-            gravidade,
-            status,
-            descricao,
-            providencias,
-            atualizadoEm: serverTimestamp()
-          }).catch(() => {});
-        } catch(e) {}
-
         window.fecharModais();
         renderizarTabelaOcorrencias();
         notificar("Ocorrência atualizada com sucesso no banco local!");
@@ -3167,9 +3046,6 @@
       try {
         DBLocal.excluirOcorrencia(id);
         estadoReal.ocorrencias = estadoReal.ocorrencias.filter(o => o.id !== id);
-        try {
-          deleteDoc(doc(db, "ocorrencias", id)).catch(() => {});
-        } catch(e) {}
         renderizarTabelaOcorrencias();
         document.getElementById("badgeOcorrenciasQtd").textContent = estadoReal.ocorrencias.length;
         notificar("Registro de ocorrência excluído do banco local.");
@@ -3248,7 +3124,18 @@
             </td>
             <td title="${o.descricao}">${descCurta}</td>
             <td title="${o.providencias}">${provCurta}</td>
-            <td><strong>${o.status}</strong></td>
+            <td>
+              <strong>${o.status}</strong>
+              ${o.assinaturaPais?.assinado ? `
+                <div style="font-size:0.75rem; color:#16a34a; font-weight:bold; margin-top:3px;">
+                  ✅ Ciência dos Pais: ${o.assinaturaPais.responsavelNome}
+                </div>
+              ` : (o.requerAssinatura !== false ? `
+                <div style="font-size:0.75rem; color:#d97706; font-weight:600; margin-top:3px;">
+                  ⏳ Aguardando Visto dos Pais
+                </div>
+              ` : '')}
+            </td>
             <td>
               <div style="display:flex; gap:6px; flex-wrap:wrap;">
                 <button type="button" class="btn-acao-tabela" onclick="window.abrirModalEditarOcorrencia('${o.id}')">Editar</button>
@@ -3346,17 +3233,41 @@
     document.getElementById("btnResetarDemo")?.addEventListener("click", () => {
       if (confirm("Deseja redefinir todos os dados locais de demonstração para o padrão da escola?")) {
         DBLocal.resetarParaPadrao();
-        sincronizarBancoFirestore(false);
+        sincronizarBancoLocal(false);
         notificar("Banco local restaurado para os dados oficiais de demonstração!");
       }
     });
 
     document.getElementById("btnSincronizarReal")?.addEventListener("click", () => {
-      sincronizarBancoFirestore(true);
+      sincronizarBancoLocal(true);
+    });
+
+    // Identificação do Gestor Logado
+    try {
+      const gestorStorage = localStorage.getItem("gestorAtivo");
+      const gestor = gestorStorage ? JSON.parse(gestorStorage) : (DBLocal.obterUsuarioAtivo() || {});
+      const elNome = document.getElementById("nomeGestorTopo");
+      const elCargo = document.getElementById("cargoGestorTopo");
+      if (elNome && gestor?.nome) {
+        elNome.textContent = gestor.nome;
+      }
+      if (elCargo && gestor?.cargo) {
+        elCargo.textContent = gestor.cargo.includes("Diret") ? "Diretoria" : (gestor.cargo.includes("Superv") ? "Supervisão" : "Gestão");
+      }
+    } catch (e) {}
+
+    document.getElementById("btnSairAdm")?.addEventListener("click", () => {
+      DBLocal.fazerLogout();
+      try { localStorage.removeItem("gestorAtivo"); } catch(e) {}
     });
 
     // INICIALIZAÇÃO AUTOMÁTICA
-    sincronizarBancoFirestore(false);
+    sincronizarBancoLocal(false);
+
+    // Sincronização em tempo real quando dados forem atualizados por alunos ou professores
+    window.addEventListener("banco-local-atualizado", () => {
+      sincronizarBancoLocal(false);
+    });
   </script>
 </body>
 </html>

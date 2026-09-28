@@ -16,7 +16,7 @@ button,input,textarea,select{font:inherit} button{cursor:pointer}
 .menu-botao:hover{background:#f1f7fd;color:var(--azul)}.menu-botao.ativo{background:#eaf4ff;color:var(--azul);border-color:#cce3f8;font-weight:bold}
 .menu-rodape{margin-top:20px;display:grid;gap:8px}.menu-rodape button{width:100%;padding:10px;border-radius:10px;border:1px solid var(--borda);background:white;color:var(--texto2)}
 .conteudo{min-width:0;padding:26px}.topo{max-width:1200px;margin:0 auto 22px;display:flex;justify-content:space-between;align-items:center;gap:15px}.topo h1{margin:0;color:#445671;font-size:clamp(1.6rem,4vw,2.4rem)}.topo p{margin:5px 0 0;color:var(--texto2)}
-.status-firebase{padding:9px 12px;border-radius:999px;background:#eef6ff;border:1px solid #d2e6fb;color:#235f9e;font-size:13px}
+.status-banco-local{padding:9px 12px;border-radius:999px;background:#eef6ff;border:1px solid #d2e6fb;color:#235f9e;font-size:13px}
 .pagina{max-width:1200px;margin:0 auto;display:none;animation:aparecer .32s ease}.pagina.ativa{display:block}
 .grade{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.card{grid-column:span 6;background:rgba(255,255,255,.97);border:1px solid rgba(170,190,215,.45);border-radius:20px;padding:20px;box-shadow:0 8px 25px rgba(40,70,110,.08)}.card.largo{grid-column:span 12}.card h2,.card h3{margin-top:0;color:#425670}.card p{color:var(--texto2);line-height:1.5}
 .metricas{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.metrica{padding:18px;border:1px solid #dce8f3;border-radius:17px;background:linear-gradient(135deg,#fff,#f6faff)}.metrica strong{display:block;margin-top:6px;font-size:27px;color:var(--azul)}

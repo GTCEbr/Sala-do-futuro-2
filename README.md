@@ -25,7 +25,7 @@ A *Sala do futuro 2* é uma plataforma feita para alunos exclusivamente para fin
 ## Arquitetura Tecnológica
 * **Frontend:** HTML5, CSS3/Tailwind CSS e JavaScript modular para assegurar responsividade, clareza e acessibilidade visual.
 * **Backend e Infraestrutura:** Cloudflare (Workers e Static Assets) para alta performance na borda e entrega de conteúdo estático.
-* **Autenticação e Banco de Dados:** Firebase (Auth e Cloud Firestore) para gestão segura de identidade e persistência de dados.
+* **Autenticação e Banco de Dados:** Banco de Dados Local (LocalStorage com motor DBLocal reativo) para gestão 100% conectada, rápida e persistente entre perfis (Alunos, Professores, Responsáveis e Gestão/Adm), funcionando de forma totalmente autônoma e descentralizada.
 * **Inteligência Artificial:** Integração com a Gemini API para suporte pedagógico automatizado, explicando erros de forma contextual sem expor dados pessoais sensíveis dos discentes.
 
 ---

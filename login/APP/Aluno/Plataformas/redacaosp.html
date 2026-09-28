@@ -846,36 +846,10 @@ Apresente o tema, formule sua tese, desenvolva seus argumentos nos parágrafos s
   <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
   <script src="../../../../js/acessibilidade-global.js"></script>
 
-  <!-- LÓGICA DA REDAÇÃO PAULISTA INTEGRADA AO FIRESTORE -->
+  <!-- LÓGICA DA REDAÇÃO PAULISTA INTEGRADA AO BANCO LOCAL -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
     import DBLocal from "../../../js/db-local.js";
 
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      doc,
-      getDoc,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCey_SsTCeHuTKwBaZ-Eo6_7LRa4l-5A80",
-      authDomain: "salafuturov2prot.firebaseapp.com",
-      projectId: "salafuturov2prot",
-      storageBucket: "salafuturov2prot.firebasestorage.app",
-      messagingSenderId: "352042722106",
-      appId: "1:352042722106:web:395ba7ef400d1421426603",
-      measurementId: "G-LW16X3NHH8"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    let usuarioLogado = null;
     let dadosAluno = {
       nome: "Estudante Paulista",
       ra: "000.123.456-7 SP",
@@ -991,24 +965,6 @@ Apresente o tema, formule sua tese, desenvolva seus argumentos nos parágrafos s
     }
 
     carregarRedacoesEnviadas();
-
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        usuarioLogado = user;
-        try {
-          const docSnap = await getDoc(doc(db, "usuarios", user.uid));
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            dadosAluno.nome = data.nome ? `${data.nome} ${data.sobrenome || ""}`.trim() : (data.email || "Estudante");
-            dadosAluno.ra = data.ra || "000.123.456-7 SP";
-            dadosAluno.turma = data.turma || "8º Ano A";
-            atualizarDadosAlunoTela();
-          }
-        } catch (e) {
-          console.warn("Aluno offline:", e);
-        }
-      }
-    });
 
     // Seletor de Tema
     const seletor = document.getElementById("seletorTemasOficiais");
@@ -1274,7 +1230,7 @@ Apresente o tema, formule sua tese, desenvolva seus argumentos nos parágrafos s
       window.print();
     });
 
-    // Enviar Redação Oficial para o Banco Local e Firestore
+    // Enviar Redação Oficial para o Banco Local
     document.getElementById("btnEnviarRedacao").addEventListener("click", async () => {
       const titulo = document.getElementById("tituloRedacao").value.trim();
       const texto = textarea.value.trim();
@@ -1319,30 +1275,17 @@ Apresente o tema, formule sua tese, desenvolva seus argumentos nos parágrafos s
           data: new Date().toISOString().split("T")[0]
         };
 
-        // 1. Salva no banco local de entregas
-        DBLocal.salvarEntrega(registroLocal);
+        // 1. Salva no banco local de redações e entregas
+        DBLocal.salvarRedacao(registroLocal);
 
         // 2. Bonifica o aluno com +100 XP
-        const perfilAtivo = DBLocal.obterPerfilAluno() || DBLocal.obterUsuarioAtivo();
-        if (perfilAtivo) {
-          perfilAtivo.xp = (Number(perfilAtivo.xp) || 380) + 100;
-          perfilAtivo.nivel = Math.floor(perfilAtivo.xp / 100) + 1;
-          DBLocal.salvarPerfilAluno(perfilAtivo);
-        }
+        DBLocal.adicionarXPAluno(alunoIdAtual, 100);
 
         // 3. Atualiza o histórico visual de redações na tela
         carregarRedacoesEnviadas();
 
-        // 4. Sincronização em nuvem não bloqueante se online
-        try {
-          await addDoc(collection(db, "redacoes"), {
-            ...registroLocal,
-            criadoEm: serverTimestamp()
-          });
-        } catch (eSync) {}
-
         notificar("🎉 Redação enviada com sucesso! +100 XP conquistados.");
-        document.getElementById("indicadorStatusFolha").textContent = "Entregue e salva no banco institucional";
+        document.getElementById("indicadorStatusFolha").textContent = "Entregue e salva no banco local";
       } catch (err) {
         console.warn("Erro ao salvar redação:", err);
         notificar("Redação gravada com sucesso em contingência local!");

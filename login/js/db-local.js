@@ -11,7 +11,7 @@
 const CHAVE_STORAGE = "SALA_DO_FUTURO_BANCO_LOCAL_V2";
 
 const DADOS_INICIAIS = {
-  versao: "2.5-local-demo",
+  versao: "2.7-cmsp-tasks",
   atualizadoEm: new Date().toISOString(),
   
   usuarios: [
@@ -116,8 +116,89 @@ const DADOS_INICIAIS = {
       prazo: "2026-09-25",
       pontosXP: 40,
       status: "ativa",
-      descricao: "Resolva os 4 desafios práticos envolvendo proporcionalidade e equações lineares no cotidiano da escola e do comércio local.",
-      anexos: []
+      habilidadeBNCC: "EF08MA04 / EF08MA07",
+      descricao: "Desafios práticos envolvendo proporcionalidade, razão e equações lineares no cotidiano da escola e do laboratório Maker.",
+      anexos: [],
+      questoes: [
+        {
+          id: "q1",
+          tipo: "lacuna",
+          enunciado: "Complete a frase selecionando a taxa de produção unitária correta no menu suspenso:",
+          textoAntes: "Se 4 impressoras 3D produzem 24 peças em 3 horas contínuas, a taxa de produção de cada impressora é de",
+          textoDepois: "de funcionamento ininterrupto.",
+          opcoes: ["2 peças por hora", "4 peças por hora", "6 peças por hora", "8 peças por hora"],
+          respostaCorreta: "2 peças por hora",
+          pontos: 5,
+          dica: "Descubra primeiro quantas peças são feitas ao todo em uma única hora pelas 4 impressoras juntas.",
+          explicacao: "24 peças divididas por 3 horas = 8 peças/hora no conjunto. Como são 4 máquinas: 8 / 4 = 2 peças por hora para cada impressora."
+        },
+        {
+          id: "q2",
+          tipo: "multiplaEscolha",
+          enunciado: "Mantendo o mesmo ritmo de produção, quantas peças serão produzidas por 6 impressoras iguais durante 4 horas de funcionamento?",
+          alternativas: [
+            { id: "a", texto: "36 peças" },
+            { id: "b", texto: "48 peças" },
+            { id: "c", texto: "54 peças" },
+            { id: "d", texto: "60 peças" }
+          ],
+          respostaCorreta: "b",
+          pontos: 5,
+          dica: "Multiplique a quantidade de impressoras pelo número de horas e pela taxa unitária (2 peças/hora).",
+          explicacao: "Total de peças = 6 impressoras * 4 horas * 2 peças/hora = 48 peças produzidas."
+        },
+        {
+          id: "q3",
+          tipo: "multiplaEscolha",
+          enunciado: "O dobro da pontuação de uma guilda na gincana escolar, somado a 150 pontos bônus, totaliza 750 pontos. Qual é a pontuação original dessa guilda?",
+          alternativas: [
+            { id: "a", texto: "250 pontos" },
+            { id: "b", texto: "300 pontos" },
+            { id: "c", texto: "350 pontos" },
+            { id: "d", texto: "400 pontos" }
+          ],
+          respostaCorreta: "b",
+          pontos: 10,
+          dica: "Monte a equação linear: 2x + 150 = 750 e subtraia 150 de ambos os lados.",
+          explicacao: "2x + 150 = 750 => 2x = 600 => x = 300 pontos."
+        },
+        {
+          id: "q4",
+          tipo: "lacuna",
+          enunciado: "Selecione o valor que satisfaz a igualdade na equação linear:",
+          textoAntes: "Para a equação 3x - 15 = 45, o valor numérico da incógnita x é",
+          textoDepois: ", tornando a sentença verdadeira.",
+          opcoes: ["15", "20", "25", "30"],
+          respostaCorreta: "20",
+          pontos: 5,
+          dica: "Some 15 em ambos os membros da igualdade e depois divida por 3.",
+          explicacao: "3x = 45 + 15 => 3x = 60 => x = 20."
+        },
+        {
+          id: "q5",
+          tipo: "multiplaEscolha",
+          enunciado: "Em uma mistura de tinta para pintura de um mural escolar, a proporção recomendada é de 2 partes de pigmento azul para 5 partes de base branca. Se foram utilizados 15 litros de base branca, qual a quantidade necessária de pigmento azul?",
+          alternativas: [
+            { id: "a", texto: "4 litros" },
+            { id: "b", texto: "6 litros" },
+            { id: "c", texto: "8 litros" },
+            { id: "d", texto: "10 litros" }
+          ],
+          respostaCorreta: "b",
+          pontos: 10,
+          dica: "A base branca aumentou 3 vezes (de 5 para 15). O que deve acontecer com o pigmento azul?",
+          explicacao: "Razão: 2/5 = x/15 => 5x = 30 => x = 6 litros."
+        },
+        {
+          id: "q6",
+          tipo: "dissertativa",
+          enunciado: "Explique sucintamente o método das operações inversas que você utiliza para isolar uma incógnita e por que conferir o resultado substituindo a raiz encontrada na equação original é uma prática essencial da investigação científica.",
+          criterios: "Clareza expositiva, menção a operações inversas e verificação de validade da solução.",
+          pontos: 5,
+          dica: "Lembre-se de termos como: 'o que está somando passa subtraindo' ou a propriedade de equivalência da igualdade.",
+          explicacao: "O método das operações inversas mantém o equilíbrio entre os membros da equação, e a prova real valida que não houve erro aritmético."
+        }
+      ]
     },
     {
       id: "tar_2",
@@ -127,8 +208,89 @@ const DADOS_INICIAIS = {
       prazo: "2026-09-28",
       pontosXP: 45,
       status: "ativa",
-      descricao: "Produza uma crônica breve sobre um momento marcante do dia a dia escolar utilizando figuras de linguagem como metáfora, personificação e ironia.",
-      anexos: []
+      habilidadeBNCC: "EF08LP04 / EF08LP07",
+      descricao: "Análise de crônica sobre o cotidiano da escola e identificação de figuras de linguagem e coesão referencial.",
+      anexos: [],
+      questoes: [
+        {
+          id: "q1",
+          tipo: "lacuna",
+          enunciado: "Complete a frase selecionando a função coesiva do pronome no trecho em destaque:",
+          textoAntes: "No trecho 'Os alunos da Sala do Futuro criaram um robô assistente. Eles dedicaram semanas ao código.', o pronome 'Eles' atua como",
+          textoDepois: ", recuperando um termo já mencionado.",
+          opcoes: ["elemento anafórico", "elemento catafórico", "termo elíptico", "metáfora estendida"],
+          respostaCorreta: "elemento anafórico",
+          pontos: 10,
+          dica: "Anafórico retoma o que já veio antes no texto; catafórico antecipa o que virá.",
+          explicacao: "A anáfora é o mecanismo de coesão referencial que retoma uma expressão precedente ('Os alunos da Sala do Futuro')."
+        },
+        {
+          id: "q2",
+          tipo: "multiplaEscolha",
+          enunciado: "No trecho 'O sino do intervalo cantou alto e libertou a turma ansiosa', a figura de linguagem presente na expressão 'o sino cantou' é classificada como:",
+          alternativas: [
+            { id: "a", texto: "Personificação (ou Prosopopeia)" },
+            { id: "b", texto: "Metonímia quantitativa" },
+            { id: "c", texto: "Pleonasmo vicioso" },
+            { id: "d", texto: "Eufemismo atenuador" }
+          ],
+          respostaCorreta: "a",
+          pontos: 10,
+          dica: "Atribuir ações humanas (como cantar) a objetos inanimados (o sino).",
+          explicacao: "A personificação ou prosopopeia confere características ou ações próprias de seres humanos a objetos ou seres inanimados."
+        },
+        {
+          id: "q3",
+          tipo: "multiplaEscolha",
+          enunciado: "Qual das seguintes características é predominante no gênero textual 'Crônica'?",
+          alternativas: [
+            { id: "a", texto: "Relato de fatos do cotidiano sob um olhar reflexivo, lírico ou bem-humorado com linguagem acessível." },
+            { id: "b", texto: "Linguagem técnica e impessoal com o objetivo exclusivo de orientar a montagem de um aparelho." },
+            { id: "c", texto: "Estrutura estritamente jurídica baseada em artigos e parágrafos de lei." },
+            { id: "d", texto: "Ensaio acadêmico com revisão bibliográfica exaustiva e notas de rodapé formais." }
+          ],
+          respostaCorreta: "a",
+          pontos: 5,
+          dica: "Pense nas crônicas de jornais que você lê na escola sobre pequenos acontecimentos do dia a dia.",
+          explicacao: "A crônica se destaca por transformar o ordinário e os fatos simples do dia a dia em matéria de literatura e reflexão."
+        },
+        {
+          id: "q4",
+          tipo: "lacuna",
+          enunciado: "Selecione o conector de oposição adequado para unir as orações:",
+          textoAntes: "O time de robótica encontrou desafios na programação,",
+          textoDepois: "conseguiu apresentar o projeto com excelência na feira de ciências.",
+          opcoes: ["contudo", "porque", "conforme", "portanto"],
+          respostaCorreta: "contudo",
+          pontos: 5,
+          dica: "Procure a conjunção adversativa sinônima de 'porém' ou 'no entanto'.",
+          explicacao: "'Contudo' é conjunção coordenativa adversativa, estabelecendo quebra de expectativa favorável."
+        },
+        {
+          id: "q5",
+          tipo: "multiplaEscolha",
+          enunciado: "Em 'Suas palavras foram um bálsamo para o colega que estava nervoso antes da prova', a expressão 'foram um bálsamo' constitui uma:",
+          alternativas: [
+            { id: "a", texto: "Metáfora" },
+            { id: "b", texto: "Hipérbole" },
+            { id: "c", texto: "Aliteração" },
+            { id: "d", texto: "Ironia" }
+          ],
+          respostaCorreta: "a",
+          pontos: 5,
+          dica: "Trata-se de uma comparação direta e implícita sem a palavra 'como'.",
+          explicacao: "A metáfora é uma transferência de sentido por semelhança (as palavras acalmaram como um remédio/bálsamo)."
+        },
+        {
+          id: "q6",
+          tipo: "dissertativa",
+          enunciado: "Escreva uma breve reflexão de 3 a 5 linhas sobre a importância de observar os detalhes e conversas do ambiente escolar para a criação de um texto expressivo e autêntico.",
+          criterios: "Pertinência temática, clareza e uso da norma-padrão.",
+          pontos: 10,
+          dica: "Pense na sensibilidade do cronista para perceber o valor do que parece invisível aos olhos apressados.",
+          explicacao: "A crônica desenvolve a escuta atenta, a empatia e o olhar poético sobre a comunidade escolar."
+        }
+      ]
     },
     {
       id: "tar_3",
@@ -138,8 +300,86 @@ const DADOS_INICIAIS = {
       prazo: "2026-09-30",
       pontosXP: 50,
       status: "ativa",
-      descricao: "Descreva a evidência de reação química no experimento com bicarbonato de sódio e vinagre (liberação de CO2, variação de temperatura e coloração).",
-      anexos: []
+      habilidadeBNCC: "EF08CI05 / EF08CI06",
+      descricao: "Evidências experimentais de transformações químicas, liberação de gases e conservação da matéria.",
+      anexos: [],
+      questoes: [
+        {
+          id: "q1",
+          tipo: "lacuna",
+          enunciado: "Complete a frase identificando a principal evidência da reação química no experimento escolar:",
+          textoAntes: "Ao misturar bicarbonato de sódio e vinagre em uma garrafa fechada com bexiga, a efervescência e o inflar da bexiga indicam",
+          textoDepois: ", comprovando uma transformação química.",
+          opcoes: ["a liberação de gás carbônico (CO₂)", "a liquefação do oxigênio", "a solidificação do nitrogênio", "a evaporação da água pura"],
+          respostaCorreta: "a liberação de gás carbônico (CO₂)",
+          pontos: 10,
+          dica: "A reação ácido-base entre o ácido acético e o bicarbonato produz água, acetato de sódio e um gás específico.",
+          explicacao: "A formação rápida de bolhas (efervescência) e o gás retido comprovam a formação de uma nova substância: o gás carbônico (CO₂)."
+        },
+        {
+          id: "q2",
+          tipo: "multiplaEscolha",
+          enunciado: "Qual das seguintes situações representa exclusivamente uma transformação física da matéria?",
+          alternativas: [
+            { id: "a", texto: "Fusão de cubos de gelo na bancada do laboratório." },
+            { id: "b", texto: "Enferrujamento de um prego de ferro exposto à umidade." },
+            { id: "c", texto: "Combustão completa do gás de cozinha no bico de Bunsen." },
+            { id: "d", texto: "Fotossíntese nas folhas de uma planta da horta escolar." }
+          ],
+          respostaCorreta: "a",
+          pontos: 10,
+          dica: "Nas transformações físicas, a substância muda apenas de estado ou formato, sem alterar sua composição molecular.",
+          explicacao: "A fusão do gelo é mudança de estado da água (sólido para líquido), sem criação de novas substâncias químicas."
+        },
+        {
+          id: "q3",
+          tipo: "lacuna",
+          enunciado: "Identifique o princípio fundamental formulado por Antoine Lavoisier:",
+          textoAntes: "Em um sistema fechado, a massa total dos reagentes antes da transformação é",
+          textoDepois: "à massa total dos produtos após a reação química.",
+          opcoes: ["estritamente igual", "sempre menor", "sempre maior", "imprevisível"],
+          respostaCorreta: "estritamente igual",
+          pontos: 5,
+          dica: "'Na natureza nada se cria, nada se perde, tudo se transforma'.",
+          explicacao: "A Lei de Lavoisier (Conservação das Massas) estabelece que o número de átomos se conserva em um sistema fechado."
+        },
+        {
+          id: "q4",
+          tipo: "multiplaEscolha",
+          enunciado: "Em um ecossistema da Mata Atlântica paulista, a ausência de predadores de topo (como a onça-parda) gera diretamente:",
+          alternativas: [
+            { id: "a", texto: "Aumento descontrolado de herbívoros e degradação progressiva da vegetação nativa." },
+            { id: "b", texto: "Crescimento imediato de todas as árvores centenárias da floresta." },
+            { id: "c", texto: "Paralisação completa da evaporação de rios e cachoeiras." },
+            { id: "d", texto: "Extinção imediata de fungos decompositores no solo úmido." }
+          ],
+          respostaCorreta: "a",
+          pontos: 10,
+          dica: "Pense na cadeia alimentar e no controle biológico populacional das espécies intermediárias.",
+          explicacao: "Predadores de topo realizam o controle populacional de herbívoros, evitando a superexploração da cobertura vegetal nativa."
+        },
+        {
+          id: "q5",
+          tipo: "lacuna",
+          enunciado: "Complete a afirmação sobre o papel biológico dos organismos decompositores:",
+          textoAntes: "Os fungos e bactérias decompositores são essenciais para",
+          textoDepois: ", permitindo que os nutrientes voltem ao solo para os produtores.",
+          opcoes: ["a reciclagem da matéria orgânica", "a geração de energia solar", "a eliminação de oxigênio da atmosfera", "o congelamento do solo"],
+          respostaCorreta: "a reciclagem da matéria orgânica",
+          pontos: 5,
+          dica: "Eles fecham os ciclos biogeoquímicos que mantêm a fertilidade do solo.",
+          explicacao: "Os decompositores transformam matéria orgânica morta em compostos minerais assimiláveis pelas plantas."
+        },
+        {
+          id: "q6",
+          tipo: "dissertativa",
+          enunciado: "Explique como os alunos da Sala do Futuro podem mensurar com uma balança de precisão que a massa não foi perdida quando a reação com efervescência ocorre dentro de uma garrafa hermeticamente tampada.",
+          criterios: "Conceito de sistema fechado, leitura de massas e Lei de Lavoisier.",
+          pontos: 10,
+          dica: "Pese o conjunto antes de misturar e após a reação com a tampa bem fechada.",
+          explicacao: "No sistema vedado, o gás liberado não escapa para o ambiente, comprovando a conservação da massa."
+        }
+      ]
     },
     {
       id: "tar_4",
@@ -149,7 +389,8 @@ const DADOS_INICIAIS = {
       prazo: "2026-10-02",
       pontosXP: 40,
       status: "ativa",
-      descricao: "Analise cartazes de mobilização popular e cartas históricas de voluntários paulistas durante o movimento cívico de 1932.",
+      habilidadeBNCC: "EF09HI01 / EF08HI14",
+      descricao: "Análise histórica das causas cívicas, propaganda e mobilização popular no movimento constitucionalista paulista de 1932.",
       anexos: []
     },
     {
@@ -160,19 +401,98 @@ const DADOS_INICIAIS = {
       prazo: "2026-10-05",
       pontosXP: 40,
       status: "ativa",
-      descricao: "Mapeie os principais afluentes do Rio Tietê e discuta os impactos da impermeabilização do solo nas enchentes urbanas de São Paulo.",
+      habilidadeBNCC: "EF08GE03 / EF08GE15",
+      descricao: "Mapeamento dos afluentes do Rio Tietê, conurbação urbana e impactos da impermeabilização do solo.",
       anexos: []
     },
     {
       id: "tar_6",
-      titulo: "Climate Change & Sustainable School Actions",
-      componente: "Inglês",
+      titulo: "Climate Change & Digital Connectors in English",
+      componente: "Língua Inglesa",
       turma: "8º Ano A",
       prazo: "2026-10-08",
-      pontosXP: 35,
+      pontosXP: 50,
       status: "ativa",
-      descricao: "Read the article about renewable energy and write a 5-point action plan in English for energy conservation in your school.",
-      anexos: []
+      habilidadeBNCC: "EF08LI08 / SEDUC-SP",
+      descricao: "Atividade curricular interativa CMSP: Conectivos em Língua Inglesa, Letramento Digital e Ações Sustentáveis na Escola.",
+      anexos: [],
+      questoes: [
+        {
+          id: "q1",
+          tipo: "lacuna",
+          enunciado: "Complete a frase selecionando a opção correta no menu suspenso (indicando propósito / finalidade):",
+          textoAntes: "Students must use strong passwords,",
+          textoDepois: "they can protect their personal data online.",
+          opcoes: ["so that", "although", "because of", "however"],
+          respostaCorreta: "so that",
+          pontos: 10,
+          dica: "Procure o conector que signifique 'para que' ou 'de modo a' garantir proteção dos dados.",
+          explicacao: "'So that' indica finalidade ou propósito ('de modo que' / 'para que'), expressando o objetivo de utilizar senhas fortes para resguardar a privacidade digital."
+        },
+        {
+          id: "q2",
+          tipo: "multiplaEscolha",
+          enunciado: "Which connector correctly expresses a contrast or concession between the two clauses?",
+          alternativas: [
+            { id: "a", texto: "Although the school computers are fast, students must respect security rules." },
+            { id: "b", texto: "Because the school computers are fast, they stopped working yesterday." },
+            { id: "c", texto: "Therefore the monitor is brightly lit." },
+            { id: "d", texto: "In order to the battery was fully charged." }
+          ],
+          respostaCorreta: "a",
+          pontos: 10,
+          dica: "Observe qual oração expressa uma ideia de concessão ou oposição inesperada ('embora' / 'apesar de').",
+          explicacao: "'Although' (embora / apesar de) estabelece o contraste adequado entre a qualidade dos computadores e a necessidade do cumprimento de diretrizes de segurança."
+        },
+        {
+          id: "q3",
+          tipo: "lacuna",
+          enunciado: "Selecione o conector de causa e consequência adequado no menu suspenso:",
+          textoAntes: "The school created a digital awareness campaign",
+          textoDepois: "many students needed guidance on cybersecurity and online privacy.",
+          opcoes: ["because", "unless", "despite", "whereas"],
+          respostaCorreta: "because",
+          pontos: 5,
+          dica: "Qual conector indica o motivo ou razão fundamental que motivou o início da campanha?",
+          explicacao: "'Because' (porque / visto que) expressa a causa direta que justificou a criação da campanha de conscientização digital."
+        },
+        {
+          id: "q4",
+          tipo: "multiplaEscolha",
+          enunciado: "In the sentence: 'Solar panels were installed on the school roof; therefore, electricity costs were significantly reduced', the word 'therefore' expresses:",
+          alternativas: [
+            { id: "a", texto: "Conclusion and logical result of the previous fact." },
+            { id: "b", texto: "A mandatory condition for the future." },
+            { id: "c", texto: "A chronological sequence in the distant past." },
+            { id: "d", texto: "An opposite opinion that disagrees with the first idea." }
+          ],
+          respostaCorreta: "a",
+          pontos: 10,
+          dica: "Pense na consequência imediata gerada pela instalação dos painéis de energia solar.",
+          explicacao: "'Therefore' (portanto / por conseguinte) introduz a conclusão lógica e o resultado prático decorrente da ação anterior."
+        },
+        {
+          id: "q5",
+          tipo: "lacuna",
+          enunciado: "Complete a declaração sobre sustentabilidade e economia de energia na escola:",
+          textoAntes: "Computers and classroom monitors should be turned off after classes",
+          textoDepois: "avoid wasting electrical power in the building.",
+          opcoes: ["in order to", "even though", "as soon as", "instead of"],
+          respostaCorreta: "in order to",
+          pontos: 5,
+          dica: "Indica o objetivo deliberado da ação com o verbo no infinitivo ('avoid').",
+          explicacao: "'In order to' seguido de verbo infinitivo ('avoid') expressa a intenção e a finalidade de economizar energia elétrica."
+        },
+        {
+          id: "q6",
+          tipo: "dissertativa",
+          enunciado: "Write a short practical recommendation (2 to 3 sentences in English or Portuguese) suggesting how students in Sala do Futuro can promote digital sustainability (for example: turning off monitors, cloud cleanup or device recycling).",
+          criterios: "Pertinência temática com sustentabilidade digital, clareza e vocabulário contextualizado.",
+          pontos: 10,
+          dica: "Mencione hábitos simples do laboratório de informática que reduzem o consumo de energia ou o descarte indevido de lixo eletrônico.",
+          explicacao: "A prática desenvolve o protagonismo estudantil e a cidadania digital integrada aos Objetivos de Desenvolvimento Sustentável (ODS)."
+        }
+      ]
     },
     {
       id: "tar_7",
@@ -193,7 +513,8 @@ const DADOS_INICIAIS = {
       prazo: "2026-10-12",
       pontosXP: 45,
       status: "ativa",
-      descricao: "Elabore uma planilha prática simulada com a regra 50-30-20 (gastos essenciais, desejos e poupança) para uma renda hipotética familiar.",
+      habilidadeBNCC: "EF08MA04 / SEDUC-SP",
+      descricao: "Simulação de planejamento orçamentário pessoal e familiar utilizando a metodologia 50-30-20.",
       anexos: []
     },
     {
@@ -387,6 +708,27 @@ const DADOS_INICIAIS = {
 
   ocorrencias: [
     {
+      id: "oc_4",
+      alunoId: "aluno_1",
+      alunoNome: "Guilherme Santos",
+      alunoRA: "000.123.456-7 SP",
+      turma: "8º Ano A",
+      data: "2026-09-26",
+      gravidade: "Média",
+      tipo: "Não realização reiterada de tarefas no Tarefas SP",
+      status: "Pendente de Assinatura dos Pais",
+      descricao: "O estudante não realizou os exercícios de fixação de Matemática (Equações Lineares) e Ciências nas últimas 3 semanas.",
+      providencias: "Diálogo de orientação com o estudante em sala de aula e envio desta notificação oficial para acompanhamento e alinhamento da rotina de estudos com os responsáveis.",
+      registradoPor: "Prof. Carlos Eduardo Silva",
+      requerAssinatura: true,
+      assinaturaPais: {
+        assinado: false,
+        responsavelNome: "",
+        dataAssinatura: "",
+        observacaoPais: ""
+      }
+    },
+    {
       id: "oc_1",
       alunoId: "aluno_3",
       alunoNome: "Lucas Martins",
@@ -398,7 +740,15 @@ const DADOS_INICIAIS = {
       status: "Resolvida",
       descricao: "Estudante chegou após o término do primeiro horário da aula de Matemática.",
       providencias: "Orientado pela equipe de mediação pedagógica quanto ao cumprimento dos horários.",
-      registradoPor: "Coordenação Pedagógica"
+      registradoPor: "Coordenação Pedagógica",
+      requerAssinatura: true,
+      assinaturaPais: {
+        assinado: true,
+        responsavelNome: "Marcos Martins (Pai)",
+        vinculo: "Pai",
+        dataAssinatura: "2026-09-15 14:32",
+        observacaoPais: "Alinhado com o Lucas. Houve atraso no transporte escolar."
+      }
     },
     {
       id: "oc_2",
@@ -412,7 +762,15 @@ const DADOS_INICIAIS = {
       status: "Arquivada",
       descricao: "Auxiliou colegas com empatia durante a oficina de robótica e tutoria inclusiva.",
       providencias: "Registro em ata de mérito escolar e parabenização pública junto à guilda.",
-      registradoPor: "Prof. Carlos Eduardo Silva"
+      registradoPor: "Prof. Carlos Eduardo Silva",
+      requerAssinatura: true,
+      assinaturaPais: {
+        assinado: true,
+        responsavelNome: "Sra. Helena Lima (Mãe)",
+        vinculo: "Mãe",
+        dataAssinatura: "2026-09-16 19:40",
+        observacaoPais: "Agradecemos o reconhecimento e o carinho dos professores pela Beatriz!"
+      }
     },
     {
       id: "oc_3",
@@ -426,7 +784,14 @@ const DADOS_INICIAIS = {
       status: "Em Acompanhamento",
       descricao: "Uso de fones e aparelho durante momento de instrução coletiva sem finalidade pedagógica.",
       providencias: "Notificação registrada no sistema e advertência pedagógica reflexiva.",
-      registradoPor: "Gestão Escolar"
+      registradoPor: "Gestão Escolar",
+      requerAssinatura: true,
+      assinaturaPais: {
+        assinado: false,
+        responsavelNome: "",
+        dataAssinatura: "",
+        observacaoPais: ""
+      }
     }
   ],
 
@@ -453,6 +818,57 @@ const DADOS_INICIAIS = {
     }
   ],
 
+  redacoes: [
+    {
+      id: "red_1",
+      alunoId: "aluno_1",
+      alunoNome: "Guilherme Santos",
+      alunoRA: "000.123.456-7 SP",
+      turma: "8º Ano A",
+      tema: "O papel da Inteligência Artificial e da tecnologia na escola pública",
+      titulo: "Tecnologia e Equidade na Sala de Aula Pública",
+      texto: "A presença das novas tecnologias no ambiente escolar paulista tem transformado profundamente a forma como aprendemos e colaboramos. Ao longo do século XXI, a inteligência artificial surge não para substituir o diálogo entre professor e aluno, mas como uma ferramenta inclusiva e de aceleração do conhecimento. Contudo, é imprescindível garantir que todos os estudantes da rede tenham acesso equitativo à internet de qualidade e dispositivos modernos.",
+      palavras: 67,
+      status: "Avaliado",
+      nota: 9.5,
+      devolutiva: "Texto exemplar, com excelente argumentação e proposta consistente.",
+      data: "2026-09-18"
+    }
+  ],
+
+  chamadas: [
+    {
+      id: "cham_1",
+      turma: "8º Ano A",
+      disciplina: "Matemática",
+      data: "2026-09-18",
+      professor: "Prof. Carlos Eduardo Silva",
+      presentes: 30,
+      totalAlunos: 32
+    }
+  ],
+
+  materiais: [
+    {
+      id: "mat_1",
+      titulo: "Guia BNCC: Equações e Proporções no Cotidiano",
+      descricao: "Material de apoio com exercícios comentados e dicas práticas de resolução.",
+      componente: "Matemática",
+      turma: "8º Ano A",
+      data: "2026-09-15"
+    },
+    {
+      id: "mat_2",
+      titulo: "Roteiro de Produção Textual: Redação Dissertativa",
+      descricao: "Estrutura do texto, conectivos de transição e elaboração de intervenção social.",
+      componente: "Língua Portuguesa",
+      turma: "8º Ano A",
+      data: "2026-09-16"
+    }
+  ],
+
+  desafiosDiarios: {},
+
   usuarioAtivo: {
     id: "aluno_1",
     nome: "Guilherme Santos",
@@ -470,6 +886,14 @@ const DADOS_INICIAIS = {
 class DBLocalMotor {
   constructor() {
     this.carregar();
+    if (typeof window !== "undefined") {
+      window.addEventListener("storage", (e) => {
+        if (e.key === CHAVE_STORAGE) {
+          this.carregar();
+          window.dispatchEvent(new CustomEvent("banco-local-atualizado", { detail: { dados: this.dados } }));
+        }
+      });
+    }
   }
 
   carregar() {
@@ -480,19 +904,41 @@ class DBLocalMotor {
         this.salvar();
       } else {
         const parsed = JSON.parse(raw);
-        // Garantir retrocompatibilidade com todas as coleções
+        // Garantir retrocompatibilidade com todas as coleções e enriquecer tarefas
+        const tarefasMescladas = DADOS_INICIAIS.tarefas.map(tPadrao => {
+          const tSalva = (parsed.tarefas || []).find(t => t.id === tPadrao.id);
+          if (tSalva) {
+            return {
+              ...tPadrao,
+              ...tSalva,
+              questoes: (tSalva.questoes && tSalva.questoes.length) ? tSalva.questoes : tPadrao.questoes
+            };
+          }
+          return tPadrao;
+        });
+        (parsed.tarefas || []).forEach(t => {
+          if (!tarefasMescladas.some(tm => tm.id === t.id)) {
+            tarefasMescladas.push(t);
+          }
+        });
+
         this.dados = {
           ...DADOS_INICIAIS,
           ...parsed,
+          versao: DADOS_INICIAIS.versao,
           usuarios: parsed.usuarios?.length ? parsed.usuarios : DADOS_INICIAIS.usuarios,
           salas: parsed.salas?.length ? parsed.salas : DADOS_INICIAIS.salas,
           guildas: parsed.guildas?.length ? parsed.guildas : DADOS_INICIAIS.guildas,
-          tarefas: parsed.tarefas || DADOS_INICIAIS.tarefas,
+          tarefas: tarefasMescladas,
           entregas: parsed.entregas || DADOS_INICIAIS.entregas,
           entregasSP: parsed.entregasSP || DADOS_INICIAIS.entregasSP,
+          redacoes: parsed.redacoes || DADOS_INICIAIS.redacoes,
           notas: parsed.notas || DADOS_INICIAIS.notas,
           ocorrencias: parsed.ocorrencias || DADOS_INICIAIS.ocorrencias,
           comunicados: parsed.comunicados || DADOS_INICIAIS.comunicados,
+          chamadas: parsed.chamadas || DADOS_INICIAIS.chamadas,
+          materiais: parsed.materiais || DADOS_INICIAIS.materiais,
+          desafiosDiarios: parsed.desafiosDiarios || DADOS_INICIAIS.desafiosDiarios,
           usuarioAtivo: parsed.usuarioAtivo || DADOS_INICIAIS.usuarioAtivo
         };
       }
@@ -507,6 +953,9 @@ class DBLocalMotor {
     try {
       this.dados.atualizadoEm = new Date().toISOString();
       localStorage.setItem(CHAVE_STORAGE, JSON.stringify(this.dados));
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("banco-local-atualizado", { detail: { dados: this.dados } }));
+      }
     } catch (e) {
       console.error("Falha ao persistir no localStorage:", e);
     }
@@ -868,10 +1317,25 @@ class DBLocalMotor {
 
   // --- OCORRÊNCIAS ---
   obterOcorrencias() {
+  // ====================================================
+  // MÓDULO: LIVRO DE OCORRÊNCIAS & VISTO DIGITAL DOS PAIS
+  // ====================================================
+
+  /**
+   * Obtém a lista completa de ocorrências disciplinares e pedagógicas da escola.
+   * @returns {Array<Object>} Lista de ocorrências escolares.
+   */
+  obterOcorrencias() {
     this.carregar();
     return this.dados.ocorrencias;
   }
 
+  /**
+   * Salva ou atualiza uma ocorrência no banco de dados local.
+   * Suporta vinculação de estudante, professor autor, gravidade e solicitação de assinatura.
+   * @param {Object} oc - Objeto com os dados da ocorrência.
+   * @returns {Object} A ocorrência salva.
+   */
   salvarOcorrencia(oc) {
     this.carregar();
     const id = oc.id || `oc_${Date.now()}`;
@@ -886,6 +1350,39 @@ class DBLocalMotor {
     return registro;
   }
 
+  /**
+   * Registra a confirmação de ciência e assinatura digital do responsável legal pelo estudante.
+   * Atualiza o status para 'Ciência Confirmada pelos Pais' com carimbo de data, hora e parecer familiar.
+   * @param {string} id - ID da ocorrência a ser assinada.
+   * @param {Object} dados - Nome do responsável, grau de parentesco e parecer opcional.
+   * @returns {Object|null} A ocorrência atualizada ou null se não encontrada.
+   */
+  assinarOcorrenciaPorPais(id, { responsavelNome, vinculo, observacaoPais }) {
+    this.carregar();
+    const idx = this.dados.ocorrencias.findIndex(o => o.id === id);
+    if (idx === -1) return null;
+    const oc = this.dados.ocorrencias[idx];
+    const agora = new Date();
+    const dataFormatada = agora.toLocaleDateString("pt-BR") + " às " + agora.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    
+    oc.status = "Ciência Confirmada pelos Pais";
+    oc.assinaturaPais = {
+      assinado: true,
+      responsavelNome: responsavelNome || "Responsável Legal",
+      vinculo: vinculo || "Responsável",
+      dataAssinatura: dataFormatada,
+      observacaoPais: observacaoPais || ""
+    };
+    this.dados.ocorrencias[idx] = oc;
+    this.salvar();
+    return oc;
+  }
+
+  /**
+   * Remove uma ocorrência do banco de dados local por ID.
+   * @param {string} id - ID da ocorrência a ser removida.
+   * @returns {boolean} True se a exclusão foi concluída.
+   */
   excluirOcorrencia(id) {
     this.carregar();
     this.dados.ocorrencias = this.dados.ocorrencias.filter(o => o.id !== id);
@@ -1087,6 +1584,147 @@ class DBLocalMotor {
     return responsavel;
   }
 
+  /**
+   * Realiza a autenticação de membros da equipe de gestão escolar, coordenação ou supervisão.
+   * Valida perfis predefinidos da SEDUC-SP ou cria um perfil institucional dinâmico.
+   * @param {string} email - E-mail institucional funcional do gestor.
+   * @param {string} [senha=""] - Senha de acesso (mínimo 6 dígitos).
+   * @returns {Object} Dados do gestor autenticado com cargo e departamento.
+   */
+  autenticarGestao(email, senha = "") {
+    this.carregar();
+    const emailLimpo = String(email || "").trim().toLowerCase();
+    const gestoresPredefinidos = [
+      {
+        id: "gestor_1",
+        nome: "Diretora Ana Paula Ramos",
+        email: "diretoria.escola@educacao.sp.gov.br",
+        cargo: "Diretora de Escola",
+        departamento: "Diretoria e Gestão Geral",
+        unidade: "EE Professor Vicente de Carvalho",
+        tipo: "gestor"
+      },
+      {
+        id: "gestor_2",
+        nome: "Prof. Coordenador Roberto Mendes",
+        email: "coordenacao.pedagogica@educacao.sp.gov.br",
+        cargo: "Coordenador de Gestão Pedagógica (CGP)",
+        departamento: "Coordenação Pedagógica",
+        unidade: "EE Professor Vicente de Carvalho",
+        tipo: "gestor"
+      },
+      {
+        id: "gestor_3",
+        nome: "Profa. Supervisora Marina Costa",
+        email: "supervisao.desbc@educacao.sp.gov.br",
+        cargo: "Supervisora de Ensino",
+        departamento: "Diretoria de Ensino - Região de SBC (DESBC)",
+        unidade: "Diretoria Regional de Ensino",
+        tipo: "gestor"
+      },
+      {
+        id: "gestor_4",
+        nome: "Secretário Escolar Fernando Dias",
+        email: "secretaria.escola@educacao.sp.gov.br",
+        cargo: "Gerente de Organização Escolar (GOE)",
+        departamento: "Secretaria Escolar & Matrículas",
+        unidade: "EE Professor Vicente de Carvalho",
+        tipo: "gestor"
+      }
+    ];
+
+    let gestor = gestoresPredefinidos.find(g => 
+      g.email.toLowerCase() === emailLimpo || 
+      g.nome.toLowerCase().includes(emailLimpo)
+    );
+
+    if (!gestor) {
+      gestor = {
+        id: `gestor_${Date.now()}`,
+        nome: emailLimpo.split("@")[0].replace(/\./g, " ").replace(/\b\w/g, l => l.toUpperCase()),
+        email: emailLimpo || "gestao@educacao.sp.gov.br",
+        cargo: "Equipe de Gestão Escolar",
+        departamento: "Administração SEDUC-SP",
+        unidade: "Rede Estadual de São Paulo",
+        tipo: "gestor"
+      };
+    }
+
+    this.definirUsuarioAtivo(gestor);
+    try {
+      localStorage.setItem("usuarioLogado", JSON.stringify(gestor));
+      localStorage.setItem("gestorAtivo", JSON.stringify(gestor));
+    } catch (e) {}
+
+    return gestor;
+  }
+
+  // ====================================================
+  // MÓDULO: ARQUITETURA OFFLINE-FIRST E FILA DE SINCRONIZAÇÃO
+  // ====================================================
+
+  /**
+   * Recupera a fila de atividades entregues pelo estudante enquanto estava sem conexão.
+   * @returns {Array<Object>} Fila de entregas offline pendentes de sincronização com o servidor.
+   */
+  obterFilaOffline() {
+    try {
+      const fila = localStorage.getItem("sala_futuro_fila_offline");
+      return fila ? JSON.parse(fila) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /**
+   * Salva a resolução de uma tarefa na fila offline com persistência garantida no navegador.
+   * Também consolida o resultado no banco local para que o estudante veja sua nota e XP imediatamente.
+   * @param {Object} entrega - Objeto com id, tarefaId, respostas, acertos, nota e XP.
+   * @returns {Array<Object>} A fila offline atualizada.
+   */
+  salvarEntregaOffline(entrega) {
+    try {
+      const fila = this.obterFilaOffline();
+      // Evita duplicar se o aluno reabrir a atividade
+      const idx = fila.findIndex(f => f.id === entrega.id || (f.tarefaId === entrega.tarefaId && f.alunoId === entrega.alunoId));
+      if (idx >= 0) {
+        fila[idx] = { ...fila[idx], ...entrega, salvoEmOffline: new Date().toISOString() };
+      } else {
+        fila.push({ ...entrega, salvoEmOffline: new Date().toISOString() });
+      }
+      localStorage.setItem("sala_futuro_fila_offline", JSON.stringify(fila));
+      
+      // Salva no banco local imediatamente para manter o histórico coerente
+      this.salvarEntregaDocente(entrega);
+      return fila;
+    } catch (e) {
+      console.warn("Erro ao salvar entrega offline:", e);
+      return [];
+    }
+  }
+
+  /**
+   * Executa a sincronização em lote da fila offline quando a conexão com a internet retorna.
+   * Transmite todas as notas e presenças computadas offline para o diário do professor e esvazia a fila.
+   * @returns {{ total: number, sincronizados: number }} Resumo com a quantidade de tarefas sincronizadas.
+   */
+  sincronizarFilaOffline() {
+    const fila = this.obterFilaOffline();
+    if (!fila.length) return { total: 0, sincronizados: 0 };
+    
+    let cont = 0;
+    fila.forEach(item => {
+      this.salvarEntregaDocente({ ...item, sincronizado: true });
+      cont++;
+    });
+
+    try {
+      localStorage.removeItem("sala_futuro_fila_offline");
+    } catch (e) {}
+
+    return { total: fila.length, sincronizados: cont };
+  }
+
   fazerLogout() {
     this.definirUsuarioAtivo(null);
     try {
@@ -1106,6 +1744,233 @@ class DBLocalMotor {
     this.dados.usuarioAtivo = usuario;
     this.salvar();
     return usuario;
+  }
+
+  // --- XP E PROGRESSO GAMIFICADO ---
+  adicionarXPAluno(alunoId, pontos) {
+    this.carregar();
+    pontos = Number(pontos) || 0;
+    if (pontos <= 0) return null;
+
+    let aluno = this.dados.usuarios.find(u => 
+      u.id === alunoId || 
+      (u.ra && u.ra === alunoId) ||
+      (this.dados.usuarioAtivo && this.dados.usuarioAtivo.id === alunoId)
+    );
+
+    if (!aluno && this.dados.usuarioAtivo && (!this.dados.usuarioAtivo.tipo || this.dados.usuarioAtivo.tipo === "aluno")) {
+      aluno = this.dados.usuarioAtivo;
+    }
+
+    if (!aluno) {
+      aluno = this.obterAlunos()[0];
+    }
+
+    if (aluno) {
+      aluno.xp = (Number(aluno.xp) || 0) + pontos;
+      aluno.nivel = Math.max(1, Math.floor(aluno.xp / 100) + 1);
+
+      // Atualiza também a pontuação da guilda
+      if (aluno.guilda && this.dados.guildas) {
+        const guilda = this.dados.guildas.find(g => 
+          g.nome.toLowerCase() === aluno.guilda.toLowerCase() ||
+          g.id === aluno.guilda
+        );
+        if (guilda) {
+          guilda.pontos = (Number(guilda.pontos) || 0) + pontos;
+        }
+      }
+
+      if (this.dados.usuarioAtivo && this.dados.usuarioAtivo.id === aluno.id) {
+        this.dados.usuarioAtivo = { ...this.dados.usuarioAtivo, xp: aluno.xp, nivel: aluno.nivel };
+        try {
+          localStorage.setItem("usuarioLogado", JSON.stringify(this.dados.usuarioAtivo));
+          localStorage.setItem("perfilAluno", JSON.stringify(this.dados.usuarioAtivo));
+        } catch (e) {}
+      }
+
+      this.salvar();
+      return aluno;
+    }
+    return null;
+  }
+
+  // --- REDAÇÕES SP ---
+  obterRedacoes(alunoId = null) {
+    this.carregar();
+    if (!this.dados.redacoes) this.dados.redacoes = [];
+    if (!alunoId) return this.dados.redacoes;
+    return this.dados.redacoes.filter(r => r.alunoId === alunoId || r.alunoRA === alunoId);
+  }
+
+  salvarRedacao(redacao) {
+    this.carregar();
+    if (!this.dados.redacoes) this.dados.redacoes = [];
+    const id = redacao.id || `red_${Date.now()}`;
+    const idx = this.dados.redacoes.findIndex(r => r.id === id);
+    const registro = {
+      data: new Date().toISOString().split("T")[0],
+      status: "Aguardando Correção",
+      ...redacao,
+      id
+    };
+    if (idx !== -1) {
+      this.dados.redacoes[idx] = { ...this.dados.redacoes[idx], ...registro };
+    } else {
+      this.dados.redacoes.unshift(registro);
+    }
+
+    // Registra entrega institucional para visualização de professores e coordenação
+    this.salvarEntrega({
+      id: `ent_${registro.id}`,
+      tarefaId: "tar_redacao_oficial",
+      alunoId: registro.alunoId,
+      alunoNome: registro.alunoNome,
+      turma: registro.turma,
+      tarefaTitulo: `Redação: ${registro.titulo || registro.tema}`,
+      componente: "Língua Portuguesa",
+      data: registro.data,
+      status: registro.status,
+      nota: registro.nota || null,
+      devolutiva: registro.devolutiva || "Aguardando devolutiva pedagógica."
+    });
+
+    this.salvar();
+    return registro;
+  }
+
+  // --- AVISOS E MURAL ---
+  obterAvisos(turma = null) {
+    this.carregar();
+    const lista = this.dados.comunicados || [];
+    if (!turma || turma === "TODOS" || turma === "GERAL") return lista;
+    const turmaNorm = String(turma).trim().toUpperCase().replace(/[ºª°\s]/g, "");
+    return lista.filter(a => {
+      const destNorm = String(a.destino || a.turma || "TODOS").trim().toUpperCase().replace(/[ºª°\s]/g, "");
+      return destNorm === "TODOS" || destNorm === turmaNorm || destNorm.includes(turmaNorm);
+    });
+  }
+
+  salvarAviso(aviso) {
+    return this.salvarComunicado(aviso);
+  }
+
+  // --- CHAMADAS E FREQUÊNCIA ---
+  obterChamadas(turma = null) {
+    this.carregar();
+    if (!this.dados.chamadas) this.dados.chamadas = [];
+    if (!turma) return this.dados.chamadas;
+    const turmaNorm = String(turma).trim().toUpperCase().replace(/[ºª°\s]/g, "");
+    return this.dados.chamadas.filter(c => {
+      const cNorm = String(c.turma || "").trim().toUpperCase().replace(/[ºª°\s]/g, "");
+      return cNorm === turmaNorm;
+    });
+  }
+
+  salvarChamada(chamada) {
+    this.carregar();
+    if (!this.dados.chamadas) this.dados.chamadas = [];
+    const id = chamada.id || `cham_${Date.now()}`;
+    const idx = this.dados.chamadas.findIndex(c => c.id === id || (c.data === chamada.data && c.turma === chamada.turma && c.disciplina === chamada.disciplina));
+    const registro = {
+      data: new Date().toISOString().split("T")[0],
+      ...chamada,
+      id
+    };
+    if (idx !== -1) {
+      this.dados.chamadas[idx] = { ...this.dados.chamadas[idx], ...registro };
+    } else {
+      this.dados.chamadas.unshift(registro);
+    }
+    this.salvar();
+    return registro;
+  }
+
+  // --- MATERIAIS DE APOIO ---
+  obterMateriais(turma = null) {
+    this.carregar();
+    if (!this.dados.materiais) {
+      this.dados.materiais = [
+        {
+          id: "mat_1",
+          titulo: "Guia BNCC: Equações e Proporções no Cotidiano",
+          descricao: "Material de apoio com exercícios comentados e dicas práticas de resolução.",
+          componente: "Matemática",
+          turma: "8º Ano A",
+          data: "2026-09-15"
+        },
+        {
+          id: "mat_2",
+          titulo: "Roteiro de Produção Textual: Redação Dissertativa",
+          descricao: "Estrutura do texto, conectivos de transição e elaboração de intervenção social.",
+          componente: "Língua Portuguesa",
+          turma: "8º Ano A",
+          data: "2026-09-16"
+        }
+      ];
+    }
+    if (!turma) return this.dados.materiais;
+    const turmaNorm = String(turma).trim().toUpperCase().replace(/[ºª°\s]/g, "");
+    return this.dados.materiais.filter(m => {
+      const mNorm = String(m.turma || "TODOS").trim().toUpperCase().replace(/[ºª°\s]/g, "");
+      return mNorm === "TODOS" || mNorm === turmaNorm;
+    });
+  }
+
+  salvarMaterial(material) {
+    this.carregar();
+    if (!this.dados.materiais) this.dados.materiais = [];
+    const id = material.id || `mat_${Date.now()}`;
+    const idx = this.dados.materiais.findIndex(m => m.id === id);
+    const registro = {
+      data: new Date().toISOString().split("T")[0],
+      ...material,
+      id
+    };
+    if (idx !== -1) {
+      this.dados.materiais[idx] = { ...this.dados.materiais[idx], ...registro };
+    } else {
+      this.dados.materiais.unshift(registro);
+    }
+    this.salvar();
+    return registro;
+  }
+
+  // --- ALIASES ADICIONAIS ---
+  adicionarTarefa(tarefa) {
+    return this.salvarTarefa(tarefa);
+  }
+
+  avaliarEntrega(entregaId, nota, devolutiva) {
+    return this.salvarAvaliacaoDocente({
+      id: entregaId,
+      nota,
+      devolutiva
+    });
+  }
+
+  // --- EXPORTAR E IMPORTAR BANCO LOCAL ---
+  exportarJSON() {
+    this.carregar();
+    return JSON.stringify(this.dados, null, 2);
+  }
+
+  importarJSON(conteudoJSON) {
+    try {
+      const parsed = typeof conteudoJSON === "string" ? JSON.parse(conteudoJSON) : conteudoJSON;
+      if (parsed && typeof parsed === "object") {
+        this.dados = {
+          ...DADOS_INICIAIS,
+          ...parsed,
+          versao: DADOS_INICIAIS.versao
+        };
+        this.salvar();
+        return { sucesso: true, mensagem: "Banco local restaurado com sucesso!" };
+      }
+      throw new Error("Formato inválido de JSON");
+    } catch (e) {
+      return { sucesso: false, erro: e.message };
+    }
   }
 
   // --- RESTAURAR DADOS PADRÃO ---

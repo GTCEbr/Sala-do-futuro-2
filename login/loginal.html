@@ -671,42 +671,7 @@
 <!----------Login--------------------->
 
   <script type="module">
-
-    import { initializeApp }
-    from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-
-    import {
-      getAuth,
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword,
-      signInAnonymously
-    }
-    from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
-
-    import {
-      getFirestore,
-      doc,
-      setDoc,
-      getDoc
-    }
-    from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
-
     import DBLocal from "./js/db-local.js";
-
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCey_SsTCeHuTKwBaZ-Eo6_7LRa4l-5A80",
-      authDomain: "salafuturov2prot.firebaseapp.com",
-      projectId: "salafuturov2prot",
-      storageBucket: "salafuturov2prot.firebasestorage.app",
-      messagingSenderId: "352042722106",
-      appId: "1:352042722106:web:395ba7ef400d1421426603",
-      measurementId: "G-LW16X3NHH8"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
 
     const loginForm = document.getElementById("loginForm");
     const mensagem = document.getElementById("mensagem");
@@ -755,8 +720,8 @@
 
     renderizarContasAlunos();
 
-    // Login Simulado 100% Offline
-    loginForm.addEventListener("submit", async function(event) {
+    // Login 100% Conectado via Local Storage
+    loginForm.addEventListener("submit", function(event) {
       event.preventDefault();
 
       const emailOuRa = document.getElementById("email").value.trim();
@@ -778,7 +743,7 @@
       entrar.textContent = "Acessando...";
 
       try {
-        // 1. Autenticação simulada imediata e persistente no DBLocal
+        // 1. Autenticação imediata e persistente no DBLocal
         const alunoAutenticado = DBLocal.autenticarAluno(emailOuRa, senha);
         if (turma) {
           alunoAutenticado.turma = turma;
@@ -786,17 +751,12 @@
           DBLocal.salvarAluno(alunoAutenticado);
         }
 
-        // 2. Sincronização em segundo plano não-bloqueante com Firebase (se disponível)
-        try {
-          signInWithEmailAndPassword(auth, alunoAutenticado.email, senha).catch(() => {});
-        } catch (e) {}
-
         mostrarMensagem("sucesso", `Bem-vindo(a), ${alunoAutenticado.nome}! Acessando a Sala do Futuro...`);
         entrar.textContent = "Sucesso";
 
         setTimeout(() => {
           window.location.href = "APP/Aluno/index.html";
-        }, 500);
+        }, 300);
       } catch (error) {
         console.error("Erro na autenticação:", error);
         mostrarMensagem("erro", error.message || "Não foi possível validar o acesso.");
