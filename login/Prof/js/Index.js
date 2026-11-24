@@ -45,7 +45,8 @@ function turma(valor) {
   return String(valor || "")
   .trim()
   .toUpperCase()
-  .replace(/\s+/g, "");
+  .replace(/[ºª°\s]+/g, "")
+  .replace(/ANO/g, "");
 
 }
 
@@ -56,20 +57,15 @@ function textoSeguro(valor) {
 
   return String(valor ?? "")
 
-  .replaceAll(
-    "&",
-    "&amp;"
-  )
+  .replaceAll("&", "&amp;")
 
-  .replaceAll(
-    "<",
-    "&lt;"
-  )
+  .replaceAll("<", "&lt;")
 
-  .replaceAll(
-    ">",
-    "&gt;"
-  );
+  .replaceAll(">", "&gt;")
+
+  .replaceAll('"', "&quot;")
+
+  .replaceAll("'", "&#039;");
 
 }
 
@@ -115,41 +111,113 @@ function gerarCodigo(
 LOGIN E INICIALIZAÇÃO OFFLINE
 ========================================*/
 
-function inicializarPerfilDocenteLocal() {
+function hidratarSessaoDocente() {
   const ativo = DBLocal.obterUsuarioAtivo();
-  if (ativo && (ativo.tipo === "professor" || ativo.tipo === "docente")) {
-    usuarioAtual = {
-      uid: ativo.id,
-      email: ativo.email || "professor@escola.sp.gov.br",
-      nome: ativo.nome || "Prof. Carlos Eduardo Silva"
-    };
-  } else {
-    usuarioAtual = {
-      uid: "prof_1",
-      email: "professor@escola.sp.gov.br",
-      nome: "Prof. Carlos Eduardo Silva"
-    };
+  if (!ativo || (ativo.tipo !== "professor" && ativo.tipo !== "docente" && ativo.tipo !== "gestor")) {
+    return false;
   }
 
+  usuarioAtual = {
+    uid: ativo.id || `gestao_${ativo.cadastro || "docente"}`,
+    cadastro: ativo.cadastro || "",
+    email: ativo.email || (ativo.cadastro ? `Cadastro ${ativo.cadastro}` : "Docente"),
+    nome: ativo.nome || ativo.cadastro || "Docente",
+    cargo: ativo.cargo || "Docente"
+  };
+
   if ($("professorEmail")) {
-    $("professorEmail").textContent = `${usuarioAtual.nome} | ${usuarioAtual.email}`;
+    $("professorEmail").textContent = `${usuarioAtual.nome} (${usuarioAtual.cargo})`;
   }
 
   if ($("statusBancoLocal")) {
-    $("statusBancoLocal").textContent = "🟢 Banco Local: 100% Conectado";
+    const online = typeof navigator !== "undefined" ? navigator.onLine : true;
+    $("statusBancoLocal").textContent = online
+      ? "🟢 API Planilha & Cache Local Conectados"
+      : "🟡 Modo Offline (Cache Local Ativo)";
   }
 
-  atualizarPainel();
+  return true;
 }
 
-// Inicialização imediata conectada ao banco local
-inicializarPerfilDocenteLocal();
+function atualizarSelectsTurmasDinamicos() {
+  const salas = DBLocal.obterSalas ? DBLocal.obterSalas() : [];
+  const nomesSalas = Array.from(new Set(
+    salas.map((s) => String(s.nome || "").trim()).filter(Boolean)
+  ));
+  if (nomesSalas.length === 0) return;
 
-// Atualiza o painel e métricas automaticamente quando estudantes ou admins atualizam dados
-window.addEventListener("banco-local-atualizado", () => {
+  ["notaTurmaSelect", "ocTurmaSelect"].forEach((id) => {
+    const sel = $(id);
+    if (!sel) return;
+    const atual = sel.value;
+    sel.innerHTML = nomesSalas
+      .map((nome) => `<option value="${textoSeguro(nome)}">${textoSeguro(nome)}</option>`)
+      .join("");
+    if (atual && nomesSalas.includes(atual)) sel.value = atual;
+  });
+
+  const ocFiltro = $("ocFiltroTurma");
+  if (ocFiltro) {
+    const atual = ocFiltro.value;
+    ocFiltro.innerHTML = `<option value="TODAS">Todas as Turmas</option>` +
+      nomesSalas.map((nome) => `<option value="${textoSeguro(nome)}">${textoSeguro(nome)}</option>`).join("");
+    if (atual) ocFiltro.value = atual;
+  }
+}
+
+async function renderizarTudoDocente() {
+  atualizarSelectsTurmasDinamicos();
   atualizarPainel();
   carregarTarefas();
+  carregarGuildas();
+  carregarRanking();
+  carregarRankingGlobal();
+  carregarAlunosPautaNotas();
+  renderizarHistoricoAvaliacoes();
+  carregarModuloOcorrenciasProf();
+}
+
+async function inicializarPerfilDocenteLocal() {
+  if (!hidratarSessaoDocente()) {
+    window.location.href = "../logingov.html";
+    return;
+  }
+
+  await renderizarTudoDocente();
+
+  if (typeof navigator === "undefined" || navigator.onLine !== false) {
+    await DBLocal.sincronizarComAPI().catch(() => {});
+    hidratarSessaoDocente();
+    await renderizarTudoDocente();
+  }
+}
+
+// Inicialização imediata conectada à API e cache local
+inicializarPerfilDocenteLocal();
+
+// Atualização reativa sem loop quando outra aba atualizar o banco local
+window.addEventListener("banco-local-atualizado", () => {
+  hidratarSessaoDocente();
+  atualizarPainel();
+  carregarTarefas();
+  carregarGuildas();
 });
+
+if ($("atualizarTudoBtn")) {
+  $("atualizarTudoBtn").addEventListener("click", async () => {
+    const btn = $("atualizarTudoBtn");
+    btn.disabled = true;
+    btn.textContent = "Sincronizando...";
+    try {
+      await DBLocal.sincronizarComAPI({ forcar: true });
+      hidratarSessaoDocente();
+      await renderizarTudoDocente();
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Atualizar dados";
+    }
+  });
+}
 
 /*----------Sair----------*/
 
@@ -354,12 +422,14 @@ if ($("aulaForm")) {
 /*----------Criar tarefas automaticas----------*/
 
       const ids = [];
-
       for (let i = 0; i < tarefas.length; i++) {
         const tarefa = tarefas[i];
+        const disciplinaEscolhida = $("aulaComponente")?.value || "História";
         const novaTarefaLocal = {
           id: "aula_tar_" + Date.now() + "_" + i,
           titulo: tarefa,
+          componente: disciplinaEscolhida,
+          disciplina: disciplinaEscolhida,
           turma: classe,
           xp: xp,
           prazo: prazo || null,
@@ -447,9 +517,12 @@ if ($("tarefaForm")) {
 
 
     try {
+      const disciplinaEscolhida = $("tarefaComponente")?.value || "História";
       const novaTarefaLocal = {
         id: "tar_man_" + Date.now(),
         titulo: $("tarefaTitulo").value.trim(),
+        componente: disciplinaEscolhida,
+        disciplina: disciplinaEscolhida,
         turma: turma($("tarefaTurma").value),
         xp: Number($("tarefaXp").value),
         prazo: $("tarefaPrazo").value || null,
@@ -464,7 +537,7 @@ if ($("tarefaForm")) {
       mensagem(
         "tarefaMensagem",
         "ok",
-        "Tarefa criada com sucesso no banco local. ID: " + novaTarefaLocal.id
+        `Tarefa criada no banco local e sincronizada no Firebase Firestore (Coleção Atividades/${disciplinaEscolhida})! ID: ${novaTarefaLocal.id}`
       );
 
 
@@ -587,20 +660,22 @@ if ($("buscarEntregasBtn")) {
       tabela.innerHTML = "";
 
       lista.forEach(function(entrega) {
+        const dt = entrega.criadoEm ? new Date(entrega.criadoEm).toLocaleString("pt-BR") : "-";
         tabela.insertAdjacentHTML(
           "beforeend",
           `
           <tr>
             <td>${textoSeguro(entrega.alunoNome || entrega.alunoEmail || "-")}</td>
-            <td>${textoSeguro(entrega.alunoId || "-")}</td>
+            <td>${textoSeguro(entrega.alunoRA || entrega.alunoId || "-")}</td>
             <td>${textoSeguro(entrega.status || "entregue")}</td>
+            <td>${textoSeguro(dt)}</td>
           </tr>
           `
         );
       });
 
       if (lista.length === 0) {
-        tabela.innerHTML = `<tr><td colspan="3">Nenhuma entrega registrada para esta tarefa.</td></tr>`;
+        tabela.innerHTML = `<tr><td colspan="4">Nenhuma entrega registrada para esta tarefa.</td></tr>`;
       }
 
       mensagem(
@@ -664,67 +739,40 @@ if ($("carregarChamadaBtn")) {
     "";
 
 
-    alunos
+    const filtradosChamada = alunos.filter(
+      aluno => !classe || turma(aluno.turma || aluno.sala) === classe
+    );
 
-    .filter(
-      aluno =>
-      turma(aluno.turma)
-      === classe
-    )
+    if (filtradosChamada.length === 0) {
+      lista.innerHTML = `<div class="vazio">Nenhum aluno encontrado para a turma informada.</div>`;
+      return;
+    }
 
-    .forEach(
-    function(aluno) {
-
-
-      lista
-      .insertAdjacentHTML(
-
-      "beforeend",
-
-      `
-
-      <div
-        class="aluno-chamada"
-        data-id="${aluno.id}"
-      >
-
-        <strong>
-          ${textoSeguro(
-            aluno.nome
-          )}
-        </strong>
-
-
-        <select
-          class="presenca"
+    filtradosChamada.forEach(function(aluno) {
+      lista.insertAdjacentHTML(
+        "beforeend",
+        `
+        <div
+          class="aluno-chamada"
+          data-id="${textoSeguro(aluno.id)}"
         >
+          <strong>
+            ${textoSeguro(aluno.nome)} <small style="color:#64748b;">(${textoSeguro(aluno.sala || aluno.turma || "-")})</small>
+          </strong>
 
-          <option value="presente">
-            Presente
-          </option>
+          <select class="presenca">
+            <option value="presente">Presente</option>
+            <option value="ausente">Ausente</option>
+            <option value="justificado">Justificado</option>
+          </select>
 
-          <option value="ausente">
-            Ausente
-          </option>
-
-          <option value="justificado">
-            Justificado
-          </option>
-
-        </select>
-
-
-        <input
-          class="comportamento"
-          placeholder="Comportamento"
-        >
-
-      </div>
-
-      `
-
+          <input
+            class="comportamento"
+            placeholder="Comportamento"
+          >
+        </div>
+        `
       );
-
     });
 
   });
@@ -819,16 +867,28 @@ async function carregarGuildas() {
     const lista = DBLocal.obterGuildas();
 
     lista.forEach(function(guilda) {
+      const membrosArr = Array.isArray(guilda.membrosLista) ? guilda.membrosLista : [];
+      const membrosTxt = membrosArr.length > 0
+        ? membrosArr.map(m => textoSeguro(m)).join(", ")
+        : `${Number(guilda.membros) || 0} membro(s)`;
+
       tabela.insertAdjacentHTML(
         "beforeend",
         `
         <tr>
-          <td>${textoSeguro(guilda.nome || guilda.id)}</td>
-          <td>${textoSeguro(guilda.turma || "-")}</td>
-          <td>${textoSeguro(guilda.status || "aprovada")}</td>
+          <td><strong>${textoSeguro(guilda.nome || guilda.id)}</strong></td>
+          <td>${textoSeguro(guilda.desafio || "-")}</td>
+          <td>${membrosTxt}</td>
           <td>
-            <button class="aprovarGuilda" data-id="${guilda.id}">Aprovar</button>
-            <button class="rejeitarGuilda" data-id="${guilda.id}">Rejeitar</button>
+            <span class="badge">${textoSeguro(guilda.status || "Ativa")}</span>
+            <strong style="margin-left:6px; color:#1d4ed8;">${Number(guilda.pontos) || 0} XP</strong>
+          </td>
+          <td>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button type="button" class="darXpGuilda" data-nome="${textoSeguro(guilda.nome)}">+50 XP</button>
+              <button type="button" class="aprovarGuilda" data-id="${textoSeguro(guilda.id)}">Aprovar</button>
+              <button type="button" class="rejeitarGuilda" data-id="${textoSeguro(guilda.id)}">Rejeitar</button>
+            </div>
           </td>
         </tr>
         `
@@ -836,8 +896,32 @@ async function carregarGuildas() {
     });
 
     if (lista.length === 0) {
-      tabela.innerHTML = `<tr><td colspan="4">Nenhuma guilda cadastrada.</td></tr>`;
+      tabela.innerHTML = `<tr><td colspan="5">Nenhuma guilda cadastrada na planilha.</td></tr>`;
     }
+
+    document.querySelectorAll(".darXpGuilda").forEach(function(botao) {
+      botao.addEventListener("click", async function() {
+        const nome = botao.dataset.nome;
+        botao.disabled = true;
+        botao.textContent = "Enviando...";
+        try {
+          const res = await DBLocal.adicionarXPGuildaAPI(nome, 50);
+          if (res?.ok) {
+            mensagem("guildaMensagem", "ok", res.offlineEnfileirado
+              ? `+50 XP enfileirados offline para a guilda ${nome}.`
+              : `+50 XP concedidos à guilda ${nome}! Novo placar: ${res.novoXP ?? ""} XP`);
+            await DBLocal.sincronizarComAPI({ forcar: true }).catch(() => {});
+          } else {
+            mensagem("guildaMensagem", "erro", res?.msg || "Não foi possível conceder XP à guilda.");
+          }
+          carregarGuildas();
+          atualizarPainel();
+        } finally {
+          botao.disabled = false;
+          botao.textContent = "+50 XP";
+        }
+      });
+    });
 
     /*----------Aprovar----------*/
     document.querySelectorAll(".aprovarGuilda").forEach(function(botao) {
@@ -873,7 +957,11 @@ if ($("carregarGuildasBtn")) {
 
     "click",
 
-    carregarGuildas
+    async () => {
+      await DBLocal.sincronizarComAPI({ forcar: true }).catch(() => {});
+      carregarGuildas();
+      atualizarPainel();
+    }
 
   );
 
@@ -885,177 +973,128 @@ RANKING
 ========================================*/
 
 async function carregarRanking() {
+  const tabela = $("rankingTabela");
+  if (!tabela) return;
 
-  const tabela =
-  $("rankingTabela");
+  const filtroTurma = turma($("rankingTurma")?.value || "");
+  const alunos = await buscarAlunos();
 
+  const filtrados = alunos
+    .filter(a => !filtroTurma || turma(a.sala || a.turma) === filtroTurma)
+    .sort((a, b) => Number(b.xp || 0) - Number(a.xp || 0));
 
-  if (!tabela) {
+  tabela.innerHTML = "";
+
+  if (filtrados.length === 0) {
+    tabela.innerHTML = `<tr><td colspan="5">Nenhum estudante encontrado para o filtro informado.</td></tr>`;
     return;
   }
 
-
-  const alunos =
-  await buscarAlunos();
-
-
-  alunos.sort(
-
-    (a,b) =>
-
-    Number(b.xp || 0) -
-    Number(a.xp || 0)
-
-  );
-
-
-  tabela.innerHTML =
-  "";
-
-
-  alunos
-  .forEach(
-  function(aluno, posicao) {
-
-
-    tabela
-    .insertAdjacentHTML(
-
-    "beforeend",
-
-    `
-
-    <tr>
-
-      <td>
-        ${posicao + 1}
-      </td>
-
-      <td>
-        ${textoSeguro(
-          aluno.nome ||
-          aluno.id
-        )}
-      </td>
-
-      <td>
-        ${textoSeguro(
-          aluno.turma ||
-          "-"
-        )}
-      </td>
-
-      <td>
-        ${aluno.xp || 0}
-      </td>
-
-      <td>
-
-        <input
-          id="xp-${aluno.id}"
-          type="number"
-          min="1"
-          max="50"
-          value="10"
-        >
-
-        <button
-          class="darXp"
-          data-id="${aluno.id}"
-        >
-          Dar XP
-        </button>
-
-      </td>
-
-    </tr>
-
-    `
-
+  filtrados.forEach(function(aluno, posicao) {
+    const idSeguro = textoSeguro(aluno.ra || aluno.id);
+    tabela.insertAdjacentHTML(
+      "beforeend",
+      `
+      <tr>
+        <td>${posicao + 1}</td>
+        <td>
+          <strong>${textoSeguro(aluno.nome || aluno.id)}</strong>
+          <div style="font-size:11px; color:#64748b;">RA: ${textoSeguro(aluno.ra || "-")} • Faltas: ${Number(aluno.faltas) || 0}</div>
+        </td>
+        <td>${textoSeguro(aluno.sala || aluno.turma || "-")}</td>
+        <td><strong>${Number(aluno.xp) || 0} XP</strong></td>
+        <td>
+          <input
+            id="xp-input-${idSeguro}"
+            type="number"
+            min="1"
+            max="50"
+            value="10"
+          >
+          <button
+            type="button"
+            class="darXp"
+            data-ra="${textoSeguro(aluno.ra || aluno.id)}"
+            data-input-id="xp-input-${idSeguro}"
+            data-nome="${textoSeguro(aluno.nome)}"
+          >
+            Dar XP
+          </button>
+        </td>
+      </tr>
+      `
     );
-
   });
 
+  document.querySelectorAll(".darXp").forEach(function(botao) {
+    botao.addEventListener("click", async function() {
+      const raAluno = botao.dataset.ra;
+      const nomeAluno = botao.dataset.nome || raAluno;
+      const inputEl = $(botao.dataset.inputId);
+      const xp = Number(inputEl?.value || 0);
 
-  document
-  .querySelectorAll(
-    ".darXp"
-  )
-
-  .forEach(
-  function(botao) {
-
-    botao
-    .addEventListener(
-    "click",
-    async function() {
-
-      const alunoId =
-      botao.dataset.id;
-
-
-      const xp =
-
-      Number(
-
-        $("xp-" + alunoId)
-        .value
-
-      );
-
-
-      if (
-        xp < 1 ||
-        xp > 50
-      ) {
-
-        alert(
-          "Máximo de 50 XP."
-        );
-
+      if (xp < 1 || xp > 50) {
+        mensagem("rankingMensagem", "erro", "Informe um valor entre 1 e 50 XP.");
         return;
-
       }
 
-
-      await updateDoc(
-
-        doc(
-          db,
-          "usuarios",
-          alunoId
-        ),
-
-        {
-
-          xp:
-          increment(xp)
-
+      botao.disabled = true;
+      botao.textContent = "Enviando...";
+      try {
+        const res = await DBLocal.adicionarXPAlunoAPI(raAluno, xp);
+        if (res?.ok) {
+          mensagem("rankingMensagem", "ok", res.offlineEnfileirado
+            ? `+${xp} XP enfileirados offline para ${nomeAluno}.`
+            : `+${xp} XP concedidos a ${nomeAluno}! Novo XP: ${res.novoXP ?? ""}`);
+          await DBLocal.sincronizarComAPI({ forcar: true }).catch(() => {});
+        } else {
+          mensagem("rankingMensagem", "erro", res?.msg || "Não foi possível conceder XP.");
         }
-
-      );
-
-
-      carregarRanking();
-
+        await carregarRanking();
+        await carregarRankingGlobal();
+      } finally {
+        botao.disabled = false;
+        botao.textContent = "Dar XP";
+      }
     });
-
   });
-
 }
 
+async function carregarRankingGlobal() {
+  const tabela = $("globalTabela");
+  if (!tabela) return;
+
+  const alunos = await buscarAlunos();
+  const inst = DBLocal.obterInstituicao ? DBLocal.obterInstituicao() : {};
+  const escolaNome = inst.escola || "E.E. Maurício Antunes";
+
+  const ordenados = [...alunos].sort((a, b) => Number(b.xp || 0) - Number(a.xp || 0));
+  if (ordenados.length === 0) {
+    tabela.innerHTML = `<tr><td colspan="5">Nenhum estudante sincronizado da planilha.</td></tr>`;
+    return;
+  }
+
+  tabela.innerHTML = ordenados.map((al, idx) => `
+    <tr>
+      <td>${idx + 1}</td>
+      <td>${textoSeguro(al.nome)} <small style="color:#64748b;">(RA: ${textoSeguro(al.ra || "-")})</small></td>
+      <td>${textoSeguro(al.sala || al.turma || "-")}</td>
+      <td>${textoSeguro(escolaNome)}</td>
+      <td><strong>${Number(al.xp) || 0} XP</strong></td>
+    </tr>
+  `).join("");
+}
 
 if ($("carregarRankingBtn")) {
+  $("carregarRankingBtn").addEventListener("click", carregarRanking);
+}
 
-  $("carregarRankingBtn")
-  .addEventListener(
-
-    "click",
-
-    carregarRanking
-
-  );
-
+if ($("carregarGlobalBtn")) {
+  $("carregarGlobalBtn").addEventListener("click", async () => {
+    await DBLocal.sincronizarComAPI({ forcar: true }).catch(() => {});
+    await carregarRankingGlobal();
+    await carregarRanking();
+  });
 }
 
 
@@ -1158,6 +1197,7 @@ async function atualizarPainel() {
     const tarefasLocais = DBLocal.obterTarefasDocentes();
     const avisosLocais = DBLocal.obterComunicados();
     const alunos = DBLocal.obterAlunos();
+    const guildas = DBLocal.obterGuildas();
 
     if ($("metricaTarefas")) {
       $("metricaTarefas").textContent = tarefasLocais.length;
@@ -1165,6 +1205,10 @@ async function atualizarPainel() {
 
     if ($("metricaAlunos")) {
       $("metricaAlunos").textContent = alunos.length;
+    }
+
+    if ($("metricaGuildas")) {
+      $("metricaGuildas").textContent = guildas.length;
     }
 
     if ($("metricaAvisos")) {
@@ -1315,52 +1359,21 @@ if ($("chamadaData")) {
 LANÇAMENTO DE NOTAS DAS AVALIAÇÕES
 ========================================*/
 
-const CHAVE_AVALIACOES = "SALA_FUTURO_AVALIACOES_NOTAS_V2";
+const CHAVE_AVALIACOES = "SALA_FUTURO_AVALIACOES_NOTAS_V3";
 
-const avaliacoesIniciais = [
-  {
-    id: "av_1",
-    data: "2026-09-12",
-    turma: "8º Ano A",
-    disciplina: "Matemática",
-    instrumento: "Prova Paulista Bimestral",
-    bimestre: "3º Bimestre",
-    peso: 10,
-    media: 7.8,
-    totalAlunos: 2,
-    notas: [
-      { nome: "Guilherme Santos", ra: "000.123.456-7 SP", guilda: "Águias da Sabedoria", nota: 8.5, status: "Aprovado", obs: "Excelente raciocínio algébrico" },
-      { nome: "Beatriz Lima", ra: "000.234.567-8 SP", guilda: "Fênix da Criação", nota: 7.2, status: "Aprovado", obs: "Bom desempenho em equações" }
-    ]
-  },
-  {
-    id: "av_2",
-    data: "2026-09-14",
-    turma: "8º Ano A",
-    disciplina: "Língua Portuguesa",
-    instrumento: "Redação Paulista SP",
-    bimestre: "3º Bimestre",
-    peso: 10,
-    media: 8.2,
-    totalAlunos: 2,
-    notas: [
-      { nome: "Guilherme Santos", ra: "000.123.456-7 SP", guilda: "Águias da Sabedoria", nota: 9.0, status: "Destaque", obs: "Texto com excelente coesão" },
-      { nome: "Beatriz Lima", ra: "000.234.567-8 SP", guilda: "Fênix da Criação", nota: 7.5, status: "Aprovado", obs: "Argumentação consistente" }
-    ]
-  }
-];
+const avaliacoesIniciais = [];
 
 function obterAvaliacoesArmazenadas() {
   const dados = localStorage.getItem(CHAVE_AVALIACOES);
   if (dados) {
     try {
-      return JSON.parse(dados);
+      const parsed = JSON.parse(dados);
+      return Array.isArray(parsed) ? parsed : [];
     } catch(e) {
       console.warn("Erro ao parsear avaliações:", e);
     }
   }
-  localStorage.setItem(CHAVE_AVALIACOES, JSON.stringify(avaliacoesIniciais));
-  return avaliacoesIniciais;
+  return [];
 }
 
 function salvarAvaliacoesArmazenadas(lista) {
@@ -1369,20 +1382,20 @@ function salvarAvaliacoesArmazenadas(lista) {
 
 let avaliacoesCadastradas = obterAvaliacoesArmazenadas();
 
-// Recupera alunos da turma cadastrados no Banco Local
+// Recupera alunos da turma cadastrados na Planilha / Cache Local
 async function obterAlunosTurma(turmaAlvo) {
   const alunosDoBanco = DBLocal.obterAlunos();
   const todosAlunos = (alunosDoBanco || []).map(u => ({
     id: u.id,
-    nome: u.nome ? (u.nome + (u.sobrenome ? " " + u.sobrenome : "")) : (u.email || "Estudante"),
-    ra: u.ra || "000.123.456-7 SP",
-    sala: u.turma || u.sala || "8º Ano A",
-    guilda: u.guilda || "Águias da Sabedoria"
+    nome: u.nome || "Estudante",
+    ra: u.ra || "-",
+    sala: u.sala || u.turma || "-",
+    guilda: u.guilda || "Sem guilda"
   }));
 
-  const alvoNorm = String(turmaAlvo || "").trim().toUpperCase().replace(/[ºª°\s]/g, "");
+  const alvoNorm = turma(turmaAlvo);
   return todosAlunos.filter(a => {
-    const salaNorm = String(a.sala || a.turma || "").trim().toUpperCase().replace(/[ºª°\s]/g, "");
+    const salaNorm = turma(a.sala || a.turma || "");
     return !alvoNorm || alvoNorm === "TODAS" || salaNorm === alvoNorm || salaNorm.includes(alvoNorm) || alvoNorm.includes(salaNorm);
   });
 }
@@ -1399,7 +1412,7 @@ function calcularStatusNota(nota) {
 }
 
 function atualizarCabecalhoNotas() {
-  const turmaSel = $("notaTurmaSelect")?.value || "8º Ano A";
+  const turmaSel = $("notaTurmaSelect")?.value || "Turma";
   const discSel = $("notaDisciplinaSelect")?.value || "Matemática";
   const tipoSel = $("notaTipoAvaliacao")?.value || "Prova Paulista Bimestral";
   const bimSel = $("notaBimestreSelect")?.value || "3º Bimestre";
@@ -1411,14 +1424,14 @@ function atualizarCabecalhoNotas() {
 
 async function carregarAlunosPautaNotas() {
   atualizarCabecalhoNotas();
-  const turmaSel = $("notaTurmaSelect")?.value || "8º Ano A";
+  const turmaSel = $("notaTurmaSelect")?.value || "";
   const alunos = await obterAlunosTurma(turmaSel);
   const corpo = $("corpoTabelaLancamentoNotas");
 
   if (!corpo) return;
 
   if (alunos.length === 0) {
-    corpo.innerHTML = `<tr><td colspan="7" class="vazio">Nenhum estudante matriculado na turma "${turmaSel}". Cadastre estudantes na Área ADM.</td></tr>`;
+    corpo.innerHTML = `<tr><td colspan="7" class="vazio">Nenhum estudante encontrado na turma "${textoSeguro(turmaSel)}".</td></tr>`;
     if ($("contadorAlunosPauta")) $("contadorAlunosPauta").textContent = "0 estudantes encontrados";
     if ($("mediaTurmaValor")) $("mediaTurmaValor").textContent = "--";
     return;
@@ -1426,17 +1439,16 @@ async function carregarAlunosPautaNotas() {
 
   let html = "";
   alunos.forEach((aluno, index) => {
-    // Busca se já existe nota prévia cadastrada para essa avaliação e aluno
     const statusInicial = calcularStatusNota(null);
 
     html += `
-      <tr data-aluno-nome="${aluno.nome}" data-aluno-ra="${aluno.ra}">
+      <tr data-aluno-nome="${textoSeguro(aluno.nome)}" data-aluno-ra="${textoSeguro(aluno.ra)}">
         <td><strong>${index + 1}</strong></td>
         <td>
-          <strong>${aluno.nome}</strong>
+          <strong>${textoSeguro(aluno.nome)}</strong>
         </td>
-        <td><span class="codigo">${aluno.ra}</span></td>
-        <td><span class="badge">${aluno.guilda || "Geral"}</span></td>
+        <td><span class="codigo">${textoSeguro(aluno.ra)}</span></td>
+        <td><span class="badge">${textoSeguro(aluno.guilda || "Sem guilda")}</span></td>
         <td>
           <input
             type="number"
@@ -1524,15 +1536,15 @@ function renderizarHistoricoAvaliacoes() {
   corpo.innerHTML = avaliacoesCadastradas.map(av => {
     return `
       <tr>
-        <td>${av.data || "2026-09-16"}</td>
-        <td><strong>${av.turma}</strong></td>
-        <td>${av.disciplina}</td>
-        <td>${av.instrumento}</td>
-        <td><span class="badge">${av.bimestre}</span></td>
-        <td><strong style="color:var(--azul);">${av.media}</strong></td>
-        <td>${av.totalAlunos} alunos</td>
+        <td>${textoSeguro(av.data || "-")}</td>
+        <td><strong>${textoSeguro(av.turma)}</strong></td>
+        <td>${textoSeguro(av.disciplina)}</td>
+        <td>${textoSeguro(av.instrumento)}</td>
+        <td><span class="badge">${textoSeguro(av.bimestre)}</span></td>
+        <td><strong style="color:var(--azul);">${textoSeguro(av.media)}</strong></td>
+        <td>${Number(av.totalAlunos) || 0} alunos</td>
         <td>
-          <button type="button" class="botao" style="padding:4px 8px; font-size:12px;" onclick="window.imprimirBoletimAvaliacao('${av.id}')">
+          <button type="button" class="botao" style="padding:4px 8px; font-size:12px;" onclick="window.imprimirBoletimAvaliacao('${textoSeguro(av.id)}')">
             Imprimir
           </button>
         </td>
@@ -1779,20 +1791,20 @@ function renderizarAtividadeIAPreview(dados, motor) {
   const containerAlts = $("iaPreviewAlternativas");
   if (containerAlts && Array.isArray(dados.alternativas)) {
     containerAlts.innerHTML = dados.alternativas.map(alt => {
-      const estilo = alt.correta 
-        ? "background:#f0fdf4; border:1.5px solid #86efac; color:#166534;" 
+      const estilo = alt.correta
+        ? "background:#f0fdf4; border:1.5px solid #86efac; color:#166534;"
         : "background:#f8fafc; border:1px solid #cbd5e1; color:#334155;";
-      const badge = alt.correta 
-        ? `<span style="background:#16a34a; color:#fff; font-size:0.75rem; font-weight:bold; padding:2px 8px; border-radius:12px;">Gabarito Correto</span>` 
+      const badge = alt.correta
+        ? `<span style="background:#16a34a; color:#fff; font-size:0.75rem; font-weight:bold; padding:2px 8px; border-radius:12px;">Gabarito Correto</span>`
         : "";
       return `
         <div style="padding:10px; border-radius:8px; ${estilo}">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-            <strong>(${alt.id}) ${alt.texto}</strong>
+            <strong>(${textoSeguro(alt.id)}) ${textoSeguro(alt.texto)}</strong>
             ${badge}
           </div>
           <small style="display:block; opacity:0.85; font-size:0.8rem;">
-            ${alt.explicacao || ""}
+            ${textoSeguro(alt.explicacao || "")}
           </small>
         </div>
       `;
@@ -1914,12 +1926,12 @@ function renderizarPreviaAtividadesJson(itens) {
   }
 
   listaContainer.innerHTML = itens.map((atv, idx) => {
-    const titulo = atv.titulo || `Atividade #${idx + 1}`;
-    const comp = atv.componente || "Geral";
-    const turmaAtv = atv.turma || "Todas as turmas";
-    const hab = atv.habilidadeBNCC || atv.habilidade || "BNCC SP";
-    const enunciado = (atv.enunciado || atv.descricao || "").slice(0, 160) + "...";
-    const xp = atv.pontosXP || atv.xp || 30;
+    const titulo = textoSeguro(atv.titulo || `Atividade #${idx + 1}`);
+    const comp = textoSeguro(atv.componente || "Geral");
+    const turmaAtv = textoSeguro(atv.turma || "Todas as turmas");
+    const hab = textoSeguro(atv.habilidadeBNCC || atv.habilidade || "BNCC SP");
+    const enunciado = textoSeguro((atv.enunciado || atv.descricao || "").slice(0, 160) + "...");
+    const xp = Number(atv.pontosXP || atv.xp || 30);
 
     return `
       <div style="background:#ffffff; border:1.5px solid #cbd5e1; border-radius:10px; padding:14px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 1px 4px rgba(0,0,0,0.04);">
@@ -1981,8 +1993,8 @@ if ($("btnCarregarCatalogoPadrao")) {
 if ($("btnBaixarModeloJson")) {
   $("btnBaixarModeloJson").addEventListener("click", () => {
     const modelo = {
-      escola: "Escola Estadual SEDUC-SP",
-      descricao: "Modelo de importação de atividades para o Sala do Futuro V2",
+      escola: "E.E. Maurício Antunes",
+      descricao: "Modelo de importação de atividades para a Sala do Futuro Maurício Antunes (Grêmio Aegre 2027)",
       atividades: [
         {
           titulo: "Exemplo: Teorema de Pitágoras no Cotidiano",
@@ -2165,7 +2177,7 @@ function carregarModuloOcorrenciasProf() {
  * Carrega a lista suspensa de alunos com base na turma selecionada no formulário.
  */
 function popularAlunosOcorrencia() {
-  const turmaSel = $("ocTurmaSelect") ? $("ocTurmaSelect").value : "8º Ano A";
+  const turmaSel = $("ocTurmaSelect") ? $("ocTurmaSelect").value : "";
   const alunoSelect = $("ocAlunoSelect");
   if (!alunoSelect) return;
 
@@ -2173,8 +2185,8 @@ function popularAlunosOcorrencia() {
   const tNorm = turma(turmaSel);
   const filtrados = todosAlunos.filter(a => !tNorm || turma(a.sala || a.turma) === tNorm);
 
-  alunoSelect.innerHTML = `<option value="">Selecione o estudante...</option>` + 
-    filtrados.map(a => `<option value="${a.id}" data-nome="${textoSeguro(a.nome)}" data-ra="${a.ra || ''}" data-turma="${a.sala || a.turma || turmaSel}">${a.nome} (${a.ra || 'S/ RA'})</option>`).join("");
+  alunoSelect.innerHTML = `<option value="">Selecione o estudante...</option>` +
+    filtrados.map(a => `<option value="${textoSeguro(a.id)}" data-nome="${textoSeguro(a.nome)}" data-ra="${textoSeguro(a.ra || '')}" data-turma="${textoSeguro(a.sala || a.turma || turmaSel)}">${textoSeguro(a.nome)} (${textoSeguro(a.ra || 'S/ RA')})</option>`).join("");
 }
 
 /**
@@ -2216,22 +2228,22 @@ function renderizarOcorrenciasProf() {
       <div style="background:#ffffff; border:1px solid ${assinado ? '#bbf7d0' : '#fed7aa'}; border-left:4px solid ${corGravidade}; border-radius:10px; padding:14px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
           <div>
-            <span style="font-size:11px; font-weight:bold; color:#64748b; text-transform:uppercase;">${oc.data || ''} • ${oc.turma || ''}</span>
-            <h4 style="margin:2px 0 0 0; font-size:15px; color:#1e293b;">${oc.alunoNome || 'Estudante'} <small style="font-weight:normal; color:#64748b;">(RA: ${oc.alunoRA || 'N/D'})</small></h4>
+            <span style="font-size:11px; font-weight:bold; color:#64748b; text-transform:uppercase;">${textoSeguro(oc.data || '')} • ${textoSeguro(oc.turma || '')}</span>
+            <h4 style="margin:2px 0 0 0; font-size:15px; color:#1e293b;">${textoSeguro(oc.alunoNome || 'Estudante')} <small style="font-weight:normal; color:#64748b;">(RA: ${textoSeguro(oc.alunoRA || 'N/D')})</small></h4>
           </div>
           <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
             <span style="background:${corGravidade}15; color:${corGravidade}; border:1px solid ${corGravidade}40; font-size:11px; padding:2px 8px; border-radius:12px; font-weight:bold;">
-              ${oc.gravidade || 'Média'}
+              ${textoSeguro(oc.gravidade || 'Média')}
             </span>
             <span style="background:#f1f5f9; color:#475569; font-size:11px; padding:2px 8px; border-radius:12px;">
-              ${oc.tipo || 'Ocorrência'}
+              ${textoSeguro(oc.tipo || 'Ocorrência')}
             </span>
           </div>
         </div>
 
         <div style="background:#f8fafc; border-radius:6px; padding:8px 10px; margin-bottom:10px; font-size:13px; color:#334155; line-height:1.4;">
-          <strong>Relato:</strong> ${oc.descricao || 'Sem descrição.'}
-          ${oc.providencias ? `<div style="margin-top:4px; font-size:12px; color:#475569;"><strong>Providências:</strong> ${oc.providencias}</div>` : ''}
+          <strong>Relato:</strong> ${textoSeguro(oc.descricao || 'Sem descrição.')}
+          ${oc.providencias ? `<div style="margin-top:4px; font-size:12px; color:#475569;"><strong>Providências:</strong> ${textoSeguro(oc.providencias)}</div>` : ''}
         </div>
 
         <!-- Box de Assinatura dos Pais -->
@@ -2242,11 +2254,11 @@ function renderizarOcorrenciasProf() {
                 <span>✅</span> Ciência Confirmada pelo Responsável
               </div>
               <div style="color:#374151; margin-top:2px;">
-                Assinado por <strong>${oc.assinaturaPais.responsavelNome}</strong> em <em>${oc.assinaturaPais.dataAssinatura}</em>
+                Assinado por <strong>${textoSeguro(oc.assinaturaPais.responsavelNome)}</strong> em <em>${textoSeguro(oc.assinaturaPais.dataAssinatura)}</em>
               </div>
               ${oc.assinaturaPais.observacaoPais ? `
                 <div style="margin-top:4px; font-style:italic; color:#4b5563; background:#ffffff; padding:4px 8px; border-radius:4px; border:1px solid #e5e7eb;">
-                  "${oc.assinaturaPais.observacaoPais}"
+                  "${textoSeguro(oc.assinaturaPais.observacaoPais)}"
                 </div>
               ` : ''}
             ` : `
@@ -2260,7 +2272,7 @@ function renderizarOcorrenciasProf() {
           </div>
 
           <div style="display:flex; gap:6px;">
-            <button type="button" onclick="window.excluirOcorrenciaProf('${oc.id}')" style="background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; padding:4px 8px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;">
+            <button type="button" onclick="window.excluirOcorrenciaProf('${textoSeguro(oc.id)}')" style="background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; padding:4px 8px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;">
               Excluir
             </button>
           </div>
@@ -2296,7 +2308,7 @@ if (formOcProf) {
     const alunoId = alunoSel.value;
     const alunoNome = opt?.getAttribute("data-nome") || opt.textContent.split(" (")[0];
     const alunoRA = opt?.getAttribute("data-ra") || "";
-    const turmaAluno = opt?.getAttribute("data-turma") || ($("ocTurmaSelect")?.value || "8º Ano A");
+    const turmaAluno = opt?.getAttribute("data-turma") || ($("ocTurmaSelect")?.value || "Sem Sala");
     const data = $("ocDataInput")?.value || new Date().toISOString().split("T")[0];
     const tipo = $("ocTipoSelect")?.value || "Ocorrência Pedagógica";
     const gravidade = $("ocGravidadeSelect")?.value || "Média";
@@ -2320,7 +2332,7 @@ if (formOcProf) {
       gravidade,
       descricao,
       providencias,
-      registradoPor: (typeof usuarioAtual !== "undefined" && usuarioAtual?.displayName) ? usuarioAtual.displayName : "Prof. Carlos Eduardo Silva",
+      registradoPor: (usuarioAtual?.nome || usuarioAtual?.displayName || "Docente"),
       status: requerAssinatura ? "Pendente de Assinatura dos Pais" : "Registrada",
       requerAssinatura,
       assinaturaPais: {

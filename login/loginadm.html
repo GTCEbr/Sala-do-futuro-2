@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Acesso da Gestão Escolar e Coordenação | Sala do Futuro V2</title>
+  <title>Acesso da Gestão Escolar e Coordenação | Sala do Futuro Maurício Antunes</title>
   
   <style>
     :root {
@@ -274,20 +274,19 @@
   <main class="container-login" id="containerLogin">
     <div class="cabecalho-login">
       <img src="../logosp.png" alt="Governo do Estado de São Paulo" class="logo-sp">
-      <h1 class="titulo-login">Sala do Futuro V2</h1>
-      <p class="subtitulo-login">Portal de Administração, Gestão Escolar e Supervisão</p>
-      <span class="badge-gestao">🏛️ SEDUC-SP • Diretoria de Ensino</span>
+      <h1 class="titulo-login">Sala do Futuro Maurício Antunes</h1>
+      <p class="subtitulo-login">Portal de Administração, Gestão Escolar e Transição Grêmio Aegre 2027</p>
+      <span class="badge-gestao">🏛️ E.E. Maurício Antunes • Grêmio Aegre 2027</span>
     </div>
 
     <form id="formLoginGestao" novalidate>
       <div class="campo-form">
-        <label for="emailGestao" class="label-campo">E-mail funcional do Gestor ou Supervisor</label>
+        <label for="cadastroGestao" class="label-campo">Cadastro do Gestor ou Supervisor</label>
         <input 
-          type="email" 
-          id="emailGestao" 
+          type="text" 
+          id="cadastroGestao" 
           class="input-texto" 
-          placeholder="diretoria.escola@educacao.sp.gov.br" 
-          value="diretoria.escola@educacao.sp.gov.br"
+          placeholder="Digite seu código de cadastro" 
           required 
           autocomplete="username"
         >
@@ -301,7 +300,6 @@
             id="senhaGestao" 
             class="input-texto" 
             placeholder="Digite sua senha de acesso" 
-            value="123456"
             required 
             autocomplete="current-password"
           >
@@ -315,15 +313,6 @@
         <span>🔐</span> Acessar Painel de Gestão & ADM
       </button>
 
-      <div class="secao-atalhos">
-        <span class="titulo-atalhos">
-          <span>👥</span> Gestores e Supervisores Disponíveis (Clique para preencher):
-        </span>
-        <div class="lista-gestores" id="listaGestoresCadastrados">
-          <!-- Preenchido dinamicamente via JS -->
-        </div>
-      </div>
-
       <div class="rodape-login">
         <a href="../index.html" class="link-voltar">← Voltar para a página principal</a>
       </div>
@@ -334,14 +323,12 @@
     import DBLocal from "./js/db-local.js";
 
     const form = document.getElementById("formLoginGestao");
-    const emailInput = document.getElementById("emailGestao");
+    const cadastroInput = document.getElementById("cadastroGestao");
     const senhaInput = document.getElementById("senhaGestao");
     const btnAcessar = document.getElementById("btnAcessarGestao");
     const mensagem = document.getElementById("mensagemGestao");
-    const listaGestores = document.getElementById("listaGestoresCadastrados");
     const btnToggleSenha = document.getElementById("btnToggleSenha");
 
-    // Toggle de visibilidade da senha
     btnToggleSenha?.addEventListener("click", () => {
       const tipo = senhaInput.getAttribute("type") === "password" ? "text" : "password";
       senhaInput.setAttribute("type", tipo);
@@ -352,95 +339,37 @@
       mensagem.textContent = texto;
     }
 
-    // Perfis de Gestão predefinidos para agilizar a demonstração
-    const gestores = [
-      {
-        nome: "Diretora Ana Paula Ramos",
-        email: "diretoria.escola@educacao.sp.gov.br",
-        cargo: "Diretora de Escola",
-        setor: "Direção Geral"
-      },
-      {
-        nome: "Prof. Coordenador Roberto Mendes",
-        email: "coordenacao.pedagogica@educacao.sp.gov.br",
-        cargo: "Coord. Gestão Pedagógica (CGP)",
-        setor: "Pedagógico"
-      },
-      {
-        nome: "Profa. Supervisora Marina Costa",
-        email: "supervisao.desbc@educacao.sp.gov.br",
-        cargo: "Supervisora de Ensino",
-        setor: "TI / Diretoria de Ensino DESBC"
-      },
-      {
-        nome: "Secretário Escolar Fernando Dias",
-        email: "secretaria.escola@educacao.sp.gov.br",
-        cargo: "Organização Escolar (GOE)",
-        setor: "Secretaria"
-      }
-    ];
-
-    function renderizarGestores() {
-      if (!listaGestores) return;
-      listaGestores.innerHTML = "";
-
-      gestores.forEach(g => {
-        const item = document.createElement("div");
-        item.className = "item-gestor";
-        item.innerHTML = `
-          <div>
-            <strong style="color: var(--azul-gov); display:block;">${g.nome}</strong>
-            <span style="display:block; color: var(--texto-secundario); font-size: 0.76rem;">${g.email}</span>
-            <small style="color: var(--ouro-gestao); font-weight:600; font-size:0.75rem;">${g.cargo}</small>
-          </div>
-          <span style="background: #e2e8f0; color: #1e293b; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.72rem; white-space:nowrap;">
-            ${g.setor}
-          </span>
-        `;
-
-        item.addEventListener("click", () => {
-          emailInput.value = g.email;
-          senhaInput.value = "123456";
-          exibirMensagem("sucesso", `Perfil selecionado: ${g.nome} (${g.cargo}). Clique em Acessar.`);
-        });
-
-        listaGestores.appendChild(item);
-      });
-    }
-
-    renderizarGestores();
-
-    // Login no Banco Local para Gestão
-    form.addEventListener("submit", function(e) {
+    form.addEventListener("submit", async function(e) {
       e.preventDefault();
 
-      const email = emailInput.value.trim();
+      const cadastro = cadastroInput.value.trim();
       const senha = senhaInput.value;
 
-      if (!email) {
-        exibirMensagem("erro", "Por favor, informe seu e-mail institucional de gestão.");
+      if (!cadastro) {
+        exibirMensagem("erro", "Por favor, informe o número de cadastro da gestão.");
         return;
       }
 
-      if (senha.length < 6) {
-        exibirMensagem("erro", "A senha precisa ter no mínimo 6 dígitos.");
+      if (!senha) {
+        exibirMensagem("erro", "Por favor, informe sua senha institucional.");
         return;
       }
 
-      exibirMensagem("sucesso", "Autenticando credenciais na SEDUC-SP e Banco Local...");
+      exibirMensagem("sucesso", "Autenticando credenciais de gestão no sistema oficial...");
       btnAcessar.disabled = true;
       btnAcessar.innerHTML = "<span>⏳</span> Acessando painel...";
 
       try {
-        const gestorAutenticado = DBLocal.autenticarGestao(email, senha);
-        exibirMensagem("sucesso", `Bem-vindo(a), ${gestorAutenticado.nome}! Redirecionando para a Gestão Escolar...`);
+        const membroAutenticado = await DBLocal.autenticarGestaoAPI(cadastro, senha);
+        exibirMensagem("sucesso", `Bem-vindo(a), ${membroAutenticado.nome} (${membroAutenticado.cargo})! Redirecionando...`);
 
+        const destino = membroAutenticado.tipo === "professor" ? "Prof/Index.html" : "Adm/index.html";
         setTimeout(() => {
-          window.location.href = "Adm/index.html";
-        }, 500);
+          window.location.href = destino;
+        }, 400);
       } catch (err) {
         console.error("Erro no login gestao:", err);
-        exibirMensagem("erro", err.message || "Erro na validação das credenciais de gestão.");
+        exibirMensagem("erro", err.message || "Cadastro ou senha incorreta.");
         btnAcessar.disabled = false;
         btnAcessar.innerHTML = "<span>🔐</span> Acessar Painel de Gestão & ADM";
       }

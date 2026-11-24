@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Acesso do Servidor e Docente | Sala do Futuro V2</title>
+  <title>Acesso do Servidor e Docente | Sala do Futuro Maurício Antunes</title>
   
   <style>
     :root {
@@ -237,19 +237,18 @@
   <main class="container-login" id="containerLogin">
     <div class="cabecalho-login">
       <img src="../logosp.png" alt="Governo do Estado de São Paulo" class="logo-sp">
-      <h1 class="titulo-login">Sala do Futuro V2</h1>
-      <p class="subtitulo-login">Portal Oficial de Professores e Servidores da Educação</p>
+      <h1 class="titulo-login">Sala do Futuro Maurício Antunes</h1>
+      <p class="subtitulo-login">Portal de Professores e Servidores • E.E. Maurício Antunes (Grêmio Aegre 2027)</p>
     </div>
 
     <form id="formLoginDocente" novalidate>
       <div class="campo-form">
-        <label for="emailDocente" class="label-campo">E-mail institucional do Servidor</label>
+        <label for="cadastroDocente" class="label-campo">Cadastro do Docente ou Servidor</label>
         <input 
-          type="email" 
-          id="emailDocente" 
+          type="text" 
+          id="cadastroDocente" 
           class="input-texto" 
-          placeholder="professor@escola.sp.gov.br" 
-          value="professor@escola.sp.gov.br"
+          placeholder="Digite seu cadastro (ex: Convidado)" 
           required 
           autocomplete="username"
         >
@@ -263,7 +262,6 @@
             id="senhaDocente" 
             class="input-texto" 
             placeholder="Digite sua senha de acesso" 
-            value="123456"
             required 
             autocomplete="current-password"
           >
@@ -275,15 +273,6 @@
 
       <button type="submit" id="btnAcessarDocente" class="btn-entrar">Acessar Painel do Professor</button>
 
-      <div class="secao-atalhos">
-        <span class="titulo-atalhos">
-          <span>📚</span> Docentes Cadastrados (Clique para selecionar):
-        </span>
-        <div class="lista-docentes" id="listaDocentesCadastrados">
-          <!-- Preenchido dinamicamente via JS -->
-        </div>
-      </div>
-
       <div class="rodape-login">
         <a href="../Index.html" class="link-voltar">← Voltar para a página principal</a>
       </div>
@@ -294,14 +283,12 @@
     import DBLocal from "./js/db-local.js";
 
     const form = document.getElementById("formLoginDocente");
-    const emailInput = document.getElementById("emailDocente");
+    const cadastroInput = document.getElementById("cadastroDocente");
     const senhaInput = document.getElementById("senhaDocente");
     const btnAcessar = document.getElementById("btnAcessarDocente");
     const mensagem = document.getElementById("mensagemDocente");
-    const listaDocentes = document.getElementById("listaDocentesCadastrados");
     const btnToggleSenha = document.getElementById("btnToggleSenha");
 
-    // Toggle de visibilidade da senha
     btnToggleSenha?.addEventListener("click", () => {
       const tipo = senhaInput.getAttribute("type") === "password" ? "text" : "password";
       senhaInput.setAttribute("type", tipo);
@@ -312,95 +299,38 @@
       mensagem.textContent = texto;
     }
 
-    // Lista de docentes disponíveis
-    const docentes = [
-      {
-        nome: "Prof. Carlos Eduardo Silva",
-        email: "professor@escola.sp.gov.br",
-        disciplina: "Matemática",
-        turma: "8º Ano A"
-      },
-      {
-        nome: "Profª Helena Ramos",
-        email: "helena.ramos@escola.sp.gov.br",
-        disciplina: "Língua Portuguesa",
-        turma: "8º Ano B"
-      },
-      {
-        nome: "Prof. Marcos Souza",
-        email: "marcos.souza@escola.sp.gov.br",
-        disciplina: "Ciências da Natureza",
-        turma: "9º Ano A"
-      },
-      {
-        nome: "Profª Juliana Paes",
-        email: "juliana.paes@escola.sp.gov.br",
-        disciplina: "História & Geografia",
-        turma: "1º Ano EM"
-      }
-    ];
-
-    function renderizarDocentes() {
-      if (!listaDocentes) return;
-      listaDocentes.innerHTML = "";
-
-      docentes.forEach(doc => {
-        const item = document.createElement("div");
-        item.className = "item-docente";
-        item.innerHTML = `
-          <div>
-            <strong style="color: var(--azul-gov);">${doc.nome}</strong>
-            <span style="display:block; color: var(--texto-secundario); font-size: 0.75rem;">${doc.email} • ${doc.disciplina}</span>
-          </div>
-          <span style="background: #e2e8f0; color: #334155; padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">
-            ${doc.turma}
-          </span>
-        `;
-
-        item.addEventListener("click", () => {
-          emailInput.value = doc.email;
-          senhaInput.value = "123456";
-          exibirMensagem("sucesso", `Docente selecionado: ${doc.nome}. Clique em Acessar.`);
-        });
-
-        listaDocentes.appendChild(item);
-      });
-    }
-
-    renderizarDocentes();
-
-    // Login Simulado 100% Offline para Professores
-    form.addEventListener("submit", function(e) {
+    form.addEventListener("submit", async function(e) {
       e.preventDefault();
 
-      const email = emailInput.value.trim();
+      const cadastro = cadastroInput.value.trim();
       const senha = senhaInput.value;
 
-      if (!email) {
-        exibirMensagem("erro", "Por favor, informe seu e-mail institucional de professor.");
+      if (!cadastro) {
+        exibirMensagem("erro", "Por favor, informe seu cadastro de docente.");
         return;
       }
 
-      if (senha.length < 6) {
-        exibirMensagem("erro", "A senha precisa ter no mínimo 6 dígitos.");
+      if (!senha) {
+        exibirMensagem("erro", "Por favor, informe sua senha de acesso.");
         return;
       }
 
-      exibirMensagem("carregando", "Autenticando servidor docente no banco local...");
+      exibirMensagem("carregando", "Autenticando docente no sistema escolar...");
       btnAcessar.disabled = true;
       btnAcessar.textContent = "Acessando...";
 
       try {
-        const docenteAutenticado = DBLocal.autenticarProfessor(email, senha);
-        exibirMensagem("sucesso", `Bem-vindo(a), ${docenteAutenticado.nome}! Abrindo Painel do Docente...`);
+        const membroAutenticado = await DBLocal.autenticarGestaoAPI(cadastro, senha);
+        exibirMensagem("sucesso", `Bem-vindo(a), ${membroAutenticado.nome} (${membroAutenticado.cargo})! Abrindo Painel...`);
         btnAcessar.textContent = "Sucesso";
 
+        const destino = membroAutenticado.tipo === "professor" ? "Prof/Index.html" : "Adm/index.html";
         setTimeout(() => {
-          window.location.href = "Prof/Index.html";
-        }, 500);
+          window.location.href = destino;
+        }, 400);
       } catch (err) {
         console.error("Erro no login docente:", err);
-        exibirMensagem("erro", err.message || "Erro na validação do servidor.");
+        exibirMensagem("erro", err.message || "Cadastro ou senha incorreta.");
         btnAcessar.disabled = false;
         btnAcessar.textContent = "Acessar Painel do Professor";
       }

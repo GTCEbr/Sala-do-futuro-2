@@ -188,6 +188,196 @@
       "respostaCorreta": "a",
       "explicacao": "A mentalidade de 'pagar-se primeiro' é a chave da Educação Financeira para garantir segurança e realizar metas.",
       "acessibilidade": "Dica prática: Guarde um pedacinho assim que receber, não espere para ver o que sobra."
+    },
+    {
+      "id": "PAD-PDF-01",
+      "titulo": "Projeto de Vida: O Ensino Médio muda você, ou você muda o Ensino Médio?",
+      "componente": "Projeto de Vida",
+      "turma": "8º Ano A",
+      "habilidadeBNCC": "Competências Gerais BNCC 6, 7 e 8",
+      "tipo": "multiplaEscolha",
+      "xp": 35,
+      "enunciado": "Ao refletir sobre a transição para os Itinerários Formativos do Ensino Médio e a construção do seu Projeto de Vida, qual postura evidencia o protagonismo juvenil consciente?",
+      "alternativas": [
+        { "id": "a", "texto": "Adotar uma postura passiva e aguardar que outras pessoas decidam todas as suas escolhas profissionais." },
+        { "id": "b", "texto": "Reconhecer suas aptidões, interesses e forças pessoais, participando ativamente das decisões escolares e da comunidade." },
+        { "id": "c", "texto": "Abandonar metas de longo prazo e focar apenas em prazeres imediatos sem reflexão futura." },
+        { "id": "d", "texto": "Evitar o diálogo com professores e colegas sobre projetos sociais e científicos." }
+      ],
+      "respostaCorreta": "b",
+      "explicacao": "O protagonismo juvenil valoriza a autoria do estudante sobre sua trajetória, articulando autoconhecimento e cidadania ativa.",
+      "acessibilidade": "Reflexão guiada: Lembre-se do significado de ser o protagonista da sua própria história de aprendizado."
+    },
+    {
+      "id": "PAD-PDF-02",
+      "titulo": "Matemática: Análise de Dados e Pesquisas Estatísticas no Cotidiano",
+      "componente": "Matemática",
+      "turma": "8º Ano A",
+      "habilidadeBNCC": "EF08MA22 / EF08MA23",
+      "tipo": "multiplaEscolha",
+      "xp": 40,
+      "enunciado": "Em uma pesquisa amostral realizada em uma escola com 400 alunos sobre o uso de smartphones e livros impressos (Lei 15.100/2025), constatou-se que 65% dos estudantes preferem utilizar a biblioteca em horários de intervalo para estudos em grupo. Quantos estudantes representam essa preferência?",
+      "alternativas": [
+        { "id": "a", "texto": "240 estudantes" },
+        { "id": "b", "texto": "260 estudantes" },
+        { "id": "c", "texto": "280 estudantes" },
+        { "id": "d", "texto": "300 estudantes" }
+      ],
+      "respostaCorreta": "b",
+      "explicacao": "Calculando a porcentagem amostral: 400 * 0,65 = 260 estudantes.",
+      "acessibilidade": "Cálculo direto: Multiplique 400 por 65 e divida por 100 (4 * 65 = 260)."
+    },
+    {
+      "id": "PAD-PDF-03",
+      "titulo": "Língua Portuguesa: Gênero Crônica e Recursos Estilísticos",
+      "componente": "Língua Portuguesa",
+      "turma": "8º Ano A",
+      "habilidadeBNCC": "EF08LP01 / EF08LP04",
+      "tipo": "multiplaEscolha",
+      "xp": 35,
+      "enunciado": "No trecho 'O relógio da sala de aula parecia zombar da nossa pressa, movendo seus ponteiros em marcha lenta', qual figura de linguagem foi empregada pelo autor da crônica?",
+      "alternativas": [
+        { "id": "a", "texto": "Metonímia" },
+        { "id": "b", "texto": "Personificação ou Prosopopeia" },
+        { "id": "c", "texto": "Hipérbole" },
+        { "id": "d", "texto": "Pleonasmo" }
+      ],
+      "respostaCorreta": "b",
+      "explicacao": "A personificação ou prosopopeia confere sentimentos e ações humanas a objetos inanimados como o relógio.",
+      "acessibilidade": "Identificação: Atribuição de atitudes humanas a coisas materiais."
+    },
+    {
+      "id": "PAD-PDF-04",
+      "titulo": "Educação Financeira: Direitos do Consumidor e Orçamento Familiar",
+      "componente": "Educação Financeira",
+      "turma": "8º Ano A",
+      "habilidadeBNCC": "EF08MA04 / CDC Lei 8.078",
+      "tipo": "multiplaEscolha",
+      "xp": 35,
+      "enunciado": "Segundo o Código de Defesa do Consumidor (CDC), qual é o prazo legal para que um consumidor reclame de defeitos aparentes e de fácil constatação em produtos duráveis (como eletroeletrônicos)?",
+      "alternativas": [
+        { "id": "a", "texto": "30 dias" },
+        { "id": "b", "texto": "90 dias" },
+        { "id": "c", "texto": "180 dias" },
+        { "id": "d", "texto": "1 ano" }
+      ],
+      "respostaCorreta": "b",
+      "explicacao": "O Artigo 26 do CDC estabelece 90 dias para reclamar de vício aparente em produtos e serviços duráveis (e 30 dias para não duráveis).",
+      "acessibilidade": "Dica jurídica: Produtos duráveis possuem garantia legal de 3 meses (90 dias)."
+    },
+    {
+      "id": "PAD-PDF-05",
+      "titulo": "Educação Física: Práticas Corporais de Aventura na Natureza",
+      "componente": "Educação Física",
+      "turma": "8º Ano A",
+      "habilidadeBNCC": "EF08EF18 / EF08EF19",
+      "tipo": "multiplaEscolha",
+      "xp": 35,
+      "enunciado": "Qual é a principal distinção técnica entre o 'Hiking' e o 'Trekking' nas práticas de aventura?",
+      "alternativas": [
+        { "id": "a", "texto": "Hiking é uma caminhada de um só dia com percursos demarcados, enquanto o Trekking envolve percursos mais longos e pernoite em acampamentos." },
+        { "id": "b", "texto": "Hiking só pode ser praticado em águas fluviais de montanha." },
+        { "id": "c", "texto": "Trekking exige obrigatoriamente veículos motorizados de quatro rodas." },
+        { "id": "d", "texto": "Não existe nenhuma diferença entre os dois conceitos." }
+      ],
+      "respostaCorreta": "a",
+      "explicacao": "Hiking é a caminhada recreativa de curta duração (bate e volta); Trekking é a travessia mais longa com equipamentos e acampamento.",
+      "acessibilidade": "Dica prática: Hiking = caminhada de dia; Trekking = expedição com mochila pesada e pernoite."
+    },
+    {
+      "id": "PAD-PDF-06",
+      "titulo": "Arte: Matrizes Populares e Teatralidade no Brasil",
+      "componente": "Arte",
+      "turma": "8º Ano A",
+      "habilidadeBNCC": "EF08AR24 / EF08AR26",
+      "tipo": "multiplaEscolha",
+      "xp": 35,
+      "enunciado": "A manifestação cênica e folclórica tradicional que combina dança, música, sátira social e a encenação da morte e ressurreição de um boi é denominada:",
+      "alternativas": [
+        { "id": "a", "texto": "Cavalo Marinho e Bumba Meu Boi" },
+        { "id": "b", "texto": "Ballet neoclássico de corte" },
+        { "id": "c", "texto": "Teatro Kabuki japonês" },
+        { "id": "d", "texto": "Ópera barroca italiana" }
+      ],
+      "respostaCorreta": "a",
+      "explicacao": "O Cavalo Marinho e o Bumba Meu Boi são expressões teatrais da cultura popular afro-indígena brasileira consagradas como patrimônio imaterial.",
+      "acessibilidade": "Cultura brasileira: Lembre-se do Auto do Boi com Pai Francisco e Mãe Catirina."
+    },
+    {
+      "id": "PAD-PDF-07",
+      "titulo": "Língua Inglesa: Comparative Adjectives in Technology",
+      "componente": "Língua Inglesa",
+      "turma": "8º Ano A",
+      "habilidadeBNCC": "EF08LI08 / EF08LI15",
+      "tipo": "multiplaEscolha",
+      "xp": 35,
+      "enunciado": "Complete correctly: 'Quantum computers are capable of processing complex calculations ________ traditional personal computers.'",
+      "alternativas": [
+        { "id": "a", "texto": "faster than" },
+        { "id": "b", "texto": "more fast than" },
+        { "id": "c", "texto": "fastest that" },
+        { "id": "d", "texto": "as faster as" }
+      ],
+      "respostaCorreta": "a",
+      "explicacao": "Para adjetivos curtos em inglês (fast), a regra comparativa de superioridade é adjetivo + er + than (faster than).",
+      "acessibilidade": "Regra gramatical: Fast é adjetivo curto, logo recebe o sufixo -er seguido de than."
+    },
+    {
+      "id": "PAD-PDF-08",
+      "titulo": "História: O Legado da Luta Negra e Resistência no Brasil",
+      "componente": "História",
+      "turma": "8º Ano A",
+      "habilidadeBNCC": "EF08HI14 / EF08HI20",
+      "tipo": "multiplaEscolha",
+      "xp": 40,
+      "enunciado": "A Revolta dos Malês, ocorrida em Salvador em 1835, teve como protagonistas fundamentais escravizados e libertos que se organizaram secretamente através:",
+      "alternativas": [
+        { "id": "a", "texto": "Da alfabetização em língua árabe e da fé islâmica, desafiando a ordem escravocrata." },
+        { "id": "b", "texto": "De acordos oficiais celebrados diretamente com a coroa portuguesa." },
+        { "id": "c", "texto": "Do apoio de grandes latifundiários produtores de café do Sudeste." },
+        { "id": "d", "texto": "De uma campanha eleitoral pacífica no parlamento imperial." }
+      ],
+      "respostaCorreta": "a",
+      "explicacao": "Os Malês eram africanos muçulmanos letrados que utilizavam mensagens em árabe para articular a insurgência contra o cativeiro em Salvador.",
+      "acessibilidade": "Foco temático: A escrita em árabe foi um elo de comunicação e resistência que surpreendeu as forças policiais da época."
+    },
+    {
+      "id": "PAD-PDF-09",
+      "titulo": "Geografia: Dinâmicas de Urbanização e Metropolização Latino-Americana",
+      "componente": "Geografia",
+      "turma": "8º Ano A",
+      "habilidadeBNCC": "EF08GE03 / EF08GE16",
+      "tipo": "multiplaEscolha",
+      "xp": 40,
+      "enunciado": "O intenso fluxo migratório de trabalhadores rurais em direção aos centros urbanos nas décadas de 1950 a 1980 na América Latina é conhecido como:",
+      "alternativas": [
+        { "id": "a", "texto": "Êxodo rural" },
+        { "id": "b", "texto": "Transumância" },
+        { "id": "c", "texto": "Gentrificação" },
+        { "id": "d", "texto": "Migração pendular" }
+      ],
+      "respostaCorreta": "a",
+      "explicacao": "O êxodo rural refere-se à saída em massa da população do campo para a cidade impulsionada pela industrialização e mecanização agrícola.",
+      "acessibilidade": "Conceito demográfico: Movimento do campo (zona rural) para a cidade."
+    },
+    {
+      "id": "PAD-PDF-10",
+      "titulo": "Ciências: Formas, Transformações e Conservação de Energia",
+      "componente": "Ciências da Natureza",
+      "turma": "8º Ano A",
+      "habilidadeBNCC": "EF08CI01 / EF08CI05",
+      "tipo": "multiplaEscolha",
+      "xp": 45,
+      "enunciado": "De acordo com o Princípio de Conservação da Energia na física clássica:",
+      "alternativas": [
+        { "id": "a", "texto": "A energia não pode ser criada nem destruída, apenas transformada de uma forma em outra." },
+        { "id": "b", "texto": "A energia mecânica desaparece completamente quando um corpo atinge o solo." },
+        { "id": "c", "texto": "Toda energia química pode ser multiplicada infinitamente sem consumo de combustível." },
+        { "id": "d", "texto": "A energia potencial gravitacional independe da massa e da aceleração da gravidade." }
+      ],
+      "respostaCorreta": "a",
+      "explicacao": "O princípio fundamental estabelece que a energia total de um sistema isolado permanece constante, mudando apenas de modalidade (cinética, térmica, potencial, etc.).",
+      "acessibilidade": "Frase de Lavoisier/Termodinâmica: Nada se cria, nada se perde, tudo se transforma."
     }
   ]
 }

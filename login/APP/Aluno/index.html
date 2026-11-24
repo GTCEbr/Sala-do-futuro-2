@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#1d5a9e">
 
 <!----------Titulo e bombas invisiveis pro usuario---------->
-  <title>Área do Aluno | Sala do Futuro V2</title>
+  <title>Área do Aluno | Sala do Futuro Maurício Antunes</title>
 
 <!----------CSS---------->
   <link rel="stylesheet" href="css/index.css">
@@ -21,10 +21,10 @@ MENU LATERAL
 ========================================>
 <aside class="menu" id="menuLateral">
   <div class="marca">
-    <div class="marca-icone" aria-hidden="true">SF</div>
+    <div class="marca-icone" aria-hidden="true">MA</div>
     <div>
-      <strong>Sala do Futuro</strong>
-      <small>Área do aluno</small>
+      <strong>Maurício Antunes</strong>
+      <small>Sala do Futuro • Grêmio Aegre 2027</small>
     </div>
   </div>
 
@@ -101,7 +101,7 @@ INICIO
     <div>
       <h1>Olá, <span id="nomeAluno">Aluno</span></h1>
       <p id="turmaAluno">Turma não carregada</p>
-      <p id="escolaAluno">Escola não carregada</p>
+      <p id="escolaAluno">E.E. Maurício Antunes</p>
     </div>
   </div>
 
@@ -137,14 +137,17 @@ INICIO
       <button class="link-simples" data-abrir-pagina="progresso">Ver progressão</button>
     </article>
 
-    <article class="card-mini">
+    <article class="card-mini" id="cardProximaAtividadeHome" style="cursor: pointer;" title="Clique para realizar esta atividade">
       <span>Próxima atividade</span>
       <strong id="proximaTarefaHome">Nenhuma pendência</strong>
-      <button class="link-simples" data-abrir-pagina="tarefas">Abrir atividades</button>
+      <div style="display:flex; gap:8px; margin-top:8px;">
+        <button class="link-simples" id="btnFazerProximaAtividadeHome" style="color:var(--azul-primario); font-weight:700;">▶ Fazer Atividade</button>
+        <button class="link-simples" data-abrir-pagina="tarefas">Ver todas</button>
+      </div>
     </article>
   </div>
 
-  <div class="barra-pesquisa" id="avisoPesquisaHome">Não há <strong>pesquisas</strong> a serem respondidas.</div>
+  <div class="barra-pesquisa" id="avisoPesquisaHome">Carregando anotações pedagógicas...</div>
 
   <section class="plataformas-home">
     <div class="titulo-plataformas">
@@ -188,48 +191,149 @@ ATIVIDADES INTERNAS
 </section>
 
 <!========================================
-EXECUTAR ATIVIDADE (CMSP RUNNER)
+EXECUTAR ATIVIDADE (CMSP RUNNER GAMIFICADO DUOLINGO)
 ========================================>
 <section class="pagina" id="pagina-executar-tarefa">
-  <div class="cmsp-runner-topo">
-    <div class="cmsp-runner-nav-topo">
-      <button class="cmsp-btn-voltar" id="cmspBtnVoltar" type="button">
-        <span aria-hidden="true">‹</span> Voltar para Atividades
+  <!-- Topo Duolingo Gamificado -->
+  <div class="duo-topbar" id="duoTopBar">
+    <button class="duo-btn-fechar" id="duoBtnFechar" type="button" title="Sair da atividade" aria-label="Sair da atividade">✕</button>
+    
+    <div class="duo-barra-progresso-wrap">
+      <div class="duo-progresso-trilho">
+        <div class="duo-progresso-preenchimento" id="duoProgressoFill" style="width: 0%;">
+          <div class="duo-progresso-brilho"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="duo-stats-linha">
+      <div class="duo-pill streak" id="duoPillStreak" title="Ofensiva de estudos diários">
+        <span>🔥</span> <strong id="duoStreakCount">5</strong>
+      </div>
+      <div class="duo-pill gemas" id="duoPillGemas" title="Gemas do estudante">
+        <span>💎</span> <strong id="duoGemasCount">120</strong>
+      </div>
+      <div class="duo-pill vidas" id="duoPillVidas" title="Vidas disponíveis">
+        <span id="duoIconeVidas">❤️</span> <strong id="duoVidasCount">5</strong>
+      </div>
+      <button class="duo-btn-fechar" id="duoBtnSom" type="button" title="Alternar Som" style="width:38px;height:38px;font-size:16px;">
+        🔊
       </button>
-      <span class="cmsp-selo-seduc">SEDUC-SP • CMSP Interativo</span>
-    </div>
-
-    <div class="cmsp-info-tarefa">
-      <div class="cmsp-tags-tarefa">
-        <span class="cmsp-badge disciplina" id="cmspComponente">Componente</span>
-        <span class="cmsp-badge turma" id="cmspTurma">Turma</span>
-        <span class="cmsp-badge xp" id="cmspXp">0 XP</span>
-        <span class="cmsp-badge prazo" id="cmspPrazo">Prazo</span>
-      </div>
-      <h1 class="cmsp-titulo-tarefa" id="cmspTitulo">Título da Atividade</h1>
-      <p class="cmsp-desc-tarefa" id="cmspDescricao">Descrição da atividade</p>
-      <div id="bannerCmspOffline" style="display:none; background:#fffbeb; border:1px solid #fde68a; color:#92400e; padding:8px 12px; border-radius:8px; margin-top:10px; font-size:12px; font-weight:600; align-items:center; gap:8px;">
-        <span>📡</span> <strong>Modo Offline Ativo:</strong> Você pode responder e finalizar a atividade normalmente. Os pontos e a entrega serão salvos com segurança no seu dispositivo e sincronizados assim que a internet for restabelecida.
-      </div>
     </div>
   </div>
 
-  <div class="cmsp-regua-wrapper">
-    <div class="cmsp-regua-label">
-      <span>Progresso da atividade</span>
-      <strong id="cmspProgressoTexto">0 de 6 respondidas</strong>
-    </div>
-    <div class="cmsp-regua-questoes" id="cmspReguaQuestoes" role="tablist" aria-label="Navegação entre questões">
-      <!-- Gerado dinamicamente: 01, 02, 03... -->
+  <!-- Banner Offline se necessário -->
+  <div id="bannerCmspOffline" style="display:none; background:#fffbeb; border:1px solid #fde68a; color:#92400e; padding:10px 16px; border-radius:14px; margin-bottom:18px; font-size:13px; font-weight:600; align-items:center; gap:10px;">
+    <span>📡</span> <strong>Modo Offline Ativo:</strong> Atividade carregada localmente. Suas respostas, XP e ofensiva continuam funcionando sem internet.
+  </div>
+
+  <!-- Alerta do Sistema Anti-Bot (aparece se bot/extensão for interceptada) -->
+  <div id="duoAlertaBot" style="display:none;" class="duo-alerta-bot-trap">
+    <span style="font-size: 22px;">🛡️</span>
+    <div>
+      <strong style="display:block; font-size:14px;">INTEGRIDADE ACADÊMICA SEDUC-SP:</strong>
+      <p style="margin:2px 0 0;font-size:12px;font-weight:500;">Injeção de prompt ou automação robótica interceptada. O uso de IA para resolução automática infringe as normas do CMSP. Responda com sua própria reflexão!</p>
     </div>
   </div>
 
+  <!-- Palco do Mascote Futuquinha -->
+  <div class="duo-mascote-palco" id="duoMascotePalco">
+    <div class="duo-mascote-avatar" id="duoMascoteAvatar">
+      <!-- SVG da Corujinha Futuquinha -->
+      <svg viewBox="0 0 100 100" width="76" height="76" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="corpoGrad" cx="50%" cy="40%" r="50%">
+            <stop offset="0%" stop-color="#58cc02"/>
+            <stop offset="100%" stop-color="#46a302"/>
+          </radialGradient>
+        </defs>
+        <!-- Asas -->
+        <ellipse cx="22" cy="56" rx="14" ry="24" fill="#3ea100" transform="rotate(-15 22 56)"/>
+        <ellipse cx="78" cy="56" rx="14" ry="24" fill="#3ea100" transform="rotate(15 78 56)"/>
+        <!-- Pés -->
+        <ellipse cx="38" cy="88" rx="8" ry="5" fill="#f59e0b"/>
+        <ellipse cx="62" cy="88" rx="8" ry="5" fill="#f59e0b"/>
+        <!-- Corpo Principal -->
+        <ellipse cx="50" cy="54" rx="34" ry="38" fill="url(#corpoGrad)"/>
+        <!-- Barriga Clara -->
+        <ellipse cx="50" cy="62" rx="22" ry="24" fill="#f0fdf4"/>
+        <!-- Peninhas na barriga -->
+        <path d="M44 58 Q50 63 56 58" stroke="#86efac" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M42 66 Q50 71 58 66" stroke="#86efac" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <!-- Olhão Esquerdo -->
+        <circle cx="36" cy="42" r="14" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+        <circle cx="37" cy="42" r="8" fill="#1e293b"/>
+        <circle cx="35" cy="39" r="3" fill="#ffffff"/>
+        <!-- Olhão Direito -->
+        <circle cx="64" cy="42" r="14" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+        <circle cx="63" cy="42" r="8" fill="#1e293b"/>
+        <circle cx="61" cy="39" r="3" fill="#ffffff"/>
+        <!-- Óculos Futuristas Azul Tech -->
+        <rect x="20" y="36" width="30" height="14" rx="6" fill="rgba(56, 189, 248, 0.25)" stroke="#0284c7" stroke-width="2"/>
+        <rect x="50" y="36" width="30" height="14" rx="6" fill="rgba(56, 189, 248, 0.25)" stroke="#0284c7" stroke-width="2"/>
+        <line x1="48" y1="43" x2="52" y2="43" stroke="#0284c7" stroke-width="2"/>
+        <!-- Bico Laranja -->
+        <polygon points="50,47 44,55 56,55" fill="#f59e0b"/>
+        <!-- Capelo Futurista Sala do Futuro -->
+        <polygon points="50,14 26,24 50,30 74,24" fill="#1e3a8a"/>
+        <circle cx="50" cy="22" r="2.5" fill="#fbbf24"/>
+        <path d="M50 22 L66 28" stroke="#fbbf24" stroke-width="2"/>
+      </svg>
+    </div>
+    <div class="duo-balao-fala">
+      <p class="duo-balao-texto" id="duoBalaoTexto">Vamos lá! Mostre o que você aprendeu nesta aula!</p>
+      <div class="duo-balao-sub" id="duoBalaoSub">Atividade oficial SEDUC-SP • Gamificada estilo Duolingo</div>
+    </div>
+  </div>
+
+  <!-- Botão Decoy Honeypot para capturar scripts e extensões robóticas -->
+  <button class="anti-bot-decoy-trap tampermonkey-auto-answer solve-with-chatgpt-extension" id="antiBotDecoyTrap" tabindex="-1" aria-hidden="true">
+    Gabarito Automático Bot
+  </button>
+
+  <!-- Container da Questão Ativa -->
   <div id="cmspContainerQuestao">
-    <!-- Renderizado dinamicamente pelo runner -->
+    <!-- Renderizado dinamicamente pelo runner Duolingo -->
   </div>
 
+  <!-- Bottom Sheet / Barra de Feedback e Verificação Duolingo -->
+  <div class="duo-bottom-bar" id="duoBottomBar" style="display: flex;">
+    <div class="duo-feedback-conteudo" id="duoFeedbackConteudo">
+      <div class="duo-feedback-icone" id="duoFeedbackIcone" style="display:none;">✓</div>
+      <div class="duo-feedback-msg" id="duoFeedbackMsg">
+        <h3 id="duoFeedbackTitulo">Escolha uma resposta</h3>
+        <p id="duoFeedbackSub">Clique em uma alternativa ou utilize os atalhos do teclado [1, 2, 3, 4].</p>
+        <div id="duoFeedbackExplicacao" class="duo-feedback-explicacao" style="display:none;"></div>
+      </div>
+    </div>
+    <button class="duo-btn-verificar desativado" id="duoBtnVerificar" type="button">
+      Verificar
+    </button>
+  </div>
+
+  <!-- Modal de Fim de Vidas (Duolingo Out of Hearts) -->
+  <div class="duo-modal-overlay" id="duoModalSemVidas" style="display:none;">
+    <div class="duo-modal-corpo">
+      <div class="duo-modal-icone">💔</div>
+      <h2 class="duo-modal-titulo">Você ficou sem vidas!</h2>
+      <p class="duo-modal-desc">Erros fazem parte do aprendizado. Escolha como deseja continuar sua lição na Sala do Futuro:</p>
+      <div class="duo-modal-acoes">
+        <button class="duo-btn-verificar ativo" id="duoBtnRecarregarPraticar" type="button" style="background:#0284c7;border-bottom-color:#0369a1;">
+          ⚡ Recuperar Vidas e Continuar
+        </button>
+        <button class="duo-btn-verificar ativo" id="duoBtnUsarGemas" type="button" style="background:#58cc02;border-bottom-color:#46a302;">
+          💎 Usar 20 Gemas para Refil (+5 ❤️)
+        </button>
+        <button class="duo-btn-fechar" id="duoBtnVoltarSemVidas" type="button" style="width:100%;font-size:14px;height:44px;">
+          Voltar para Lista de Atividades
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container de Conclusão / Celebração Final -->
   <div id="cmspContainerResultado" style="display: none;">
-    <!-- Renderizado dinamicamente com gabarito comentado -->
+    <!-- Renderizado dinamicamente com troféu, XP e confetti -->
   </div>
 </section>
 
@@ -375,6 +479,20 @@ PROGRESSAO
     <p id="textoXp">0 de 100 XP</p>
   </div>
 
+  <div class="card-conteudo" id="bannerGremioAegreAluno" style="margin-top: 18px; background: linear-gradient(135deg, #eff6ff, #f0fdf4); border: 1.5px solid #bfdbfe;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+      <div>
+        <strong style="color:#1e3a8a; font-size:15px;">🎉 E.E. Maurício Antunes • Continuidade Grêmio Aegre 2027</strong>
+        <p style="margin:4px 0 0; font-size:13px; color:#334155;" id="textoCicloGremioAluno">
+          Esta plataforma será reutilizada oficialmente pelo Grêmio Aegre em 2027 para integrar guildas, atividades e rankings estudantis.
+        </p>
+      </div>
+      <span id="badgeAnoCicloAluno" style="background:#166534; color:#fff; padding:6px 12px; border-radius:999px; font-size:12px; font-weight:700;">
+        Ciclo Letivo 2026 • Rumo a 2027
+      </span>
+    </div>
+  </div>
+
   <div class="grade-dupla" style="margin-top: 18px;">
     <article class="card-conteudo" id="cardMinhaGuilda">
       <h2>🛡️ Minha Guilda</h2>
@@ -445,8 +563,11 @@ PERFIL
   <div class="pagina-cabecalho"><h1>Perfil</h1></div>
   <div class="card-conteudo">
     <div class="perfil-linha"><strong>Nome</strong><span id="perfilNome">-</span></div>
-    <div class="perfil-linha"><strong>E-mail</strong><span id="perfilEmail">-</span></div>
-    <div class="perfil-linha"><strong>Turma</strong><span id="perfilTurma">-</span></div>
+    <div class="perfil-linha"><strong>RA / Acesso</strong><span id="perfilEmail">-</span></div>
+    <div class="perfil-linha"><strong>Sala / Turma</strong><span id="perfilTurma">-</span></div>
+    <div class="perfil-linha"><strong>Guilda</strong><span id="perfilGuilda">-</span></div>
+    <div class="perfil-linha"><strong>Faltas</strong><span id="perfilFaltas">0</span></div>
+    <div class="perfil-linha"><strong>Anotação</strong><span id="perfilAnotacao">-</span></div>
     <div class="perfil-linha"><strong>Escola</strong><span id="perfilEscola">-</span></div>
     <div class="perfil-linha"><strong>XP</strong><span id="perfilXp">0</span></div>
   </div>

@@ -8,7 +8,7 @@
 
 <!----------Titulo e bombas invisiveis pro usuario------>
 
-  <title>Login do Responsável | Sala do futuro V2</title>
+  <title>Login do Responsável | Sala do Futuro Maurício Antunes</title>
 
 <!----------Estilo visual da pagina--------------------->
 
@@ -713,7 +713,7 @@ form {
 <p class="descricao">
 
   Entre com sua conta para acompanhar
-  as informações do estudante.
+  as informações do estudante na <strong>E.E. Maurício Antunes</strong> (Grêmio Aegre 2027).
 
 </p>
 
@@ -926,38 +926,62 @@ const mensagem = document.getElementById("mensagem");
 const entrar = document.getElementById("entrar");
 const listaEstudantesPais = document.getElementById("listaEstudantesPais");
 
-let alunoSelecionadoId = "aluno_1";
+let alunoSelecionadoId = "";
 
 function mostrarMensagem(tipo, texto) {
   mensagem.className = tipo;
   mensagem.textContent = texto;
 }
 
-// Renderiza os estudantes disponíveis para o responsável selecionar e simular
+// Renderiza os estudantes reais sincronizados para o responsável selecionar
 function renderizarOpcoesEstudantes() {
   if (!listaEstudantesPais) return;
   const alunos = DBLocal.obterAlunos();
   listaEstudantesPais.innerHTML = "";
 
-  alunos.forEach((aluno, index) => {
+  if (!alunos.length) {
+    const aviso = document.createElement("div");
+    aviso.style.cssText = "padding: 10px 12px; color: #64748b; font-size: 0.8rem;";
+    aviso.textContent = "Carregando lista de estudantes da unidade escolar...";
+    listaEstudantesPais.appendChild(aviso);
+    return;
+  }
+
+  if (!alunoSelecionadoId || !alunos.some(a => a.id === alunoSelecionadoId)) {
+    alunoSelecionadoId = alunos[0].id;
+  }
+
+  alunos.forEach((aluno) => {
+    const selecionado = aluno.id === alunoSelecionadoId;
     const item = document.createElement("button");
     item.type = "button";
-    item.style.cssText = `display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: ${index === 0 ? "#eff6ff" : "#ffffff"}; border: 1px solid ${index === 0 ? "#93c5fd" : "#cbd5e1"}; border-radius: 8px; font-size: 0.82rem; color: #1e293b; cursor: pointer; text-align: left; transition: all 0.2s;`;
-    
-    item.innerHTML = `
-      <div>
-        <strong style="color:#1d5a9e;">Responsável por ${aluno.nome}</strong>
-        <span style="display:block; color:#64748b; font-size:0.75rem;">Estudante: ${aluno.nome} • RA: ${aluno.ra}</span>
-      </div>
-      <span style="background:#e0f2fe; color:#0369a1; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 0.75rem;">
-        ${aluno.turma || aluno.sala || "8ºA"}
-      </span>
-    `;
+    item.style.cssText = `display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: ${selecionado ? "#eff6ff" : "#ffffff"}; border: 1px solid ${selecionado ? "#93c5fd" : "#cbd5e1"}; border-radius: 8px; font-size: 0.82rem; color: #1e293b; cursor: pointer; text-align: left; transition: all 0.2s;`;
+
+    const infoBox = document.createElement("div");
+    const tituloStrong = document.createElement("strong");
+    tituloStrong.style.color = "#1d5a9e";
+    tituloStrong.textContent = `Responsável por ${aluno.nome}`;
+
+    const detalheSpan = document.createElement("span");
+    detalheSpan.style.cssText = "display:block; color:#64748b; font-size:0.75rem;";
+    detalheSpan.textContent = `Estudante: ${aluno.nome} • RA: ${aluno.ra}`;
+
+    infoBox.appendChild(tituloStrong);
+    infoBox.appendChild(detalheSpan);
+
+    const badgeSala = document.createElement("span");
+    badgeSala.style.cssText = "background:#e0f2fe; color:#0369a1; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 0.75rem;";
+    badgeSala.textContent = aluno.sala || aluno.turma || "Sem Sala";
+
+    item.appendChild(infoBox);
+    item.appendChild(badgeSala);
 
     item.addEventListener("click", () => {
       alunoSelecionadoId = aluno.id;
-      document.getElementById("email").value = `familia.${aluno.id}@educacao.sp.gov.br`;
-      document.getElementById("senha").value = "123456";
+      const emailCampo = document.getElementById("email");
+      if (emailCampo && !emailCampo.value.trim()) {
+        emailCampo.value = `familia.${aluno.ra}@educacao.sp.gov.br`;
+      }
 
       Array.from(listaEstudantesPais.children).forEach(filho => {
         filho.style.background = "#ffffff";
@@ -966,7 +990,7 @@ function renderizarOpcoesEstudantes() {
       item.style.background = "#eff6ff";
       item.style.borderColor = "#93c5fd";
 
-      mostrarMensagem("sucesso", `Acompanhando: ${aluno.nome}. Clique em Acessar.`);
+      mostrarMensagem("sucesso", `Estudante selecionado: ${aluno.nome} (RA ${aluno.ra}). Informe suas credenciais e clique em Acessar.`);
     });
 
     listaEstudantesPais.appendChild(item);
@@ -974,9 +998,12 @@ function renderizarOpcoesEstudantes() {
 }
 
 renderizarOpcoesEstudantes();
+DBLocal.sincronizarComAPI().then(() => {
+  renderizarOpcoesEstudantes();
+}).catch(() => {});
 
-// Login 100% Conectado via Local Storage para Responsáveis
-loginForm.addEventListener("submit", function(event) {
+// Login conectado à base real (com cache offline) para Responsáveis
+loginForm.addEventListener("submit", async function(event) {
   event.preventDefault();
 
   const email = document.getElementById("email").value.trim();
@@ -987,16 +1014,19 @@ loginForm.addEventListener("submit", function(event) {
     return;
   }
 
-  if (senha.length < 6) {
-    mostrarMensagem("erro", "A senha precisa ter pelo menos 6 caracteres.");
+  if (!senha) {
+    mostrarMensagem("erro", "Por favor, digite a sua senha.");
     return;
   }
 
-  mostrarMensagem("carregando", "Validando acesso do responsável no banco local...");
+  mostrarMensagem("carregando", "Validando acompanhamento familiar...");
   entrar.disabled = true;
   entrar.textContent = "Acessando...";
 
   try {
+    if (!DBLocal.obterAlunos().length) {
+      await DBLocal.sincronizarComAPI({ forcar: true });
+    }
     const responsavelAutenticado = DBLocal.autenticarResponsavel(email, senha, alunoSelecionadoId);
 
     mostrarMensagem("sucesso", `Acesso liberado para o responsável de ${responsavelAutenticado.alunoNome}! Abrindo Portal...`);

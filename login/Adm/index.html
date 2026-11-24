@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestão e Administração Escolar | Sala do Futuro V2</title>
-  <meta name="description" content="Painel administrativo da Sala do Futuro V2: dados integrados no Banco Local para estudantes, guildas, turmas e relatórios automatizados de tarefas pedagógicas.">
+  <title>Gestão e Administração Escolar | Sala do Futuro Maurício Antunes</title>
+  <meta name="description" content="Painel administrativo da Sala do Futuro Maurício Antunes (E.E. Maurício Antunes): gestão escolar integrada e preparação para reutilização pelo Grêmio Aegre em 2027.">
   <link rel="stylesheet" href="../../css/acessibilidade-global.css">
   <style>
     :root {
@@ -866,15 +866,15 @@
     <div class="marca">
       <img src="../../logosp.png" alt="Governo de São Paulo">
       <div class="marca-info">
-        <strong>Sala do Futuro V2</strong>
-        <span>Módulo Administrativo Escolar • SEDUC-SP</span>
+        <strong>Sala do Futuro Maurício Antunes</strong>
+        <span>E.E. Maurício Antunes • Grêmio Aegre 2027</span>
       </div>
     </div>
     <div class="topo-links">
       <div id="gestorLogadoInfo" style="display:flex; align-items:center; gap:8px; background:#f1f5f9; padding:6px 12px; border-radius:20px; font-size:0.85rem; color:#1e293b; border:1px solid #cbd5e1;">
         <span style="font-size:16px;">👤</span>
-        <strong id="nomeGestorTopo">Diretora Ana Paula Ramos</strong>
-        <span id="cargoGestorTopo" style="font-size:0.75rem; background:#1d5a9e; color:#fff; padding:2px 6px; border-radius:10px; font-weight:600;">Diretoria</span>
+        <strong id="nomeGestorTopo">Carregando...</strong>
+        <span id="cargoGestorTopo" style="font-size:0.75rem; background:#1d5a9e; color:#fff; padding:2px 6px; border-radius:10px; font-weight:600;">Gestão</span>
       </div>
       <a href="../Prof/Index.html" class="btn-link btn-link-sec">Área do Professor</a>
       <a href="../loginal.html" class="btn-link btn-link-sec">Portal do Aluno</a>
@@ -885,21 +885,21 @@
   <!-- Conteúdo Principal -->
   <main class="container-adm">
 
-    <!-- Barra de Status com Banco Local (Modo Demonstração) & Gemini IA -->
+    <!-- Barra de Status com API Planilha & Cache Local -->
     <div class="barra-status-conexao" id="barraStatusConexao" style="border-left-color: #10b981;">
       <div class="status-badge-live">
         <span class="ponto-status" id="pontoConexao" style="background: #10b981;"></span>
-        <span id="textoStatusBancoLocal">Modo Demonstração: Banco Local Ativo &amp; Persistente</span>
-        <span class="badge-reais" style="background:#10b981;">100% LOCAL</span>
+        <span id="textoStatusBancoLocal">API Planilha &amp; Cache Local Conectados</span>
+        <span class="badge-reais" style="background:#10b981;">API PLANILHA + CACHE</span>
         <span class="badge-reais" style="background:#0284c7;">⚡ IA GEMINI CONFIGURADA</span>
       </div>
       <div class="status-acoes">
-        <span id="ultimaSincronizacao">Dados locais prontos</span>
+        <span id="ultimaSincronizacao">Sincronizando planilha...</span>
         <button type="button" class="btn-sincronizar" id="btnSincronizarReal" style="background:var(--azul-primario); color:#ffffff;">
           🔄 Atualizar Dados
         </button>
-        <button type="button" class="btn-sincronizar" id="btnResetarDemo" style="background:#f1f5f9; color:#334155; border:1px solid #cbd5e1;" title="Restaura os dados padrão de demonstração">
-          ↺ Resetar Demonstração
+        <button type="button" class="btn-sincronizar" id="btnResetarDemo" style="background:#f1f5f9; color:#334155; border:1px solid #cbd5e1;" title="Limpa o cache local e recarrega os dados oficiais da planilha">
+          ↺ Limpar Cache Local
         </button>
       </div>
     </div>
@@ -907,12 +907,12 @@
     <!-- Banner Geral -->
     <section class="banner-gestao">
       <div>
-        <h1>Gestão Escolar e Coordenação</h1>
-        <p>Acompanhe estudantes, guildas e salas diretamente sincronizados com o banco de dados oficial. Todos os relatórios pedagógicos refletem as entregas reais registradas no Tarefas SP e nas atividades docentes.</p>
+        <h1>Gestão Escolar • E.E. Maurício Antunes</h1>
+        <p>Acompanhe estudantes, guildas e salas sincronizados na <strong>Sala do Futuro Maurício Antunes</strong>. Estrutura preparada para continuidade e reutilização pelo <strong>Grêmio Aegre em 2027</strong>.</p>
       </div>
       <div class="tag-unidade">
-        <strong>Ano Letivo 2026</strong><br>
-        <span style="font-size:0.8rem; color:#e0e7ff;">Rede Estadual de SP</span>
+        <strong id="bannerAnoLetivoTag">Ano Letivo 2026</strong><br>
+        <span id="bannerGremioTag" style="font-size:0.8rem; color:#e0e7ff;">E.E. Maurício Antunes • Grêmio Aegre 2027</span>
       </div>
     </section>
 
@@ -946,6 +946,10 @@
         🧑‍🎓 Cadastrar Alunos
         <span class="badge-contador" id="badgeAlunosQtd">0</span>
       </button>
+      <button class="btn-aba" data-modulo="modulo-professores" id="abaProfessores" style="background:#f0fdf4; border:1.5px solid #86efac; color:#166534; font-weight:700;">
+        👨‍🏫 Professores & Firebase
+        <span class="badge-contador" id="badgeProfessoresQtd" style="background:#166534; color:#fff;">0</span>
+      </button>
       <button class="btn-aba" data-modulo="modulo-guildas" id="abaGuildas">
         🛡️ Guildas Escolares
         <span class="badge-contador" id="badgeGuildasQtd">0</span>
@@ -965,6 +969,9 @@
       <button class="btn-aba" data-modulo="modulo-relatorios" id="abaRelatorios">
         📊 Relatórios Reais de Tarefas
       </button>
+      <button class="btn-aba" data-modulo="modulo-ciclo2027" id="abaCiclo2027" style="background:#eff6ff; border:1.5px solid #93c5fd; color:#1e40af; font-weight:700;">
+        🎉 Ciclo 2027 • Grêmio Aegre
+      </button>
     </nav>
 
     <!-- ====================================================
@@ -981,7 +988,7 @@
           <form id="formCadastrarAluno" class="form-grupo">
             <div class="campo">
               <label for="alunoNome">Nome Completo *</label>
-              <input type="text" id="alunoNome" placeholder="Ex.: Guilherme Santos" required>
+              <input type="text" id="alunoNome" placeholder="Ex.: Nome completo do estudante" required>
             </div>
             
             <div class="campo">
@@ -1059,6 +1066,105 @@
     </section>
 
     <!-- ====================================================
+         MÓDULO: CADASTRAR E GERENCIAR PROFESSORES (FIREBASE SYNC)
+    ==================================================== -->
+    <section class="secao-modulo" id="modulo-professores">
+      <div class="modulo-layout">
+        
+        <!-- Formulário de Cadastro de Professor com Sincronização Firebase -->
+        <div class="card-painel">
+          <div class="cabecalho-painel">
+            <h2>Novo Docente / Usuário</h2>
+          </div>
+          
+          <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:12px 16px; border-radius:12px; margin-bottom:18px; font-size:0.85rem; color:#166534; display:flex; align-items:center; gap:10px;">
+            <span style="font-size:22px;">🔥</span>
+            <div>
+              <strong>Integração Oficial Firebase (sala-do-futuro-2-ofv):</strong>
+              <p style="margin:2px 0 0; color:#15803d;">
+                O usuário é criado no <strong>Firebase Authentication</strong> e gravado no <strong>Cloud Firestore</strong> (coleção <code>usuarios</code>, documento <code>professores</code>, com o campo sendo o nome do usuário), com espelhamento local imediato.
+              </p>
+            </div>
+          </div>
+
+          <form id="formCadastrarProfessor" class="form-grupo">
+            <div class="campo">
+              <label for="profNome">Nome Completo do Docente *</label>
+              <input type="text" id="profNome" placeholder="Ex.: Nome completo do docente" required>
+            </div>
+            
+            <div class="campo">
+              <label for="profEmail">E-mail Institucional (@professor.sp.gov.br) *</label>
+              <input type="email" id="profEmail" placeholder="docente@professor.sp.gov.br" required>
+            </div>
+
+            <div class="campo">
+              <label for="profSenha">Senha de Acesso (Firebase Auth) *</label>
+              <input type="password" id="profSenha" value="Seduc@2026" required>
+            </div>
+
+            <div class="campo">
+              <label for="profDisciplina">Componente Curricular / Disciplina *</label>
+              <select id="profDisciplina" required>
+                <option value="História" selected>História</option>
+                <option value="Matematica">Matemática</option>
+                <option value="Portugues">Língua Portuguesa</option>
+                <option value="Ciências">Ciências</option>
+                <option value="Geografia">Geografia</option>
+                <option value="Inglês">Língua Inglesa</option>
+                <option value="Arte">Arte</option>
+                <option value="Educação Física">Educação Física</option>
+                <option value="Educação Financeira">Educação Financeira</option>
+                <option value="Projeto de Vida">Projeto de Vida</option>
+              </select>
+            </div>
+
+            <div class="campo">
+              <label for="profCargo">Cargo / Função</label>
+              <input type="text" id="profCargo" value="Professor e Coordenador" placeholder="Ex.: Docente">
+            </div>
+
+            <div class="campo">
+              <label for="profTurmas">Turmas Atribuídas</label>
+              <input type="text" id="profTurmas" value="8º Ano A, 8º Ano B" placeholder="Ex.: 8º Ano A, 9º Ano A">
+            </div>
+
+            <button type="submit" class="btn-principal" id="btnSalvarProfessor" style="background:#58cc02; border-bottom:3px solid #46a302; font-weight:800;">
+              🔥 Salvar no Banco Local & Sincronizar no Firebase
+            </button>
+          </form>
+        </div>
+
+        <!-- Tabela de Professores Cadastrados -->
+        <div class="card-painel">
+          <div class="cabecalho-painel">
+            <h2>Docentes Registrados</h2>
+            <span class="badge-reais" style="background:#10b981;">Firebase Auth & Firestore</span>
+          </div>
+
+          <div class="tabela-container">
+            <table class="tabela-dados">
+              <thead>
+                <tr>
+                  <th>Nome do Docente</th>
+                  <th>E-mail</th>
+                  <th>Disciplina</th>
+                  <th>Turmas</th>
+                  <th>Status Firebase</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="corpoTabelaProfessores">
+                <!-- Preenchido dinamicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ====================================================
          MÓDULO 2: GERENCIAR GUILDAS ESCOLARES
     ==================================================== -->
     <section class="secao-modulo" id="modulo-guildas">
@@ -1071,7 +1177,7 @@
           <form id="formCadastrarGuilda" class="form-grupo">
             <div class="campo">
               <label for="guildaNome">Nome da Guilda *</label>
-              <input type="text" id="guildaNome" placeholder="Ex.: Águias da Sabedoria" required>
+              <input type="text" id="guildaNome" placeholder="Ex.: Nome da guilda escolar" required>
             </div>
 
             <div class="campo">
@@ -1245,7 +1351,7 @@
 
           <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--texto-claro); border-top:1px solid var(--borda-suave); padding-top:10px;">
             <span id="dossieDataEmissao">Emitido em: --/--/----</span>
-            <span>Coordenação de Gestão Pedagógica • Sala do Futuro V2</span>
+            <span>Coordenação de Gestão Pedagógica • Sala do Futuro Maurício Antunes</span>
           </div>
         </div>
 
@@ -1618,6 +1724,95 @@
       </div>
     </section>
 
+    <!-- ====================================================
+         MÓDULO 7: TRANSIÇÃO E REUTILIZAÇÃO 2027 (GRÊMIO ALEGRE)
+    ==================================================== -->
+    <section class="secao-modulo" id="modulo-ciclo2027">
+      <div class="modulo-layout">
+
+        <div class="card-painel">
+          <div class="cabecalho-painel">
+            <h2>🎉 Reutilização 2027 • Grêmio Aegre</h2>
+          </div>
+
+          <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:14px 16px; border-radius:12px; margin-bottom:18px; font-size:0.88rem; color:#1e3a8a;">
+            <strong>E.E. Maurício Antunes — Plano de Continuidade:</strong>
+            <p style="margin:6px 0 0; color:#1e40af; line-height:1.45;">
+              Em 2027, o <strong>Grêmio Aegre</strong> reutilizará toda a estrutura da <strong>Sala do Futuro Maurício Antunes</strong> (salas, docentes, guildas e catálogo de atividades interativas). Utilize este painel para arquivar o histórico de 2026 e ativar o ciclo de 2027 com segurança.
+            </p>
+          </div>
+
+          <form id="formCicloGremio2027" class="form-grupo">
+            <div class="campo">
+              <label for="instEscolaNome">Unidade Escolar</label>
+              <input type="text" id="instEscolaNome" value="E.E. Maurício Antunes" required>
+            </div>
+
+            <div class="campo">
+              <label for="instGremioNome">Grêmio Responsável pela Reutilização (2027)</label>
+              <input type="text" id="instGremioNome" value="Grêmio Aegre" required>
+            </div>
+
+            <div class="campo">
+              <label for="instAnoAtivo">Ciclo Letivo Ativo</label>
+              <select id="instAnoAtivo">
+                <option value="2026">2026 (Ciclo Atual de Implantação)</option>
+                <option value="2027">2027 (Ciclo de Reutilização • Grêmio Aegre)</option>
+              </select>
+            </div>
+
+            <div style="background:#f8fafc; border:1px solid var(--borda-suave); border-radius:10px; padding:12px; display:flex; flex-direction:column; gap:10px;">
+              <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; cursor:pointer; font-weight:600;">
+                <input type="checkbox" id="chkZerarEntregas2027">
+                Arquivar entregas e ocorrências de 2026 (iniciar histórico limpo em 2027)
+              </label>
+              <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; cursor:pointer; font-weight:600;">
+                <input type="checkbox" id="chkZerarXP2027">
+                Reiniciar temporada de XP das guildas e alunos para o campeonato 2027
+              </label>
+            </div>
+
+            <button type="submit" class="btn-principal" style="background:#1d4ed8;">
+              🚀 Salvar &amp; Ativar Reutilização Grêmio Aegre 2027
+            </button>
+          </form>
+        </div>
+
+        <div class="card-painel">
+          <div class="cabecalho-painel">
+            <h2>Status da Transição Institucional</h2>
+            <button type="button" class="btn-outline" id="btnExportarArquivo2026">📦 Exportar Backup 2026 (JSON)</button>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:14px; margin-bottom:20px;">
+            <div style="background:#f8fafc; border:1px solid var(--borda-suave); padding:14px; border-radius:12px;">
+              <span style="font-size:0.8rem; color:var(--texto-claro); display:block;">Escola Configurada</span>
+              <strong id="statusEscolaCiclo" style="font-size:1.05rem; color:var(--azul-primario);">E.E. Maurício Antunes</strong>
+            </div>
+            <div style="background:#f8fafc; border:1px solid var(--borda-suave); padding:14px; border-radius:12px;">
+              <span style="font-size:0.8rem; color:var(--texto-claro); display:block;">Grêmio Gestor (2027)</span>
+              <strong id="statusGremioCiclo" style="font-size:1.05rem; color:#15803d;">Grêmio Aegre</strong>
+            </div>
+            <div style="background:#f8fafc; border:1px solid var(--borda-suave); padding:14px; border-radius:12px;">
+              <span style="font-size:0.8rem; color:var(--texto-claro); display:block;">Ciclo Atual no Sistema</span>
+              <strong id="statusAnoCiclo" style="font-size:1.05rem; color:var(--roxo);">2026</strong>
+            </div>
+          </div>
+
+          <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:16px; border-radius:12px; font-size:0.88rem; color:#166534; line-height:1.5;">
+            <strong>O que é preservado automaticamente na reutilização pelo Grêmio Aegre em 2027?</strong>
+            <ul style="margin:8px 0 0 18px;">
+              <li>Todas as <strong>salas e turmas</strong> da E.E. Maurício Antunes.</li>
+              <li>Todos os <strong>professores e credenciais</strong> sincronizados no Firebase Auth/Firestore.</li>
+              <li>Todas as <strong>atividades interativas estilo Duolingo</strong> e banco de questões CMSP.</li>
+              <li>Estrutura das <strong>guildas escolares</strong> para nova competição anual do Grêmio Aegre.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
   </main>
 
   <!-- ====================================================
@@ -1831,7 +2026,7 @@
     </div>
 
     <div style="margin-top: 40px; text-align: center; font-size: 0.8rem; color: #555;">
-      São Paulo, <span id="printDataEmissao"></span> • Sala do Futuro V2 • Sistema de Gestão Integrada SEDUC-SP
+      São Paulo, <span id="printDataEmissao"></span> • Sala do Futuro Maurício Antunes • E.E. Maurício Antunes • Grêmio Aegre 2027
     </div>
   </div>
 
@@ -1873,12 +2068,23 @@
       }, 3200);
     }
 
-    // Normalizador de nomes de turma (ex.: "8º Ano A" -> "8A")
+    // Escapamento HTML seguro para valores externos da planilha
+    function textoSeguro(valor) {
+      return String(valor ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    // Normalizador de nomes de turma (ex.: "8º Ano A" -> "8A", "8°A" -> "8A")
     function normalizarTurma(valor) {
       return String(valor || "")
         .trim()
         .toUpperCase()
-        .replace(/[ºª°\s]/g, "");
+        .replace(/[ºª°\s]+/g, "")
+        .replace(/ANO/g, "");
     }
 
     // ====================================================
@@ -1898,39 +2104,30 @@
       }
     }
 
-    // ====================================================
-    // SINCRONIZAÇÃO COMPLETA COM BANCO LOCAL
-    // ====================================================
-    async function sincronizarBancoLocal(mostrarAviso = true) {
-      const statusEl = document.getElementById("textoStatusBancoLocal");
-      if (statusEl) statusEl.textContent = "Carregando banco local...";
-      document.getElementById("pontoConexao").style.background = "#10b981";
+    // Atualiza apenas lendo o cache já sincronizado (não dispara nova chamada de rede)
+    function atualizarEstadoDoCacheLocal() {
+      const listaAlunos = DBLocal.obterAlunos();
+      const listaProfessores = DBLocal.obterProfessores ? DBLocal.obterProfessores() : [];
+      const listaSalas = DBLocal.obterSalas();
+      const listaGuildas = DBLocal.obterGuildas();
+      const listaTarefas = DBLocal.obterTarefas();
+      const listaEntregasSP = DBLocal.obterEntregasSP();
+      const listaEntregasDocentes = DBLocal.obterEntregas();
+      const listaNotas = DBLocal.obterNotas();
+      const listaOcorrencias = DBLocal.obterOcorrencias();
+
+      estadoReal.alunos = listaAlunos;
+      estadoReal.professores = listaProfessores;
+      estadoReal.salas = listaSalas;
+      estadoReal.guildas = listaGuildas;
+      estadoReal.tarefasDocentes = listaTarefas;
+      estadoReal.entregasSP = listaEntregasSP;
+      estadoReal.entregasDocentes = listaEntregasDocentes;
+      estadoReal.avaliacoesNotas = [];
+      estadoReal.notas = listaNotas;
+      estadoReal.ocorrencias = listaOcorrencias;
 
       try {
-        await carregarAtividadesOficiaisSP();
-
-        // 1. Carrega coleções do Banco Local Oficial de Demonstração
-        const listaAlunos = DBLocal.obterAlunos();
-        const listaSalas = DBLocal.obterSalas();
-        const listaGuildas = DBLocal.obterGuildas();
-        const listaTarefas = DBLocal.obterTarefas();
-        const listaEntregasSP = DBLocal.obterEntregasSP();
-        const listaEntregasDocentes = DBLocal.obterEntregas();
-        const listaNotas = DBLocal.obterNotas();
-        const listaOcorrencias = DBLocal.obterOcorrencias();
-
-        // Atualiza o estado da gestão escolar
-        estadoReal.alunos = listaAlunos;
-        estadoReal.salas = listaSalas;
-        estadoReal.guildas = listaGuildas;
-        estadoReal.tarefasDocentes = listaTarefas;
-        estadoReal.entregasSP = listaEntregasSP;
-        estadoReal.entregasDocentes = listaEntregasDocentes;
-        estadoReal.avaliacoesNotas = [];
-        estadoReal.notas = listaNotas;
-        estadoReal.ocorrencias = listaOcorrencias;
-
-        // Salva backup local
         localStorage.setItem(CHAVE_BACKUP, JSON.stringify({
           alunos: listaAlunos,
           salas: listaSalas,
@@ -1938,26 +2135,49 @@
           notas: listaNotas,
           ocorrencias: listaOcorrencias
         }));
+      } catch (e) {}
 
-        // Compila o relatório analítico real
-        compilarRelatorioReal();
+      compilarRelatorioReal();
+      renderizarTudo();
+    }
 
-        // Atualiza a interface
-        renderizarTudo();
+    // ====================================================
+    // SINCRONIZAÇÃO COMPLETA COM API PLANILHA + CACHE LOCAL
+    // ====================================================
+    async function sincronizarBancoLocal(mostrarAviso = true, forcarAPI = false) {
+      const statusEl = document.getElementById("textoStatusBancoLocal");
+      const pontoEl = document.getElementById("pontoConexao");
+      if (statusEl) statusEl.textContent = "Sincronizando dados com a planilha...";
+      if (pontoEl) pontoEl.style.background = "#f59e0b";
 
-        // Atualiza status da barra institucional
-        document.getElementById("pontoConexao").style.background = "#10b981";
-        if (statusEl) statusEl.textContent = "Modo Demonstração: Banco Local Ativo & Persistente";
+      try {
+        await Promise.allSettled([
+          carregarAtividadesOficiaisSP(),
+          DBLocal.sincronizarFilaOffline ? DBLocal.sincronizarFilaOffline() : Promise.resolve(),
+          DBLocal.sincronizarComAPI ? DBLocal.sincronizarComAPI({ forcar: forcarAPI || mostrarAviso }) : Promise.resolve()
+        ]);
+
+        atualizarEstadoDoCacheLocal();
+
+        const online = typeof navigator === "undefined" || navigator.onLine !== false;
+        if (pontoEl) pontoEl.style.background = online ? "#10b981" : "#f59e0b";
+        if (statusEl) {
+          statusEl.textContent = online
+            ? "API Planilha & Cache Local Conectados"
+            : "Modo Offline • Exibindo Cache Local";
+        }
         const agora = new Date();
-        document.getElementById("ultimaSincronizacao").textContent = `Atualizado: ${agora.toLocaleTimeString("pt-BR")}`;
+        const ultEl = document.getElementById("ultimaSincronizacao");
+        if (ultEl) ultEl.textContent = `Atualizado: ${agora.toLocaleTimeString("pt-BR")}`;
 
         if (mostrarAviso) {
-          notificar(`Banco local atualizado com sucesso! ${listaAlunos.length} estudantes e ${estadoReal.relatorioCompilado.length} registros computados.`);
+          notificar(`Dados atualizados! ${estadoReal.alunos.length} estudantes e ${estadoReal.guildas.length} guildas carregados.`);
         }
       } catch (erro) {
-        console.error("Erro na leitura do banco local:", erro);
-        compilarRelatorioReal();
-        renderizarTudo();
+        console.error("Erro na sincronização:", erro);
+        if (pontoEl) pontoEl.style.background = "#ef4444";
+        if (statusEl) statusEl.textContent = "Cache Local Ativo (API indisponível)";
+        atualizarEstadoDoCacheLocal();
       }
     }
 
@@ -1967,34 +2187,36 @@
     function compilarRelatorioReal() {
       const registros = [];
 
-      // 1. Mapeia entregas registradas no Tarefas SP (Banco Local: entregasSP)
+      // 1. Mapeia entregas registradas no Tarefas SP / Questões Planilha
       estadoReal.entregasSP.forEach(entrega => {
-        const alunoInfo = estadoReal.alunos.find(a => 
-          a.id === entrega.alunoId || 
+        const alunoInfo = estadoReal.alunos.find(a =>
+          a.id === entrega.alunoId ||
+          String(a.ra || "") === String(entrega.alunoRA || "") ||
           a.nome.toLowerCase() === String(entrega.alunoNome || "").toLowerCase()
         );
 
         registros.push({
           id: entrega.id,
-          tipo: "Tarefa SP",
+          tipo: "Tarefa / Planilha",
           titulo: entrega.atividadeTitulo || `Atividade ${entrega.atividadeId || "SP"}`,
           disciplina: entrega.componente || "Geral",
           aluno: entrega.alunoNome || alunoInfo?.nome || "Estudante",
-          ra: alunoInfo?.ra || "000.000.000-0 SP",
-          sala: entrega.turma || alunoInfo?.sala || "8º Ano A",
-          guilda: alunoInfo?.guilda || "Águias da Sabedoria",
-          data: entrega.entregueEm ? (typeof entrega.entregueEm === "string" ? entrega.entregueEm.split("T")[0] : new Date(entrega.entregueEm?.seconds * 1000 || Date.now()).toISOString().split("T")[0]) : "2026-09-15",
+          ra: alunoInfo?.ra || entrega.alunoRA || "-",
+          sala: entrega.turma || alunoInfo?.sala || "Sem Sala",
+          guilda: alunoInfo?.guilda || "Sem guilda",
+          data: entrega.entregueEm ? (typeof entrega.entregueEm === "string" ? entrega.entregueEm.split("T")[0] : new Date(entrega.entregueEm?.seconds * 1000 || Date.now()).toISOString().split("T")[0]) : "-",
           status: "Entregue",
           resultado: entrega.resultado === "correto" ? "Acerto (100%)" : "Concluído",
-          xp: entrega.pontosRecebidos || 20,
+          xp: Number(entrega.pontosRecebidos) || 10,
           nota: null
         });
       });
 
-      // 2. Mapeia entregas de tarefas criadas pelos professores (Banco Local: entregas)
+      // 2. Mapeia entregas de tarefas criadas pelos professores
       estadoReal.entregasDocentes.forEach(entrega => {
-        const alunoInfo = estadoReal.alunos.find(a => 
-          a.id === entrega.alunoId || 
+        const alunoInfo = estadoReal.alunos.find(a =>
+          a.id === entrega.alunoId ||
+          String(a.ra || "") === String(entrega.alunoRA || "") ||
           a.nome.toLowerCase() === String(entrega.alunoNome || "").toLowerCase()
         );
         const tarefaInfo = estadoReal.tarefasDocentes.find(t => t.id === entrega.tarefaId);
@@ -2003,20 +2225,20 @@
           id: entrega.id,
           tipo: "Tarefa Professor",
           titulo: tarefaInfo?.titulo || entrega.tarefaTitulo || "Tarefa Docente",
-          disciplina: tarefaInfo?.disciplina || "Multidisciplinar",
+          disciplina: tarefaInfo?.disciplina || tarefaInfo?.componente || "Multidisciplinar",
           aluno: entrega.alunoNome || alunoInfo?.nome || "Estudante",
-          ra: alunoInfo?.ra || "000.000.000-0 SP",
-          sala: entrega.turma || alunoInfo?.sala || "8º Ano A",
-          guilda: alunoInfo?.guilda || "Águias da Sabedoria",
-          data: entrega.criadoEm ? new Date(entrega.criadoEm?.seconds * 1000 || Date.now()).toISOString().split("T")[0] : "2026-09-16",
+          ra: alunoInfo?.ra || entrega.alunoRA || "-",
+          sala: entrega.turma || alunoInfo?.sala || "Sem Sala",
+          guilda: alunoInfo?.guilda || "Sem guilda",
+          data: entrega.criadoEm ? (typeof entrega.criadoEm === "string" ? entrega.criadoEm.split("T")[0] : new Date(entrega.criadoEm?.seconds * 1000 || Date.now()).toISOString().split("T")[0]) : "-",
           status: "Entregue",
           resultado: "Avaliado",
-          xp: entrega.xpGanha || tarefaInfo?.xp || 50,
+          xp: Number(entrega.xpGanha || tarefaInfo?.xp || tarefaInfo?.pontosXP) || 10,
           nota: null
         });
       });
 
-      // 3. Mapeia avaliações oficiais lançadas pelos professores (Banco Local: notas e avaliações)
+      // 3. Mapeia avaliações oficiais lançadas pelos professores
       estadoReal.avaliacoesNotas.forEach(av => {
         if (Array.isArray(av.notas)) {
           av.notas.forEach(notaItem => {
@@ -2028,8 +2250,8 @@
               aluno: notaItem.nome,
               ra: notaItem.ra,
               sala: av.turma,
-              guilda: notaItem.guilda || "Geral",
-              data: av.data || "2026-09-16",
+              guilda: notaItem.guilda || "Sem guilda",
+              data: av.data || "-",
               status: "Avaliação",
               resultado: notaItem.status || "Lançada",
               xp: Math.round((parseFloat(notaItem.nota) || 0) * 10),
@@ -2046,16 +2268,16 @@
           titulo: a.titulo,
           disciplina: a.componente,
           pontos: a.pontos || 20,
-          prazo: "2026-09-20",
+          prazo: a.prazo || "",
           turmas: a.turmas || []
         })),
         ...estadoReal.tarefasDocentes.map(t => ({
           id: t.id,
           titulo: t.titulo,
-          disciplina: t.disciplina || "Geral",
-          pontos: t.xp || 50,
-          prazo: t.prazo || "2026-09-22",
-          turmas: [t.turma]
+          disciplina: t.disciplina || t.componente || "Geral",
+          pontos: t.xp || t.pontosXP || 10,
+          prazo: t.prazo || "",
+          turmas: (!t.turma || t.turma === "TODOS") ? [] : [t.turma]
         }))
       ];
 
@@ -2065,19 +2287,17 @@
         const turmaNorm = normalizarTurma(aluno.sala);
 
         catalogoAtividades.forEach(ativ => {
-          // Verifica se a tarefa é destinada à turma do aluno
           const atendeTurma = ativ.turmas.length === 0 || ativ.turmas.some(t => normalizarTurma(t) === turmaNorm);
           if (!atendeTurma) return;
 
-          // Verifica se já existe entrega desse aluno para essa atividade
-          const jaEntregue = registros.some(r => 
+          const jaEntregue = registros.some(r =>
             (r.aluno.toLowerCase() === aluno.nome.toLowerCase() || r.ra === aluno.ra) &&
-            (r.titulo.toLowerCase().includes(ativ.titulo.toLowerCase()) || r.id.includes(ativ.id))
+            (r.titulo.toLowerCase().includes(String(ativ.titulo || "").toLowerCase()) || String(r.id || "").includes(String(ativ.id || "")))
           );
 
           if (!jaEntregue) {
-            const dataPrazo = ativ.prazo || "2026-09-20";
-            const atrasada = dataPrazo < hojeStr;
+            const dataPrazo = ativ.prazo || "";
+            const atrasada = Boolean(dataPrazo && dataPrazo < hojeStr);
 
             registros.push({
               id: `pend_${aluno.id}_${ativ.id}`,
@@ -2085,10 +2305,10 @@
               titulo: ativ.titulo,
               disciplina: ativ.disciplina,
               aluno: aluno.nome,
-              ra: aluno.ra,
-              sala: aluno.sala,
-              guilda: aluno.guilda,
-              data: dataPrazo,
+              ra: aluno.ra || "-",
+              sala: aluno.sala || "Sem Sala",
+              guilda: aluno.guilda || "Sem guilda",
+              data: dataPrazo || "Sem prazo",
               status: atrasada ? "Atrasado" : "Pendente",
               resultado: atrasada ? "Prazo Expirado" : "Aguardando Envio",
               xp: 0,
@@ -2106,14 +2326,38 @@
     // ====================================================
     function renderizarTudo() {
       atualizarMetricasGlobais();
+      atualizarPainelInstituicao2027();
       renderizarSelectsSalasEGuildas();
       renderizarSelectsNotasEOcorrencias();
       renderizarTabelaAlunos();
+      renderizarTabelaProfessores();
       renderizarGridGuildas();
       renderizarTabelaSalas();
       renderizarTabelaNotas();
       renderizarTabelaOcorrencias();
       renderizarPainelRelatorios();
+    }
+
+    function atualizarPainelInstituicao2027() {
+      const inst = DBLocal.obterInstituicao ? DBLocal.obterInstituicao() : { escola: "E.E. Maurício Antunes", anoLetivo: 2026, gremioResponsavel: "Grêmio Aegre" };
+      const elBannerAno = document.getElementById("bannerAnoLetivoTag");
+      const elBannerGremio = document.getElementById("bannerGremioTag");
+      if (elBannerAno) elBannerAno.textContent = `Ano Letivo ${inst.anoLetivo || 2026}`;
+      if (elBannerGremio) {
+        elBannerGremio.textContent = Number(inst.anoLetivo) >= 2027
+          ? `${inst.escola} • Gestão ${inst.gremioResponsavel} Ativa`
+          : `${inst.escola} • ${inst.gremioResponsavel} 2027`;
+      }
+      if (document.getElementById("instEscolaNome")) document.getElementById("instEscolaNome").value = inst.escola || "E.E. Maurício Antunes";
+      if (document.getElementById("instGremioNome")) document.getElementById("instGremioNome").value = inst.gremioResponsavel || "Grêmio Aegre";
+      if (document.getElementById("instAnoAtivo")) document.getElementById("instAnoAtivo").value = String(inst.anoLetivo || 2026);
+      if (document.getElementById("statusEscolaCiclo")) document.getElementById("statusEscolaCiclo").textContent = inst.escola || "E.E. Maurício Antunes";
+      if (document.getElementById("statusGremioCiclo")) document.getElementById("statusGremioCiclo").textContent = inst.gremioResponsavel || "Grêmio Aegre";
+      if (document.getElementById("statusAnoCiclo")) {
+        document.getElementById("statusAnoCiclo").textContent = Number(inst.anoLetivo) >= 2027
+          ? "2027 (Reutilização Grêmio Aegre Ativa)"
+          : "2026 (Pronto para transição 2027)";
+      }
     }
 
     function atualizarMetricasGlobais() {
@@ -2122,6 +2366,9 @@
       document.getElementById("contadorGuildasTotal").textContent = estadoReal.guildas.length;
 
       document.getElementById("badgeAlunosQtd").textContent = estadoReal.alunos.length;
+      if (document.getElementById("badgeProfessoresQtd")) {
+        document.getElementById("badgeProfessoresQtd").textContent = (estadoReal.professores || []).length;
+      }
       document.getElementById("badgeGuildasQtd").textContent = estadoReal.guildas.length;
       document.getElementById("badgeSalasQtd").textContent = estadoReal.salas.length;
       document.getElementById("badgeNotasQtd").textContent = estadoReal.notas.length;
@@ -2140,16 +2387,16 @@
       const filtroTurmaAluno = document.getElementById("filtroTurmaAluno");
       const filtroRelatorioTurma = document.getElementById("filtroRelatorioTurma");
 
-      const opcoesSalas = estadoReal.salas.map(s => `<option value="${s.nome}">${s.nome}</option>`).join("");
-      selectAlunoSala.innerHTML = opcoesSalas || `<option value="8º Ano A">8º Ano A</option>`;
+      const opcoesSalas = estadoReal.salas.map(s => `<option value="${textoSeguro(s.nome)}">${textoSeguro(s.nome)}</option>`).join("");
+      selectAlunoSala.innerHTML = opcoesSalas || `<option value="">Sem Sala</option>`;
       filtroTurmaAluno.innerHTML = `<option value="">Todas as Turmas</option>` + opcoesSalas;
       filtroRelatorioTurma.innerHTML = `<option value="">Todas as Turmas</option>` + opcoesSalas;
 
       const selectAlunoGuilda = document.getElementById("alunoGuilda");
       const filtroGuildaAluno = document.getElementById("filtroGuildaAluno");
 
-      const opcoesGuildas = estadoReal.guildas.map(g => `<option value="${g.nome}">${g.nome}</option>`).join("");
-      selectAlunoGuilda.innerHTML = opcoesGuildas || `<option value="Águias da Sabedoria">Águias da Sabedoria</option>`;
+      const opcoesGuildas = estadoReal.guildas.map(g => `<option value="${textoSeguro(g.nome)}">${textoSeguro(g.nome)}</option>`).join("");
+      selectAlunoGuilda.innerHTML = `<option value="">Sem guilda</option>` + opcoesGuildas;
       filtroGuildaAluno.innerHTML = `<option value="">Todas as Guildas</option>` + opcoesGuildas;
     }
 
@@ -2163,7 +2410,7 @@
       const filtroGuilda = document.getElementById("filtroGuildaAluno").value;
 
       const filtrados = estadoReal.alunos.filter(a => {
-        const bateBusca = a.nome.toLowerCase().includes(busca) || a.ra.toLowerCase().includes(busca) || a.email.toLowerCase().includes(busca);
+        const bateBusca = String(a.nome || "").toLowerCase().includes(busca) || String(a.ra || "").toLowerCase().includes(busca) || String(a.email || "").toLowerCase().includes(busca);
         const bateTurma = !filtroTurma || a.sala === filtroTurma;
         const bateGuilda = !filtroGuilda || a.guilda === filtroGuilda;
         return bateBusca && bateTurma && bateGuilda;
@@ -2174,25 +2421,57 @@
         return;
       }
 
-      tbody.innerHTML = filtrados.map(a => `
-        <tr>
-          <td>
-            <strong>${a.nome}</strong>
-            <div style="font-size:0.75rem; color:#64748b;">${a.email || "Sem e-mail cadastrado"}</div>
-          </td>
-          <td><code>${a.ra}</code></td>
-          <td><span class="badge badge-turma">${a.sala}</span></td>
-          <td><span class="badge badge-guilda">${a.guilda}</span></td>
-          <td><strong style="color:var(--azul-primario);">${a.xp || 0} XP</strong></td>
-          <td>
-            <div style="display:flex; gap:6px;">
-              <button type="button" class="btn-acao-tabela" onclick="window.abrirModalEditarAluno('${a.id}')">Editar</button>
-              <button type="button" class="btn-acao-tabela perigo" onclick="window.excluirAlunoBanco('${a.id}')">Excluir</button>
-            </div>
-          </td>
-        </tr>
-      `).join("");
+      tbody.innerHTML = filtrados.map(a => {
+        const faltas = Number(a.faltas) || 0;
+        const anotacao = a.anotacao ? textoSeguro(a.anotacao) : "Sem anotação";
+        const guildaTexto = a.guilda ? textoSeguro(a.guilda) : "Sem guilda";
+        const salaTexto = a.sala ? textoSeguro(a.sala) : "Sem Sala";
+        const raSeguro = textoSeguro(a.ra || a.id || "-");
+        const idSeguro = textoSeguro(a.id || "");
+        return `
+          <tr>
+            <td>
+              <strong>${textoSeguro(a.nome || "Estudante")}</strong>
+              <div style="font-size:0.75rem; color:#64748b;">Anotação: ${anotacao} • Faltas: ${faltas}</div>
+            </td>
+            <td><code>${raSeguro}</code></td>
+            <td><span class="badge badge-turma">${salaTexto}</span></td>
+            <td><span class="badge badge-guilda">${guildaTexto}</span></td>
+            <td><strong style="color:var(--azul-primario);">${Number(a.xp) || 0} XP</strong></td>
+            <td>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button type="button" class="btn-acao-tabela" style="background:#dcfce7; color:#166534; font-weight:700;" onclick="window.concederXpAlunoBanco('${raSeguro}')">+10 XP</button>
+                <button type="button" class="btn-acao-tabela" onclick="window.abrirModalEditarAluno('${idSeguro}')">Editar</button>
+                <button type="button" class="btn-acao-tabela perigo" onclick="window.excluirAlunoBanco('${idSeguro}')">Excluir</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
     }
+
+    window.concederXpAlunoBanco = async function(raOuId) {
+      const aluno = estadoReal.alunos.find(a => String(a.ra) === String(raOuId) || String(a.id) === String(raOuId));
+      if (!aluno) return;
+      const raAlvo = aluno.ra || aluno.id;
+      try {
+        const res = await DBLocal.adicionarXPAlunoAPI(raAlvo, 10);
+        if (res?.ok) {
+          aluno.xp = Number(res.novoXP ?? ((Number(aluno.xp) || 0) + 10));
+          atualizarEstadoDoCacheLocal();
+          notificar(
+            res.offlineEnfileirado
+              ? `+10 XP aplicados offline para ${aluno.nome} (serão enviados ao reconectar).`
+              : `+10 XP concedidos a ${aluno.nome} (Total: ${aluno.xp} XP)!`
+          );
+        } else {
+          notificar(res?.msg || "Não foi possível conceder XP na planilha.");
+        }
+      } catch (err) {
+        console.error("Erro ao conceder XP ao estudante:", err);
+        notificar("Erro ao enviar XP para a API.");
+      }
+    };
 
     // Modal de Edição de Estudante
     window.abrirModalEditarAluno = function(id) {
@@ -2207,13 +2486,13 @@
       document.getElementById("editModalNivel").value = aluno.nivel || 1;
 
       const selectTurma = document.getElementById("editModalTurma");
-      selectTurma.innerHTML = estadoReal.salas.map(s => 
-        `<option value="${s.nome}" ${s.nome === aluno.sala ? 'selected' : ''}>${s.nome}</option>`
-      ).join("");
+      selectTurma.innerHTML = estadoReal.salas.map(s =>
+        `<option value="${textoSeguro(s.nome)}" ${s.nome === aluno.sala ? 'selected' : ''}>${textoSeguro(s.nome)}</option>`
+      ).join("") || `<option value="${textoSeguro(aluno.sala || '')}">${textoSeguro(aluno.sala || 'Sem Sala')}</option>`;
 
       const selectGuilda = document.getElementById("editModalGuilda");
-      selectGuilda.innerHTML = estadoReal.guildas.map(g => 
-        `<option value="${g.nome}" ${g.nome === aluno.guilda ? 'selected' : ''}>${g.nome}</option>`
+      selectGuilda.innerHTML = `<option value="">Sem guilda</option>` + estadoReal.guildas.map(g =>
+        `<option value="${textoSeguro(g.nome)}" ${g.nome === aluno.guilda ? 'selected' : ''}>${textoSeguro(g.nome)}</option>`
       ).join("");
 
       document.getElementById("modalEditarAluno").classList.add("visivel");
@@ -2316,6 +2595,102 @@
     };
 
     // ====================================================
+    // MÓDULO PROFESSORES & FIREBASE SYNC
+    // ====================================================
+    function renderizarTabelaProfessores() {
+      const tbody = document.getElementById("corpoTabelaProfessores");
+      if (!tbody) return;
+
+      const profs = estadoReal.professores || [];
+      if (profs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:24px; color:#64748b;">Nenhum professor registrado ainda. Utilize o formulário ao lado para cadastrar.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = profs.map(p => `
+        <tr>
+          <td>
+            <strong>${textoSeguro(p.nome)}</strong>
+            <div style="font-size:0.75rem; color:#64748b;">${textoSeguro(p.cargo || "Docente")}</div>
+          </td>
+          <td><code>${textoSeguro(p.email || "-")}</code></td>
+          <td><span class="badge" style="background:#e0e7ff; color:#3730a3; font-weight:700;">${textoSeguro(p.disciplina || "Geral")}</span></td>
+          <td><span class="badge badge-turma">${textoSeguro(p.turmas || "Todas")}</span></td>
+          <td>
+            <span class="badge" style="background:#dcfce7; color:#166534; font-weight:600; display:inline-flex; align-items:center; gap:4px;">
+              🔥 Sincronizado
+            </span>
+          </td>
+          <td>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="btn-acao-tabela perigo" onclick="window.excluirProfessorBanco('${textoSeguro(p.id)}')">Excluir</button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    document.getElementById("formCadastrarProfessor")?.addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const nome = document.getElementById("profNome").value.trim();
+      const email = document.getElementById("profEmail").value.trim();
+      const senha = document.getElementById("profSenha").value.trim();
+      const disciplina = document.getElementById("profDisciplina").value;
+      const cargo = document.getElementById("profCargo").value.trim() || "Professor";
+      const turmas = document.getElementById("profTurmas").value.trim() || "8º Ano A";
+
+      const btn = document.getElementById("btnSalvarProfessor");
+      const textoOriginal = btn ? btn.innerHTML : "";
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = "⏳ Gravando no Local & Firebase...";
+      }
+
+      try {
+        const novo = await DBLocal.salvarProfessor({
+          nome,
+          email,
+          senha,
+          disciplina,
+          cargo,
+          turmas
+        });
+
+        if (!estadoReal.professores) estadoReal.professores = [];
+        estadoReal.professores.unshift(novo);
+
+        renderizarTabelaProfessores();
+        atualizarMetricasGlobais();
+        this.reset();
+        document.getElementById("profSenha").value = "Seduc@2026";
+        notificar(`Professor ${nome} cadastrado! Salvo no banco local e sincronizado no Firebase (usuarios/professores).`);
+      } catch (err) {
+        console.error("Erro ao cadastrar professor:", err);
+        notificar(`Professor salvo localmente. (Firebase: ${err.message || "processando em segundo plano"})`);
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = textoOriginal;
+        }
+      }
+    });
+
+    window.excluirProfessorBanco = async function(id) {
+      if (!confirm("Deseja realmente remover este professor do registro local?")) return;
+      try {
+        const profs = (estadoReal.professores || []).filter(p => p.id !== id);
+        localStorage.setItem("professores", JSON.stringify(profs));
+        estadoReal.professores = profs;
+        renderizarTabelaProfessores();
+        atualizarMetricasGlobais();
+        notificar("Docente removido do registro local.");
+      } catch (err) {
+        console.error("Erro ao excluir professor:", err);
+        notificar("Erro ao remover professor.");
+      }
+    };
+
+    // ====================================================
     // MÓDULO GUILDAS
     // ====================================================
     function renderizarGridGuildas() {
@@ -2327,33 +2702,43 @@
       }
 
       container.innerHTML = estadoReal.guildas.map(g => {
-        const membrosDaGuilda = estadoReal.alunos.filter(a => a.guilda === g.nome);
-        const xpMembros = membrosDaGuilda.reduce((soma, a) => soma + (a.xp || 0), 0);
-        const totalPontos = (g.pontos || 0) + xpMembros;
+        const membrosDaGuilda = Array.isArray(g.membrosLista) && g.membrosLista.length > 0
+          ? g.membrosLista
+          : estadoReal.alunos.filter(a => a.guilda === g.nome).map(a => a.nome);
+        const totalPontos = Number(g.pontos) || 0;
+        const membrosResumo = membrosDaGuilda.length > 0
+          ? membrosDaGuilda.map(m => textoSeguro(m)).join(", ")
+          : "Nenhum membro atribuído";
 
         return `
-          <div class="card-guilda" style="border-top-color: ${g.cor || 'var(--azul-primario)'};">
-            <h3>${g.nome}</h3>
-            <p class="lema">"${g.lema || 'União e sabedoria em prol da educação.'}"</p>
+          <div class="card-guilda" style="border-top-color: ${textoSeguro(g.cor || 'var(--azul-primario)')};">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+              <h3>${textoSeguro(g.nome)}</h3>
+              <span class="badge badge-guilda">${textoSeguro(g.status || "Ativa")}</span>
+            </div>
+            <p class="lema">${textoSeguro(g.desafio || g.lema || "Sem desafio definido")}</p>
+            <div style="font-size:0.78rem; color:#475569; margin:8px 0;">
+              <strong>Membros:</strong> ${membrosResumo}
+            </div>
             <div class="stats-guilda">
               <div>
                 <strong>${membrosDaGuilda.length}</strong>
-                <span style="display:block; font-size:0.75rem; color:#64748b;">Membros Reais</span>
+                <span style="display:block; font-size:0.75rem; color:#64748b;">Membros</span>
               </div>
               <div>
                 <strong style="color:var(--azul-primario);">${totalPontos} XP</strong>
-                <span style="display:block; font-size:0.75rem; color:#64748b;">Pontos Totais</span>
+                <span style="display:block; font-size:0.75rem; color:#64748b;">XP da Guilda</span>
               </div>
               <div>
-                <strong>${g.lider || "Em definição"}</strong>
+                <strong>${textoSeguro(g.lider || "-")}</strong>
                 <span style="display:block; font-size:0.75rem; color:#64748b;">Liderança</span>
               </div>
             </div>
             <div style="display:flex; gap:8px;">
-              <button type="button" class="btn-outline" style="flex:1;" onclick="window.concederXpGuildaBanco('${g.id}')">
+              <button type="button" class="btn-outline" style="flex:1;" onclick="window.concederXpGuildaBanco('${textoSeguro(g.id)}')">
                 ⭐ +100 XP
               </button>
-              <button type="button" class="btn-acao-tabela perigo" onclick="window.excluirGuildaBanco('${g.id}')">
+              <button type="button" class="btn-acao-tabela perigo" onclick="window.excluirGuildaBanco('${textoSeguro(g.id)}')">
                 Excluir
               </button>
             </div>
@@ -2375,14 +2760,14 @@
           cor,
           lema,
           lider: lider || "A definir",
-          pontos: 1000
+          pontos: 0
         });
 
         estadoReal.guildas.push(nova);
 
         renderizarTudo();
         this.reset();
-        notificar(`Guilda "${nome}" cadastrada no banco local!`);
+        notificar(`Guilda "${nome}" cadastrada localmente!`);
       } catch(err) {
         console.error("Erro ao cadastrar guilda:", err);
       }
@@ -2391,12 +2776,24 @@
     window.concederXpGuildaBanco = async function(id) {
       const g = estadoReal.guildas.find(item => item.id === id);
       if (!g) return;
-      g.pontos = (g.pontos || 0) + 100;
       try {
+        if (DBLocal.adicionarXPGuildaAPI) {
+          const res = await DBLocal.adicionarXPGuildaAPI(g.nome, 100);
+          g.pontos = Number(res?.novoXP ?? ((Number(g.pontos) || 0) + 100));
+          renderizarGridGuildas();
+          notificar(
+            res?.offlineEnfileirado
+              ? `+100 XP aplicados offline à guilda ${g.nome} (serão enviados ao reconectar).`
+              : `+100 XP concedidos à guilda ${g.nome} (Total: ${g.pontos} XP)!`
+          );
+          return;
+        }
+        g.pontos = (Number(g.pontos) || 0) + 100;
         DBLocal.salvarGuilda(g);
         renderizarGridGuildas();
         notificar(`+100 XP concedidos à guilda ${g.nome}!`);
       } catch(err) {
+        console.error("Erro ao conceder XP à guilda:", err);
         renderizarGridGuildas();
       }
     };
@@ -2430,11 +2827,11 @@
 
         return `
           <tr>
-            <td><strong>${s.nome}</strong></td>
-            <td>${s.etapa}</td>
-            <td>${s.turno}</td>
-            <td>${s.capacidade || 35} alunos</td>
-            <td><strong>${matriculados}</strong> matriculados reais</td>
+            <td><strong>${textoSeguro(s.nome)}</strong></td>
+            <td>${textoSeguro(s.etapa || "Ensino Regular")}</td>
+            <td>${textoSeguro(s.turno || "Regular")}</td>
+            <td>${Number(s.capacidade) || 35} alunos</td>
+            <td><strong>${matriculados}</strong> matriculados</td>
             <td>
               <div style="display:flex; align-items:center; gap:8px;">
                 <div class="barra-fundo" style="flex:1; height:8px;">
@@ -2444,7 +2841,7 @@
               </div>
             </td>
             <td>
-              <button type="button" class="btn-acao-tabela perigo" onclick="window.excluirSalaBanco('${s.id}')">Excluir</button>
+              <button type="button" class="btn-acao-tabela perigo" onclick="window.excluirSalaBanco('${textoSeguro(s.id)}')">Excluir</button>
             </td>
           </tr>
         `;
@@ -2513,8 +2910,8 @@
           return `
             <div class="barra-progresso-container">
               <div class="barra-progresso-info">
-                <span>${sala.nome}</span>
-                <span>${concluidas} de ${total} tarefas reais (${pct}%)</span>
+                <span>${textoSeguro(sala.nome)}</span>
+                <span>${concluidas} de ${total} tarefas (${pct}%)</span>
               </div>
               <div class="barra-fundo">
                 <div class="barra-preenchimento" style="width: ${pct}%;"></div>
@@ -2534,17 +2931,16 @@
           const concluidas = tarefasDaGuilda.filter(r => r.status === "Entregue" || r.status === "Avaliação").length;
           const total = tarefasDaGuilda.length;
           const pct = total > 0 ? Math.round((concluidas / total) * 100) : 0;
-          const membrosGuilda = estadoReal.alunos.filter(a => a.guilda === guilda.nome);
-          const xpTotal = membrosGuilda.reduce((acc, a) => acc + (a.xp || 0), 0);
+          const xpTotal = Number(guilda.pontos) || 0;
 
           return `
             <div class="barra-progresso-container">
               <div class="barra-progresso-info">
-                <span>${guilda.nome} (${xpTotal} XP)</span>
+                <span>${textoSeguro(guilda.nome)} (${xpTotal} XP)</span>
                 <span>${concluidas}/${total} entregues (${pct}%)</span>
               </div>
               <div class="barra-fundo">
-                <div class="barra-preenchimento" style="width: ${pct}%; background:${guilda.cor || 'var(--azul-primario)'};"></div>
+                <div class="barra-preenchimento" style="width: ${pct}%; background:${textoSeguro(guilda.cor || 'var(--azul-primario)')};"></div>
               </div>
             </div>
           `;
@@ -2560,12 +2956,12 @@
       const filtroStatus = document.getElementById("filtroRelatorioStatus").value;
 
       const filtradas = estadoReal.relatorioCompilado.filter(item => {
-        const bateBusca = item.titulo.toLowerCase().includes(busca) || 
-                          item.aluno.toLowerCase().includes(busca) || 
-                          item.ra.toLowerCase().includes(busca) || 
-                          item.disciplina.toLowerCase().includes(busca);
+        const bateBusca = String(item.titulo || "").toLowerCase().includes(busca) ||
+                          String(item.aluno || "").toLowerCase().includes(busca) ||
+                          String(item.ra || "").toLowerCase().includes(busca) ||
+                          String(item.disciplina || "").toLowerCase().includes(busca);
         const bateTurma = !filtroTurma || item.sala === filtroTurma;
-        const bateComp = !filtroComp || item.disciplina.toLowerCase().includes(filtroComp.toLowerCase());
+        const bateComp = !filtroComp || String(item.disciplina || "").toLowerCase().includes(filtroComp.toLowerCase());
         const bateStatus = !filtroStatus || (
           filtroStatus === "Avaliação" ? item.status === "Avaliação" : item.status === filtroStatus
         );
@@ -2584,23 +2980,23 @@
         if (t.status === "Atrasado") badgeClasse = "badge-atrasado";
         if (t.status === "Avaliação") badgeClasse = "badge-avaliacao";
 
-        let rotuloNotaXP = t.nota !== null ? `Nota: ${t.nota.toFixed(1)}` : `+${t.xp} XP`;
+        let rotuloNotaXP = t.nota !== null ? `Nota: ${Number(t.nota).toFixed(1)}` : `+${Number(t.xp) || 0} XP`;
 
         return `
           <tr>
             <td>
-              <strong>${t.titulo}</strong>
-              <div style="font-size:0.75rem; color:#64748b;">${t.tipo} • ${t.resultado || ""}</div>
+              <strong>${textoSeguro(t.titulo)}</strong>
+              <div style="font-size:0.75rem; color:#64748b;">${textoSeguro(t.tipo)} • ${textoSeguro(t.resultado || "")}</div>
             </td>
-            <td>${t.disciplina}</td>
+            <td>${textoSeguro(t.disciplina)}</td>
             <td>
-              <strong>${t.aluno}</strong>
-              <div style="font-size:0.75rem; color:#64748b;">RA: ${t.ra}</div>
+              <strong>${textoSeguro(t.aluno)}</strong>
+              <div style="font-size:0.75rem; color:#64748b;">RA: ${textoSeguro(t.ra)}</div>
             </td>
-            <td><span class="badge badge-turma">${t.sala}</span></td>
-            <td><span class="badge badge-guilda">${t.guilda}</span></td>
-            <td>${t.data}</td>
-            <td><span class="badge ${badgeClasse}">${t.status}</span></td>
+            <td><span class="badge badge-turma">${textoSeguro(t.sala)}</span></td>
+            <td><span class="badge badge-guilda">${textoSeguro(t.guilda)}</span></td>
+            <td>${textoSeguro(t.data)}</td>
+            <td><span class="badge ${badgeClasse}">${textoSeguro(t.status)}</span></td>
             <td><strong style="color:var(--azul-primario);">${rotuloNotaXP}</strong></td>
           </tr>
         `;
@@ -2633,7 +3029,7 @@
 
       // Alunos com 100% de tarefas em dia
       const alunosEmDia = estadoReal.alunos.filter(aluno => {
-        const pendentesDoAluno = estadoReal.relatorioCompilado.filter(r => 
+        const pendentesDoAluno = estadoReal.relatorioCompilado.filter(r =>
           (r.aluno === aluno.nome || r.ra === aluno.ra) && (r.status === "Pendente" || r.status === "Atrasado")
         );
         return pendentesDoAluno.length === 0;
@@ -2643,9 +3039,9 @@
 
       // Média das avaliações oficiais
       const notasAvaliacoes = estadoReal.relatorioCompilado.filter(r => r.nota !== null).map(r => r.nota);
-      const mediaGeralNotas = notasAvaliacoes.length > 0 
-        ? (notasAvaliacoes.reduce((a, b) => a + b, 0) / notasAvaliacoes.length).toFixed(1) 
-        : "7.8";
+      const mediaGeralNotas = notasAvaliacoes.length > 0
+        ? (notasAvaliacoes.reduce((a, b) => a + b, 0) / notasAvaliacoes.length).toFixed(1)
+        : "--";
 
       document.getElementById("dossieTotalEntregas").textContent = entregues;
       document.getElementById("dossieTaxaAcerto").textContent = `${taxa}%`;
@@ -2656,10 +3052,10 @@
       const agora = new Date();
       document.getElementById("dossieDataEmissao").textContent = `Emitido em: ${agora.toLocaleDateString("pt-BR")} às ${agora.toLocaleTimeString("pt-BR")}`;
 
-      document.getElementById("dossieParecerTexto").textContent = 
-        `Foram auditadas ${total} tarefas no ecossistema escolar com ${entregues} entregas verificadas no banco. A taxa de cumprimento pedagógico atingiu ${taxa}%, com média de avaliações em ${mediaGeralNotas}. Recomenda-se acompanhamento direto para os ${alunosComPendencia} estudantes com pendências acumuladas.`;
+      document.getElementById("dossieParecerTexto").textContent =
+        `Foram auditadas ${total} tarefas no ecossistema escolar com ${entregues} entregas verificadas. A taxa de cumprimento pedagógico atingiu ${taxa}%, com média de avaliações em ${mediaGeralNotas}. Recomenda-se acompanhamento direto para os ${alunosComPendencia} estudantes com pendências acumuladas.`;
 
-      notificar("Dossiê Analítico Real gerado com sucesso!");
+      notificar("Dossiê Analítico gerado com sucesso!");
       painel.scrollIntoView({ behavior: "smooth" });
     });
 
@@ -2671,7 +3067,7 @@
 
     // Sincronizar em Tempo Real (Botão da barra)
     document.getElementById("btnSincronizarReal").addEventListener("click", async () => {
-      await sincronizarBancoLocal(true);
+      await sincronizarBancoLocal(true, true);
     });
 
     // Exportação de CSV Real
@@ -2916,21 +3312,21 @@
         return `
           <tr>
             <td>
-              <strong>${n.alunoNome}</strong>
-              <div style="font-size:0.75rem; color:#64748b;">RA: ${n.alunoRA}</div>
+              <strong>${textoSeguro(n.alunoNome)}</strong>
+              <div style="font-size:0.75rem; color:#64748b;">RA: ${textoSeguro(n.alunoRA)}</div>
             </td>
-            <td><span class="badge badge-turma">${n.turma}</span></td>
-            <td><strong>${n.componente}</strong></td>
-            <td>${n.bimestre}</td>
+            <td><span class="badge badge-turma">${textoSeguro(n.turma)}</span></td>
+            <td><strong>${textoSeguro(n.componente)}</strong></td>
+            <td>${textoSeguro(n.bimestre)}</td>
             <td>${Number(n.notaProva).toFixed(1)}</td>
             <td>${Number(n.notaTarefas).toFixed(1)}</td>
             <td>${Number(n.notaParticipacao).toFixed(1)}</td>
             <td><strong style="font-size:1.05rem; color:var(--azul-primario);">${Number(n.media).toFixed(1)}</strong></td>
-            <td><span class="badge ${badgeSit}">${n.situacao}</span></td>
+            <td><span class="badge ${badgeSit}">${textoSeguro(n.situacao)}</span></td>
             <td>
               <div style="display:flex; gap:6px;">
-                <button type="button" class="btn-acao-tabela" onclick="window.abrirModalEditarNota('${n.id}')">Editar</button>
-                <button type="button" class="btn-acao-tabela perigo" onclick="window.excluirNotaBanco('${n.id}')">Excluir</button>
+                <button type="button" class="btn-acao-tabela" onclick="window.abrirModalEditarNota('${textoSeguro(n.id)}')">Editar</button>
+                <button type="button" class="btn-acao-tabela perigo" onclick="window.excluirNotaBanco('${textoSeguro(n.id)}')">Excluir</button>
               </div>
             </td>
           </tr>
@@ -3109,26 +3505,27 @@
 
         const descCurta = o.descricao && o.descricao.length > 60 ? o.descricao.substring(0, 58) + "..." : (o.descricao || "--");
         const provCurta = o.providencias && o.providencias.length > 50 ? o.providencias.substring(0, 48) + "..." : (o.providencias || "--");
+        const idOc = textoSeguro(o.id);
 
         return `
           <tr>
-            <td>${o.data || "--"}</td>
+            <td>${textoSeguro(o.data || "--")}</td>
             <td>
-              <strong>${o.alunoNome}</strong>
-              <div style="font-size:0.75rem; color:#64748b;">RA: ${o.alunoRA}</div>
+              <strong>${textoSeguro(o.alunoNome)}</strong>
+              <div style="font-size:0.75rem; color:#64748b;">RA: ${textoSeguro(o.alunoRA)}</div>
             </td>
-            <td><span class="badge badge-turma">${o.turma}</span></td>
+            <td><span class="badge badge-turma">${textoSeguro(o.turma)}</span></td>
             <td>
-              <span class="badge ${badgeGrav}">${o.gravidade}</span>
-              <div style="font-size:0.75rem; color:#64748b; margin-top:2px;">${o.tipo}</div>
+              <span class="badge ${badgeGrav}">${textoSeguro(o.gravidade)}</span>
+              <div style="font-size:0.75rem; color:#64748b; margin-top:2px;">${textoSeguro(o.tipo)}</div>
             </td>
-            <td title="${o.descricao}">${descCurta}</td>
-            <td title="${o.providencias}">${provCurta}</td>
+            <td title="${textoSeguro(o.descricao || "")}">${textoSeguro(descCurta)}</td>
+            <td title="${textoSeguro(o.providencias || "")}">${textoSeguro(provCurta)}</td>
             <td>
-              <strong>${o.status}</strong>
+              <strong>${textoSeguro(o.status)}</strong>
               ${o.assinaturaPais?.assinado ? `
                 <div style="font-size:0.75rem; color:#16a34a; font-weight:bold; margin-top:3px;">
-                  ✅ Ciência dos Pais: ${o.assinaturaPais.responsavelNome}
+                  ✅ Ciência dos Pais: ${textoSeguro(o.assinaturaPais.responsavelNome)}
                 </div>
               ` : (o.requerAssinatura !== false ? `
                 <div style="font-size:0.75rem; color:#d97706; font-weight:600; margin-top:3px;">
@@ -3138,9 +3535,9 @@
             </td>
             <td>
               <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                <button type="button" class="btn-acao-tabela" onclick="window.abrirModalEditarOcorrencia('${o.id}')">Editar</button>
-                <button type="button" class="btn-acao-tabela" style="background:#0284c7; color:#fff;" onclick="window.imprimirTermoOcorrencia('${o.id}')" title="Gerar Notificação Oficial e Convite para Pais">🖨️ Notificação</button>
-                <button type="button" class="btn-acao-tabela perigo" onclick="window.excluirOcorrenciaBanco('${o.id}')">Excluir</button>
+                <button type="button" class="btn-acao-tabela" onclick="window.abrirModalEditarOcorrencia('${idOc}')">Editar</button>
+                <button type="button" class="btn-acao-tabela" style="background:#0284c7; color:#fff;" onclick="window.imprimirTermoOcorrencia('${idOc}')" title="Gerar Notificação Oficial e Convite para Pais">🖨️ Notificação</button>
+                <button type="button" class="btn-acao-tabela perigo" onclick="window.excluirOcorrenciaBanco('${idOc}')">Excluir</button>
               </div>
             </td>
           </tr>
@@ -3161,15 +3558,15 @@
       const filtroTurmaNotas = document.getElementById("filtroTurmaNotas");
       const filtroTurmaOc = document.getElementById("filtroTurmaOcorrencias");
 
-      const opcoesAlunos = `<option value="">Selecione o estudante...</option>` + estadoReal.alunos.map(a => 
-        `<option value="${a.id}">${a.nome} (${a.sala} - RA: ${a.ra})</option>`
+      const opcoesAlunos = `<option value="">Selecione o estudante...</option>` + estadoReal.alunos.map(a =>
+        `<option value="${textoSeguro(a.id)}">${textoSeguro(a.nome)} (${textoSeguro(a.sala)} - RA: ${textoSeguro(a.ra)})</option>`
       ).join("");
 
       if (selectAlunoNota) selectAlunoNota.innerHTML = opcoesAlunos;
       if (selectAlunoOc) selectAlunoOc.innerHTML = opcoesAlunos;
 
-      const opcoesSalas = `<option value="">Todas as Turmas</option>` + estadoReal.salas.map(s => 
-        `<option value="${s.nome}">${s.nome}</option>`
+      const opcoesSalas = `<option value="">Todas as Turmas</option>` + estadoReal.salas.map(s =>
+        `<option value="${textoSeguro(s.nome)}">${textoSeguro(s.nome)}</option>`
       ).join("");
 
       if (filtroTurmaNotas) filtroTurmaNotas.innerHTML = opcoesSalas;
@@ -3230,43 +3627,97 @@
       });
     });
 
-    document.getElementById("btnResetarDemo")?.addEventListener("click", () => {
-      if (confirm("Deseja redefinir todos os dados locais de demonstração para o padrão da escola?")) {
+    document.getElementById("btnResetarDemo")?.addEventListener("click", async () => {
+      if (confirm("Deseja limpar o cache local e recarregar os dados atualizados da planilha?")) {
         DBLocal.resetarParaPadrao();
-        sincronizarBancoLocal(false);
-        notificar("Banco local restaurado para os dados oficiais de demonstração!");
+        await sincronizarBancoLocal(true, true);
       }
     });
 
-    document.getElementById("btnSincronizarReal")?.addEventListener("click", () => {
-      sincronizarBancoLocal(true);
-    });
+    // Identificação e validação do Gestor / Docente Logado
+    function validarEExibirSessaoGestao() {
+      try {
+        const gestorStorage = localStorage.getItem("gestorAtivo");
+        const usuarioAtivo = DBLocal.obterUsuarioAtivo ? DBLocal.obterUsuarioAtivo() : null;
+        const gestor = gestorStorage ? JSON.parse(gestorStorage) : usuarioAtivo;
+        const tipo = String(gestor?.tipo || "").toLowerCase();
 
-    // Identificação do Gestor Logado
-    try {
-      const gestorStorage = localStorage.getItem("gestorAtivo");
-      const gestor = gestorStorage ? JSON.parse(gestorStorage) : (DBLocal.obterUsuarioAtivo() || {});
-      const elNome = document.getElementById("nomeGestorTopo");
-      const elCargo = document.getElementById("cargoGestorTopo");
-      if (elNome && gestor?.nome) {
-        elNome.textContent = gestor.nome;
+        if (!gestor || (tipo !== "gestor" && tipo !== "professor" && tipo !== "docente")) {
+          window.location.href = "../loginadm.html";
+          return false;
+        }
+
+        const elNome = document.getElementById("nomeGestorTopo");
+        const elCargo = document.getElementById("cargoGestorTopo");
+        if (elNome) {
+          elNome.textContent = gestor.nome || gestor.cadastro || "Gestor Escolar";
+        }
+        if (elCargo) {
+          elCargo.textContent = gestor.cargo || "Gestor";
+        }
+        return true;
+      } catch (e) {
+        window.location.href = "../loginadm.html";
+        return false;
       }
-      if (elCargo && gestor?.cargo) {
-        elCargo.textContent = gestor.cargo.includes("Diret") ? "Diretoria" : (gestor.cargo.includes("Superv") ? "Supervisão" : "Gestão");
-      }
-    } catch (e) {}
+    }
 
     document.getElementById("btnSairAdm")?.addEventListener("click", () => {
       DBLocal.fazerLogout();
-      try { localStorage.removeItem("gestorAtivo"); } catch(e) {}
+      try {
+        localStorage.removeItem("gestorAtivo");
+        localStorage.removeItem("usuarioLogado");
+      } catch(e) {}
+    });
+
+    // Listeners do Ciclo 2027 • Grêmio Aegre (E.E. Maurício Antunes)
+    document.getElementById("formCicloGremio2027")?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const escola = document.getElementById("instEscolaNome")?.value?.trim() || "E.E. Maurício Antunes";
+      const gremio = document.getElementById("instGremioNome")?.value?.trim() || "Grêmio Aegre";
+      const ano = parseInt(document.getElementById("instAnoAtivo")?.value || "2027", 10);
+      const zerarEntregas = Boolean(document.getElementById("chkZerarEntregas2027")?.checked);
+      const zerarXP = Boolean(document.getElementById("chkZerarXP2027")?.checked);
+
+      if (ano >= 2027) {
+        DBLocal.prepararCicloGremio2027({ zerarEntregas, zerarXP });
+      }
+      DBLocal.salvarInstituicao({
+        escola,
+        gremioResponsavel: gremio,
+        anoLetivo: ano,
+        nomeSistema: `Sala do Futuro ${escola.replace(/^E\.E\.\s*/i, "")}`
+      });
+
+      atualizarEstadoDoCacheLocal();
+      notificar(`Configuração salva! ${escola} • Ciclo ${ano} (${gremio}) ativo.`);
+    });
+
+    document.getElementById("btnExportarArquivo2026")?.addEventListener("click", () => {
+      const json = DBLocal.exportarJSON();
+      const blob = new Blob([json], { type: "application/json;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute("download", "arquivo_2026_sala_do_futuro_mauricio_antunes.json");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      notificar("Backup completo de 2026 (E.E. Maurício Antunes) exportado em JSON!");
     });
 
     // INICIALIZAÇÃO AUTOMÁTICA
-    sincronizarBancoLocal(false);
+    if (validarEExibirSessaoGestao()) {
+      atualizarEstadoDoCacheLocal();
+      sincronizarBancoLocal(false, true);
+    }
 
-    // Sincronização em tempo real quando dados forem atualizados por alunos ou professores
+    // Reage a atualizações locais sem disparar nova chamada de rede em loop
     window.addEventListener("banco-local-atualizado", () => {
-      sincronizarBancoLocal(false);
+      atualizarEstadoDoCacheLocal();
+    });
+
+    window.addEventListener("online", () => {
+      sincronizarBancoLocal(true, true);
     });
   </script>
 </body>

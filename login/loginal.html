@@ -7,7 +7,7 @@
 
 <!----------Titulo e bombas invisiveis pro usuario------>
 
-  <title>Login do Estudante | Sala do futuro V2</title>
+  <title>Login do Estudante | Sala do Futuro Maurício Antunes</title>
 
 <!----------Estilo visual da pagina--------------------->
 
@@ -550,35 +550,22 @@
       <div class="conteudo-login">
         <h1>Estudante</h1>
         <p>
-          Preencha seus dados abaixo para acessar o sistema.
+          Preencha seus dados abaixo para acessar a <strong>Sala do Futuro Maurício Antunes</strong> (E.E. Maurício Antunes • Grêmio Aegre 2027).
         </p>
 
 <!----------Formulário do aluno--------------------->
 
         <form id="loginForm" class="formulario">
 
-          <div class="linha">
-
-            <div class="campo">
-              <label for="email">E-mail institucional</label>
-              <input
-                type="email"
-                id="email"
-                placeholder="seuemail@escola.sp.gov.br"
-                autocomplete="username"
-                required
-              >
-            </div>
-
-            <div class="campo">
-              <label for="turma">Turma (opcional)</label>
-              <input
-                type="text"
-                id="turma"
-                placeholder="8ºA"
-              >
-            </div>
-
+          <div class="campo">
+            <label for="raAluno">RA (Registro do Aluno)</label>
+            <input
+              type="text"
+              id="raAluno"
+              placeholder="Digite o seu RA (ex: 123456789)"
+              autocomplete="username"
+              required
+            >
           </div>
 
           <div class="campo">
@@ -607,7 +594,7 @@
           <p class="texto-ajuda">
             Esqueceu a senha?
             <a href="#">Clique aqui</a>
-            para saber como recuperá-la.
+            para saber como recuperá-la junto à secretaria escolar.
           </p>
 
           <div id="mensagem" aria-live="polite"></div>
@@ -619,14 +606,13 @@
             <button type="submit" class="acessar" id="entrar">Acessar</button>
           </div>
 
-          <!-- Seleção de Alunos Cadastrados para Simulação -->
-          <div style="margin-top: 20px; padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; text-align: left;">
-            <p style="font-size: 0.85rem; font-weight: 700; color: #1d5a9e; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-              <span>👤</span> Contas de Estudantes Cadastradas (Clique para preencher):
+          <div style="margin-top: 20px; padding: 14px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; text-align: left;">
+            <p style="font-size: 0.84rem; font-weight: 700; color: #1d5a9e; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+              <span>🎓</span> Acesso Oficial Integrado
             </p>
-            <div id="listaContasAlunos" style="display: flex; flex-direction: column; gap: 6px;">
-              <!-- Preenchido via script -->
-            </div>
+            <p style="font-size: 0.78rem; color: #475569; margin: 0; line-height: 1.45;">
+              Utilize seu número de <strong>RA</strong> e senha cadastrados na unidade escolar para carregar suas tarefas, XP, faltas e guilda.
+            </p>
           </div>
 
         </form>
@@ -676,7 +662,6 @@
     const loginForm = document.getElementById("loginForm");
     const mensagem = document.getElementById("mensagem");
     const entrar = document.getElementById("entrar");
-    const listaContasAlunos = document.getElementById("listaContasAlunos");
 
     function mostrarMensagem(tipo, texto) {
       mensagem.className = "";
@@ -684,73 +669,31 @@
       mensagem.textContent = texto;
     }
 
-    // Renderiza a lista de estudantes cadastrados para preenchimento ágil
-    function renderizarContasAlunos() {
-      if (!listaContasAlunos) return;
-      const alunos = DBLocal.obterAlunos();
-      listaContasAlunos.innerHTML = "";
+    // Pré-carrega catálogo escolar em segundo plano quando houver conexão
+    DBLocal.sincronizarComAPI().catch(() => {});
 
-      alunos.forEach(aluno => {
-        const item = document.createElement("button");
-        item.type = "button";
-        item.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.82rem; color: #1e293b; cursor: pointer; text-align: left; transition: all 0.2s;";
-        item.onmouseenter = () => { item.style.background = "#eff6ff"; item.style.borderColor = "#93c5fd"; };
-        item.onmouseleave = () => { item.style.background = "#ffffff"; item.style.borderColor = "#cbd5e1"; };
-        
-        item.innerHTML = `
-          <div>
-            <strong style="color:#1d5a9e;">${aluno.nome}</strong>
-            <span style="display:block; color:#64748b; font-size:0.75rem;">${aluno.email} • RA: ${aluno.ra}</span>
-          </div>
-          <span style="background:#e0f2fe; color:#0369a1; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 0.75rem;">
-            ${aluno.turma || aluno.sala || "8ºA"}
-          </span>
-        `;
-
-        item.addEventListener("click", () => {
-          document.getElementById("email").value = aluno.email;
-          document.getElementById("turma").value = aluno.turma || aluno.sala || "8ºA";
-          document.getElementById("senha").value = "123456";
-          mostrarMensagem("sucesso", `Credenciais de ${aluno.nome} preenchidas! Clique em Acessar.`);
-        });
-
-        listaContasAlunos.appendChild(item);
-      });
-    }
-
-    renderizarContasAlunos();
-
-    // Login 100% Conectado via Local Storage
-    loginForm.addEventListener("submit", function(event) {
+    loginForm.addEventListener("submit", async function(event) {
       event.preventDefault();
 
-      const emailOuRa = document.getElementById("email").value.trim();
+      const ra = document.getElementById("raAluno").value.trim();
       const senha = document.getElementById("senha").value;
-      const turma = document.getElementById("turma")?.value?.trim() || "8ºA";
 
-      if (!emailOuRa) {
-        mostrarMensagem("erro", "Por favor, digite seu e-mail institucional ou RA.");
+      if (!ra) {
+        mostrarMensagem("erro", "Por favor, digite o seu RA.");
         return;
       }
 
-      if (senha.length < 6) {
-        mostrarMensagem("erro", "A senha precisa ter no mínimo 6 dígitos.");
+      if (!senha) {
+        mostrarMensagem("erro", "Por favor, digite a sua senha.");
         return;
       }
 
-      mostrarMensagem("carregando", "Autenticando estudante no banco local...");
+      mostrarMensagem("carregando", "Validando RA e senha no sistema escolar...");
       entrar.disabled = true;
       entrar.textContent = "Acessando...";
 
       try {
-        // 1. Autenticação imediata e persistente no DBLocal
-        const alunoAutenticado = DBLocal.autenticarAluno(emailOuRa, senha);
-        if (turma) {
-          alunoAutenticado.turma = turma;
-          alunoAutenticado.sala = turma;
-          DBLocal.salvarAluno(alunoAutenticado);
-        }
-
+        const alunoAutenticado = await DBLocal.autenticarAlunoAPI(ra, senha);
         mostrarMensagem("sucesso", `Bem-vindo(a), ${alunoAutenticado.nome}! Acessando a Sala do Futuro...`);
         entrar.textContent = "Sucesso";
 
@@ -759,7 +702,7 @@
         }, 300);
       } catch (error) {
         console.error("Erro na autenticação:", error);
-        mostrarMensagem("erro", error.message || "Não foi possível validar o acesso.");
+        mostrarMensagem("erro", error.message || "RA ou senha incorreta.");
         entrar.disabled = false;
         entrar.textContent = "Acessar";
       }

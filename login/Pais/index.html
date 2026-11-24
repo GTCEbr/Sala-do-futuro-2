@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Área do Responsável | Sala do Futuro V2</title>
+  <title>Área do Responsável | Sala do Futuro Maurício Antunes</title>
   <style>
     :root {
       --azul: #1d5a9e;
@@ -260,8 +260,8 @@
     <div class="marca-topo">
       <img src="../../logosp.png" alt="Governo de São Paulo">
       <div>
-        <strong>Sala do Futuro V2</strong>
-        <small>Portal do Responsável</small>
+        <strong>Sala do Futuro Maurício Antunes</strong>
+        <small>Portal do Responsável • E.E. Maurício Antunes</small>
       </div>
     </div>
     <div class="topo-acoes">
@@ -274,44 +274,49 @@
     <section class="boas-vindas">
       <div>
         <h1>Acompanhamento Pedagógico</h1>
-        <p>Acompanhe a frequência escolar, notas e recados da instituição de ensino.</p>
+        <p>Acompanhe a frequência escolar, notas e recados da <strong>E.E. Maurício Antunes</strong> (Continuidade Grêmio Aegre 2027).</p>
       </div>
       <div class="tag-estudante" id="cardEstudanteVinculado">
-        <div class="avatar" id="avatarEstudante">GS</div>
+        <div class="avatar" id="avatarEstudante">--</div>
         <div>
-          <strong id="nomeEstudanteVinculado">Guilherme Santos</strong>
-          <small id="detalheEstudanteVinculado" style="display:block; color:var(--texto);">8º Ano A • RA: 000.123.456-7 SP</small>
+          <strong id="nomeEstudanteVinculado">Carregando estudante...</strong>
+          <small id="detalheEstudanteVinculado" style="display:block; color:var(--texto);">Sincronizando dados...</small>
         </div>
       </div>
     </section>
 
     <!-- Seletor Rápido de Filho/Estudante -->
     <div style="background: #ffffff; border: 1px solid var(--borda); border-radius: 12px; padding: 12px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-      <span style="font-size: 0.85rem; font-weight: 700; color: var(--azul);">Filhos / Estudantes Cadastrados:</span>
+      <span style="font-size: 0.85rem; font-weight: 700; color: var(--azul);">Estudantes Vinculados:</span>
       <div id="seletorFilhosPais" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
     </div>
 
     <div class="grade-resumo">
       <div class="card-metrica">
-        <span>Frequência Bimestral</span>
-        <strong class="status-positivo" id="metricaFrequencia">94%</strong>
-        <small class="status-positivo">Regular (Meta: ≥ 75%)</small>
+        <span>Faltas Registradas</span>
+        <strong class="status-positivo" id="metricaFrequencia">-</strong>
+        <small class="status-positivo" id="detalheFrequencia">Sincronizando frequência...</small>
       </div>
       <div class="card-metrica">
         <span>Média Geral</span>
-        <strong class="status-positivo" id="metricaMedia">8.4</strong>
-        <small class="status-positivo">Acima da média escolar</small>
+        <strong class="status-positivo" id="metricaMedia">-</strong>
+        <small class="status-positivo" id="detalheMedia">Avaliações registradas</small>
       </div>
       <div class="card-metrica">
-        <span>Atividades Concluídas</span>
-        <strong id="metricaTarefas">18 / 20</strong>
-        <small class="status-atencao" id="detalheTarefas">2 pendentes esta semana</small>
+        <span>Atividades Ativas / Entregues</span>
+        <strong id="metricaTarefas">0 / 0</strong>
+        <small class="status-atencao" id="detalheTarefas">Carregando tarefas...</small>
       </div>
       <div class="card-metrica">
         <span>Pontuação Gamificada</span>
-        <strong id="metricaXp">420 XP</strong>
-        <small style="color:var(--azul);" id="detalheNivel">Nível 4 • Sala do Futuro</small>
+        <strong id="metricaXp">0 XP</strong>
+        <small style="color:var(--azul);" id="detalheNivel">Nível 1 • Sala do Futuro</small>
       </div>
+    </div>
+
+    <div class="painel-card" id="cardAnotacaoPais" style="border-left: 5px solid var(--azul); margin-bottom: 20px;">
+      <h2><span>📝 Anotação Pedagógica da Planilha</span></h2>
+      <p id="textoAnotacaoPais" style="font-size:0.95rem; color:var(--texto-escuro);">Carregando anotação do estudante...</p>
     </div>
 
     <div class="secoes-grid">
@@ -322,41 +327,14 @@
             <thead>
               <tr>
                 <th>Componente Curricular</th>
-                <th>1º Bimestre</th>
-                <th>2º Bimestre</th>
+                <th>Bimestre</th>
+                <th>Média</th>
                 <th>Situação</th>
               </tr>
             </thead>
             <tbody id="corpoTabelaNotas">
               <tr>
-                <td>Língua Portuguesa</td>
-                <td>8.5</td>
-                <td>8.0</td>
-                <td><span class="badge-nota badge-verde">Aprovado</span></td>
-              </tr>
-              <tr>
-                <td>Matemática</td>
-                <td>7.5</td>
-                <td>8.5</td>
-                <td><span class="badge-nota badge-verde">Aprovado</span></td>
-              </tr>
-              <tr>
-                <td>Ciências / Biologia</td>
-                <td>9.0</td>
-                <td>8.8</td>
-                <td><span class="badge-nota badge-verde">Aprovado</span></td>
-              </tr>
-              <tr>
-                <td>História & Geografia</td>
-                <td>8.0</td>
-                <td>8.5</td>
-                <td><span class="badge-nota badge-verde">Aprovado</span></td>
-              </tr>
-              <tr>
-                <td>Inglês</td>
-                <td>9.5</td>
-                <td>9.0</td>
-                <td><span class="badge-nota badge-azul">Destaque</span></td>
+                <td colspan="4" style="color:#64748b;">Carregando boletim...</td>
               </tr>
             </tbody>
           </table>
@@ -380,15 +358,8 @@
 
         <div class="painel-card">
           <h2>Recados e Comunicações da Escola</h2>
-          <div class="item-aviso">
-            <strong>Reunião de Pais e Mestres do 2º Bimestre</strong>
-            <p>Convidamos os responsáveis para a devolutiva pedagógica na próxima sexta-feira às 18h30 no auditório da escola.</p>
-            <time>Publicado pela Coordenação Pedagógica</time>
-          </div>
-          <div class="item-aviso">
-            <strong>Semana da Ciência e Tecnologia</strong>
-            <p>Alunos apresentarão projetos interdisciplinares gamificados desenvolvidos nas trilhas da Sala do Futuro.</p>
-            <time>Publicado pela Diretoria de Ensino</time>
+          <div id="listaComunicadosPais">
+            <p style="color:#64748b; font-size:0.9rem;">Nenhum comunicado publicado até o momento.</p>
           </div>
         </div>
       </div>
@@ -533,20 +504,48 @@
 
     let alunoAtualId = null;
 
-    function inicializarPainelPais() {
+    function esc(v) {
+      return String(v ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    async function inicializarPainelPais() {
+      await DBLocal.sincronizarComAPI().catch(() => {});
       const usuarioAtivo = DBLocal.obterUsuarioAtivo();
       const alunos = DBLocal.obterAlunos();
 
       if (usuarioAtivo && usuarioAtivo.tipo === "responsavel" && usuarioAtivo.alunoId) {
         alunoAtualId = usuarioAtivo.alunoId;
-      } else if (usuarioAtivo && usuarioAtivo.tipo === "aluno") {
+      } else if (usuarioAtivo && (!usuarioAtivo.tipo || usuarioAtivo.tipo === "aluno")) {
         alunoAtualId = usuarioAtivo.id;
       } else {
-        alunoAtualId = alunos[0]?.id || "aluno_1";
+        alunoAtualId = alunos[0]?.id || null;
       }
 
       renderizarSeletorFilhos(alunos);
       carregarDadosEstudante(alunoAtualId);
+      renderizarComunicadosPais();
+    }
+
+    function renderizarComunicadosPais() {
+      const container = document.getElementById("listaComunicadosPais");
+      if (!container) return;
+      const lista = DBLocal.obterComunicados();
+      if (!lista.length) {
+        container.innerHTML = '<p style="color:#64748b; font-size:0.9rem;">Nenhum comunicado publicado até o momento.</p>';
+        return;
+      }
+      container.innerHTML = lista.map(c => `
+        <div class="item-aviso">
+          <strong>${esc(c.titulo || "Comunicado Escolar")}</strong>
+          <p>${esc(c.conteudo || c.mensagem || "")}</p>
+          <time>${esc(c.autor || "Coordenação")} • ${esc(c.data || "")}</time>
+        </div>
+      `).join("");
     }
 
     function renderizarSeletorFilhos(alunos) {
@@ -554,12 +553,17 @@
       if (!seletor) return;
       seletor.innerHTML = "";
 
+      if (!alunos.length) {
+        seletor.textContent = "Nenhum estudante carregado.";
+        return;
+      }
+
       alunos.forEach(aluno => {
         const btn = document.createElement("button");
         btn.type = "button";
         const ativo = aluno.id === alunoAtualId;
         btn.style.cssText = `padding: 6px 12px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid ${ativo ? "var(--azul)" : "var(--borda)"}; background: ${ativo ? "var(--azul)" : "#ffffff"}; color: ${ativo ? "#ffffff" : "var(--texto-escuro)"};`;
-        btn.textContent = `${aluno.nome} (${aluno.turma || aluno.sala || "8ºA"})`;
+        btn.textContent = `${aluno.nome} (${aluno.sala || aluno.turma || "Sem Sala"})`;
 
         btn.addEventListener("click", () => {
           alunoAtualId = aluno.id;
@@ -573,44 +577,67 @@
 
     function carregarDadosEstudante(alunoId) {
       const alunos = DBLocal.obterAlunos();
-      const estudante = alunos.find(a => a.id === alunoId) || alunos[0];
-      if (!estudante) return;
+      const estudante = alunos.find(a => a.id === alunoId || a.ra === alunoId) || alunos[0];
+      if (!estudante) {
+        const nomeEl = document.getElementById("nomeEstudanteVinculado");
+        const detalheEl = document.getElementById("detalheEstudanteVinculado");
+        if (nomeEl) nomeEl.textContent = "Nenhum estudante vinculado";
+        if (detalheEl) detalheEl.textContent = "Conecte-se à internet para sincronizar a planilha.";
+        return;
+      }
 
-      // Atualiza cabeçalho do aluno
       const nomeEl = document.getElementById("nomeEstudanteVinculado");
       const detalheEl = document.getElementById("detalheEstudanteVinculado");
       const avatarEl = document.getElementById("avatarEstudante");
 
       if (nomeEl) nomeEl.textContent = estudante.nome;
-      if (detalheEl) detalheEl.textContent = `${estudante.turma || estudante.sala || "8º Ano A"} • RA: ${estudante.ra} • Guilda: ${estudante.guilda || "Águias"}`;
+      if (detalheEl) detalheEl.textContent = `${estudante.sala || estudante.turma || "Sem Sala"} • RA: ${estudante.ra}${estudante.guilda ? ` • Guilda: ${estudante.guilda}` : ""}`;
       if (avatarEl) {
-        const partes = estudante.nome.split(" ");
-        avatarEl.textContent = (partes[0]?.[0] || "A") + (partes[1]?.[0] || "L");
+        const partes = estudante.nome.trim().split(/\s+/);
+        avatarEl.textContent = ((partes[0]?.[0] || "A") + (partes[partes.length - 1]?.[0] || "L")).toUpperCase();
       }
 
-      // Atualiza métricas
+      const faltas = Number(estudante.faltas || 0);
+      const metricaFreq = document.getElementById("metricaFrequencia");
+      const detalheFreq = document.getElementById("detalheFrequencia");
+      if (metricaFreq) {
+        metricaFreq.textContent = `${faltas} falta(s)`;
+        metricaFreq.className = faltas > 15 ? "status-atencao" : "status-positivo";
+      }
+      if (detalheFreq) {
+        detalheFreq.textContent = faltas > 15 ? "Atenção ao limite de faltas" : "Acompanhamento registrado";
+      }
+
+      const textoAnot = document.getElementById("textoAnotacaoPais");
+      if (textoAnot) {
+        textoAnot.textContent = estudante.anotacao && estudante.anotacao !== "Nenhuma"
+          ? estudante.anotacao
+          : "Nenhuma anotação pedagógica registrada até o momento.";
+      }
+
+      const xpReal = Number(estudante.xp || 0);
+      const nivelReal = Number(estudante.nivel || Math.max(1, Math.floor(xpReal / 100) + 1));
       const metricaXp = document.getElementById("metricaXp");
       const detalheNivel = document.getElementById("detalheNivel");
-      if (metricaXp) metricaXp.textContent = `${estudante.xp || 420} XP`;
-      if (detalheNivel) detalheNivel.textContent = `Nível ${estudante.nivel || 4} • Sala do Futuro`;
+      if (metricaXp) metricaXp.textContent = `${xpReal} XP`;
+      if (detalheNivel) detalheNivel.textContent = `Nível ${nivelReal} • Sala do Futuro`;
 
-      // Tarefas entregues e pendentes
       const todasTarefas = DBLocal.obterTarefas();
       const entregas = DBLocal.obterEntregas();
       const entregasAluno = entregas.filter(e => e.alunoId === estudante.id || e.alunoNome === estudante.nome);
-      
+
       const metricaTarefas = document.getElementById("metricaTarefas");
       const detalheTarefas = document.getElementById("detalheTarefas");
       if (metricaTarefas) metricaTarefas.textContent = `${entregasAluno.length} / ${todasTarefas.length}`;
       if (detalheTarefas) {
         const pendentes = Math.max(0, todasTarefas.length - entregasAluno.length);
-        detalheTarefas.textContent = pendentes > 0 ? `${pendentes} tarefas ativas na plataforma` : "Todas as atividades em dia!";
+        detalheTarefas.textContent = pendentes > 0 ? `${pendentes} tarefa(s) ativas na plataforma` : "Todas as atividades em dia!";
       }
 
-      // Notas do boletim
       const todasNotas = DBLocal.obterNotas();
-      const notasAluno = todasNotas.filter(n => n.alunoId === estudante.id || n.alunoNome === estudante.nome);
+      const notasAluno = todasNotas.filter(n => n.alunoId === estudante.id || n.alunoRA === estudante.ra || n.alunoNome === estudante.nome);
       const corpoTabela = document.getElementById("corpoTabelaNotas");
+      const metricaMedia = document.getElementById("metricaMedia");
 
       if (corpoTabela) {
         if (notasAluno.length > 0) {
@@ -619,14 +646,14 @@
 
           notasAluno.forEach(nota => {
             const tr = document.createElement("tr");
-            const media = Number(nota.media || nota.notaTarefas || 8.0);
+            const media = Number(nota.media ?? nota.notaTarefas ?? 0);
             somaMedias += media;
             const badgeClass = media >= 9.0 ? "badge-azul" : (media >= 6.0 ? "badge-verde" : "badge-vermelho");
             const situacaoTexto = media >= 9.0 ? "Destaque" : (media >= 6.0 ? "Aprovado" : "Atenção");
 
             tr.innerHTML = `
-              <td><strong>${nota.componente}</strong></td>
-              <td>${nota.bimestre || "2º Bimestre"}</td>
+              <td><strong>${esc(nota.componente)}</strong></td>
+              <td>${esc(nota.bimestre || "2º Bimestre")}</td>
               <td>${media.toFixed(1)}</td>
               <td><span class="badge-nota ${badgeClass}">${situacaoTexto}</span></td>
             `;
@@ -634,12 +661,13 @@
           });
 
           const mediaGeral = somaMedias / notasAluno.length;
-          const metricaMedia = document.getElementById("metricaMedia");
           if (metricaMedia) metricaMedia.textContent = mediaGeral.toFixed(1);
+        } else {
+          corpoTabela.innerHTML = '<tr><td colspan="4" style="color:#64748b;">Nenhuma avaliação bimestral lançada ainda.</td></tr>';
+          if (metricaMedia) metricaMedia.textContent = "-";
         }
       }
 
-      // Ocorrências disciplinares e pedagógicas do estudante
       carregarOcorrenciasEstudante(estudante);
     }
 
@@ -681,26 +709,27 @@
       container.innerHTML = ocorrenciasAluno.map(oc => {
         const assinado = Boolean(oc.assinaturaPais?.assinado);
         const corGravidade = oc.gravidade === "Alta" ? "#dc2626" : (oc.gravidade === "Média" ? "#d97706" : (oc.gravidade === "Elogio" ? "#16a34a" : "#2563eb"));
+        const idOc = esc(oc.id);
 
         return `
           <div style="background:#ffffff; border:1px solid ${assinado ? '#bbf7d0' : '#fed7aa'}; border-left:4px solid ${corGravidade}; border-radius:10px; padding:14px; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
             <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
               <div>
                 <span style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase;">
-                  📅 ${oc.data || ''} • Registrado por: ${oc.registradoPor || 'Docente'}
+                  📅 ${esc(oc.data || '')} • Registrado por: ${esc(oc.registradoPor || 'Docente')}
                 </span>
                 <h4 style="margin:2px 0 0 0; font-size:15px; color:#1e293b;">
-                  ${oc.tipo || 'Ocorrência Pedagógica'}
+                  ${esc(oc.tipo || 'Ocorrência Pedagógica')}
                 </h4>
               </div>
               <span style="background:${corGravidade}15; color:${corGravidade}; border:1px solid ${corGravidade}40; font-size:11px; padding:2px 8px; border-radius:12px; font-weight:700;">
-                ${oc.gravidade || 'Média'}
+                ${esc(oc.gravidade || 'Média')}
               </span>
             </div>
 
             <div style="background:#f8fafc; border-radius:6px; padding:10px; font-size:13px; color:#334155; line-height:1.45; margin-bottom:10px;">
-              <p style="margin:0 0 4px 0;"><strong>Relato do Professor:</strong> ${oc.descricao || 'Sem descrição.'}</p>
-              ${oc.providencias ? `<p style="margin:0; font-size:12px; color:#64748b;"><strong>Providências pedagógicas:</strong> ${oc.providencias}</p>` : ''}
+              <p style="margin:0 0 4px 0;"><strong>Relato do Professor:</strong> ${esc(oc.descricao || 'Sem descrição.')}</p>
+              ${oc.providencias ? `<p style="margin:0; font-size:12px; color:#64748b;"><strong>Providências pedagógicas:</strong> ${esc(oc.providencias)}</p>` : ''}
             </div>
 
             <!-- Caixa de Assinatura Digital -->
@@ -712,15 +741,15 @@
                       <span>✅</span> Ciência Confirmada Digitalmente
                     </div>
                     <div style="font-size:12px; color:#374151; margin-top:2px;">
-                      Assinado por <strong>${oc.assinaturaPais.responsavelNome}</strong> (${oc.assinaturaPais.vinculo || 'Responsável'}) em <em>${oc.assinaturaPais.dataAssinatura}</em>
+                      Assinado por <strong>${esc(oc.assinaturaPais.responsavelNome)}</strong> (${esc(oc.assinaturaPais.vinculo || 'Responsável')}) em <em>${esc(oc.assinaturaPais.dataAssinatura)}</em>
                     </div>
                     ${oc.assinaturaPais.observacaoPais ? `
                       <div style="margin-top:6px; font-size:12px; font-style:italic; color:#4b5563; background:#ffffff; padding:6px 10px; border-radius:6px; border:1px solid #e5e7eb;">
-                        "${oc.assinaturaPais.observacaoPais}"
+                        "${esc(oc.assinaturaPais.observacaoPais)}"
                       </div>
                     ` : ''}
                   </div>
-                  <button type="button" onclick="window.imprimirComprovanteCiencia('${oc.id}')" style="background:#ffffff; color:#166534; border:1px solid #86efac; padding:6px 12px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;">
+                  <button type="button" onclick="window.imprimirComprovanteCiencia('${idOc}')" style="background:#ffffff; color:#166534; border:1px solid #86efac; padding:6px 12px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;">
                     🖨️ Imprimir Ciência
                   </button>
                 </div>
@@ -734,7 +763,7 @@
                       A escola solicita que o responsável tome ciência formal deste comunicado.
                     </div>
                   </div>
-                  <button type="button" onclick="window.abrirModalAssinatura('${oc.id}')" style="background:#d97706; color:#ffffff; border:none; padding:8px 14px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(217,119,6,0.3);">
+                  <button type="button" onclick="window.abrirModalAssinatura('${idOc}')" style="background:#d97706; color:#ffffff; border:none; padding:8px 14px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(217,119,6,0.3);">
                     <span>✍️</span> Assinar / Confirmar Ciência
                   </button>
                 </div>
@@ -759,21 +788,21 @@
       if (resumoEl) {
         resumoEl.innerHTML = `
           <div style="margin-bottom:6px;">
-            <strong>Estudante:</strong> ${oc.alunoNome} (${oc.turma}) | <strong>Data:</strong> ${oc.data}
+            <strong>Estudante:</strong> ${esc(oc.alunoNome)} (${esc(oc.turma)}) | <strong>Data:</strong> ${esc(oc.data)}
           </div>
           <div style="margin-bottom:6px;">
-            <strong>Natureza:</strong> ${oc.tipo} (${oc.gravidade}) • <strong>Docente:</strong> ${oc.registradoPor || 'Equipe Pedagógica'}
+            <strong>Natureza:</strong> ${esc(oc.tipo)} (${esc(oc.gravidade)}) • <strong>Docente:</strong> ${esc(oc.registradoPor || 'Equipe Pedagógica')}
           </div>
           <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:6px; padding:8px; margin-top:6px;">
-            <strong>Relato:</strong> ${oc.descricao}
-            ${oc.providencias ? `<br><small style="color:#64748b;"><strong>Providências:</strong> ${oc.providencias}</small>` : ''}
+            <strong>Relato:</strong> ${esc(oc.descricao)}
+            ${oc.providencias ? `<br><small style="color:#64748b;"><strong>Providências:</strong> ${esc(oc.providencias)}</small>` : ''}
           </div>
         `;
       }
 
       const inputNome = document.getElementById("modalNomeResponsavel");
       if (inputNome && !inputNome.value) {
-        inputNome.value = "Maria Clara Santos";
+        inputNome.value = "";
       }
 
       document.getElementById("modalTermoCiencia").checked = false;
@@ -812,7 +841,7 @@
       const oc = DBLocal.obterOcorrencias().find(o => o.id === id);
       if (!oc || !oc.assinaturaPais) return;
 
-      alert(`📄 COMPROVANTE DE CIÊNCIA DIGITAL ESCOLAR\n\nEstudante: ${oc.alunoNome} (RA: ${oc.alunoRA || 'N/D'} - ${oc.turma})\nOcorrência: ${oc.tipo} (${oc.data})\nDocente: ${oc.registradoPor}\n\nASSINATURA DIGITAL DO RESPONSÁVEL:\nNome: ${oc.assinaturaPais.responsavelNome} (${oc.assinaturaPais.vinculo || 'Responsável'})\nData/Hora: ${oc.assinaturaPais.dataAssinatura}\nParecer da Família: ${oc.assinaturaPais.observacaoPais || 'Sem observações adicionais.'}\nStatus: Documento registrado e autenticado no sistema Sala do Futuro V2.`);
+      alert(`📄 COMPROVANTE DE CIÊNCIA DIGITAL ESCOLAR\n\nEstudante: ${oc.alunoNome} (RA: ${oc.alunoRA || 'N/D'} - ${oc.turma})\nOcorrência: ${oc.tipo} (${oc.data})\nDocente: ${oc.registradoPor}\n\nASSINATURA DIGITAL DO RESPONSÁVEL:\nNome: ${oc.assinaturaPais.responsavelNome} (${oc.assinaturaPais.vinculo || 'Responsável'})\nData/Hora: ${oc.assinaturaPais.dataAssinatura}\nParecer da Família: ${oc.assinaturaPais.observacaoPais || 'Sem observações adicionais.'}\nStatus: Documento registrado e autenticado no sistema Sala do Futuro Maurício Antunes (E.E. Maurício Antunes).`);
     };
 
     // Sincronização em tempo real quando o professor lançar ocorrência
